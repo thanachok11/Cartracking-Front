@@ -1,0 +1,134 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* App.css */
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  /* ✅ สำคัญ: ให้ container สูงเต็มจอ */
+}
+
+.app-container.sidebar-open .map-container-wrapper{
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-open .vehicle-page {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+.app-container.sidebar-closed .vehicle-page {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-closed .map-container-wrapper {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+.app-container.sidebar-open .vehicle-panel {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+.app-container.sidebar-closed .vehicle-panel {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+.app-container.sidebar-open .vehicle-container{
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-closed .vehicle-container{
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+/* Driver Page Responsive */
+.app-container.sidebar-open .driver-page {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-closed .driver-page {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+/* Container Page Responsive */
+.app-container.sidebar-open .container-page {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-closed .container-page {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.main-content {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .app-container.sidebar-open .vehicle-page,
+  .app-container.sidebar-open .driver-page,
+  .app-container.sidebar-open .container-page,
+  .app-container.sidebar-open .map-container-wrapper,
+  .app-container.sidebar-open .vehicle-panel,
+  .app-container.sidebar-open .vehicle-container {
+    margin-left: 240px;
+    margin-top: 5px;
+  }
+  
+  .app-container.sidebar-closed .vehicle-page,
+  .app-container.sidebar-closed .driver-page,
+  .app-container.sidebar-closed .container-page,
+  .app-container.sidebar-closed .map-container-wrapper,
+  .app-container.sidebar-closed .vehicle-panel,
+  .app-container.sidebar-closed .vehicle-container {
+    margin-left: 60px;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-container.sidebar-open .vehicle-page,
+  .app-container.sidebar-open .driver-page,
+  .app-container.sidebar-open .container-page,
+  .app-container.sidebar-open .map-container-wrapper,
+  .app-container.sidebar-open .vehicle-panel,
+  .app-container.sidebar-open .vehicle-container {
+    margin-left: 200px;
+    margin-top: 5px;
+  }
+  
+  .app-container.sidebar-closed .vehicle-page,
+  .app-container.sidebar-closed .driver-page,
+  .app-container.sidebar-closed .container-page,
+  .app-container.sidebar-closed .map-container-wrapper,
+  .app-container.sidebar-closed .vehicle-panel,
+  .app-container.sidebar-closed .vehicle-container {
+    margin-left: 50px;
+    margin-top: 5px;
+  }
+}
