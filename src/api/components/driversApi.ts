@@ -20,12 +20,12 @@ export const fetchAllDrivers = async (): Promise<Driver[]> => {
     try {
         const token = localStorage.getItem('token');
         console.log('🔑 Using token:', token ? 'Token exists' : 'No token found');
-        console.log('🌐 Calling API:', `${API_BASE_URL}/vehicles/drivers`);
-        
+        console.log('🌐 Calling API:', `${API_BASE_URL}/driver`);
+
         // Try without authentication first to see if endpoint works
         let response;
         try {
-            response = await axios.get(`${API_BASE_URL}/vehicles/drivers`, {
+            response = await axios.get(`${API_BASE_URL}/driver`, {
                 headers: {
                     'Authorization': token ? `Bearer ${token}` : '',
                     'Content-Type': 'application/json'
@@ -35,22 +35,22 @@ export const fetchAllDrivers = async (): Promise<Driver[]> => {
             console.log('🔄 Auth failed, trying without token...');
             if (authError?.response?.status === 401 || authError?.response?.status === 403) {
                 // Try without auth
-                response = await axios.get(`${API_BASE_URL}/vehicles/drivers`);
+                response = await axios.get(`${API_BASE_URL}/driver`);
             } else {
                 throw authError;
             }
         }
-        
+
         console.log('📡 API Response Status:', response.status);
         console.log('📋 Raw API response:', response.data);
         console.log('📊 Response type:', typeof response.data);
         console.log('🔍 Is Array?', Array.isArray(response.data));
-        
+
         // Handle different response formats
         const data = response.data?.data || response.data;
         console.log('✅ Processed data:', data);
         console.log('📈 Data length:', Array.isArray(data) ? data.length : 'Not an array');
-        
+
         return Array.isArray(data) ? data : [];
     } catch (error: any) {
         console.error('❌ Error fetching drivers:', error);
@@ -65,7 +65,7 @@ export const fetchAllDrivers = async (): Promise<Driver[]> => {
 export const fetchDriverById = async (id: string): Promise<Driver> => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_BASE_URL}/vehicles/drivers/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/driver/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export const createDriver = async (driverData: Omit<Driver, '_id'>): Promise<Dri
     try {
         const token = localStorage.getItem('token');
         console.log('Creating driver with data:', driverData);
-        const response = await axios.post(`${API_BASE_URL}/vehicles/drivers`, driverData, {
+        const response = await axios.post(`${API_BASE_URL}/driver/create`, driverData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ export const createDriver = async (driverData: Omit<Driver, '_id'>): Promise<Dri
 export const updateDriver = async (id: string, driverData: Partial<Driver>): Promise<Driver> => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.patch(`${API_BASE_URL}/vehicles/drivers/${id}`, driverData, {
+        const response = await axios.patch(`${API_BASE_URL}/driver/${id}`, driverData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@ export const updateDriver = async (id: string, driverData: Partial<Driver>): Pro
 export const deleteDriver = async (id: string): Promise<void> => {
     try {
         const token = localStorage.getItem('token');
-        await axios.delete(`${API_BASE_URL}/vehicles/drivers/${id}`, {
+        await axios.delete(`${API_BASE_URL}/driver/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -126,17 +126,6 @@ export const deleteDriver = async (id: string): Promise<void> => {
         });
     } catch (error) {
         console.error('Error deleting driver:', error);
-        throw error;
-    }
-};
-
-// Get drivers from Vehicle API (Cartrack API)
-export const fetchDriversFromCartrack = async (): Promise<any[]> => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/drivers`);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching drivers from Cartrack:', error);
         throw error;
     }
 };

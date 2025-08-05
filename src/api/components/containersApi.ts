@@ -101,29 +101,6 @@ export const fetchContainerById = async (id: string): Promise<Containers> => {
     }
 };
 
-export const fetchTrackContainers = async (): Promise<Containers[]> => {
-    try {
-        const base64Cookie = localStorage.getItem("container_cookie"); // หรือ context/state ก็ได้
-        if (!base64Cookie) throw new APIError("No cookie found. Please login.");
-
-        const response = await api.post('/trackcontainers', {
-            cookie: base64Cookie,
-        });
-
-        const { success, data } = response.data;
-
-        if (!success || !Array.isArray(data)) {
-            throw new APIError("Invalid container response");
-        }
-
-        return data as Containers[];
-
-    } catch (error) {
-        console.error("❌ Failed to fetch containers:", error);
-        throw new APIError("Failed to fetch containers");
-    }
-};
-
 export const createContainer = async (containerData: Omit<Containers, '_id'>): Promise<Containers> => {
     try {
         // Clean and extract only the essential fields for backend

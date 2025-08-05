@@ -26,7 +26,7 @@ export interface VehicleTimelineEvent {
 // Get vehicles with positions (from Cartrack API)
 export const fetchVehiclesWithPositions = async (): Promise<Vehicle[]> => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/vehicles`);
+        const response = await axios.get(`${API_BASE_URL}/vehicles/position`);
         return response.data;
     } catch (error) {
         console.error('Error fetching vehicles with positions:', error);
@@ -37,7 +37,7 @@ export const fetchVehiclesWithPositions = async (): Promise<Vehicle[]> => {
 // Get vehicle list
 export const fetchVehicleList = async (): Promise<any[]> => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/car`);
+        const response = await axios.get(`${API_BASE_URL}/vehicles`);
         return response.data;
     } catch (error) {
         console.error('Error fetching vehicle list:', error);

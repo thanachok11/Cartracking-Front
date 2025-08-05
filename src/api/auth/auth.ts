@@ -1,4 +1,3 @@
-// services/auth.ts
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
@@ -28,7 +27,9 @@ export interface RegisterData {
 // ฟังก์ชันสำหรับการลงทะเบียนผู้ใช้ใหม่
 export const registerUser = async (userData: RegisterData) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
+        const response = await axios.post(`${API_BASE_URL}/auth/register`, userData, {
+            withCredentials: true
+        });
         return response.data;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Registration failed');
@@ -38,24 +39,31 @@ export const registerUser = async (userData: RegisterData) => {
 // ฟังก์ชันสำหรับการล็อกอินผู้ใช้
 export const loginUser = async (email: string, password: string): Promise<LoginResponse> => {
     try {
-        // Login เข้าระบบหลักของคุณ
-        const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-            email,
-            password
-        });
+        // Login เข้าระบบหลัก
+        const response = await axios.post(
+            `${API_BASE_URL}/auth/login`,
+            { email, password },
+            { withCredentials: true } // ✅ สำคัญ
+        );
 
         const loginData: LoginResponse = response.data;
 
-        // ยิง loginContainers ต่อ (เบื้องหลัง)
+        // ยิง loginContainers ต่อ
         try {
-            const containerRes = await axios.post(`${API_BASE_URL}/logincontainers`);
-            const base64Cookie = containerRes.data.cookie;
+            const containerRes = await axios.post(
+                `${API_BASE_URL}/loginContainers`,
+                null,
+                { withCredentials: true } // ✅ สำคัญ
+            );
 
-            // เก็บ cookie ไว้ใน localStorage
+            const base64Cookie = containerRes.data.cookie;
             localStorage.setItem('container_cookie', base64Cookie);
             console.log('container_cookie saved');
         } catch (containerErr: any) {
-            console.warn('Failed to login to container system:', containerErr?.response?.data || containerErr.message);
+            console.warn(
+                'Failed to login to container system:',
+                containerErr?.response?.data || containerErr.message
+            );
         }
 
         return loginData;
@@ -65,7 +73,7 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
     }
 };
 
-// Get all users
+// ดึงผู้ใช้ทั้งหมด
 export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
     try {
         const token = localStorage.getItem('token');
@@ -73,7 +81,8 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            withCredentials: true // ✅ เผื่อมี session ตรวจสอบ
         });
         return response.data;
     } catch (error: any) {
@@ -81,7 +90,7 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
     }
 };
 
-// Token management utilities
+// Token utils
 export const saveToken = (token: string) => {
     localStorage.setItem('token', token);
 };
