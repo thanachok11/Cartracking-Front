@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 export interface User {
@@ -103,7 +102,18 @@ export const removeToken = () => {
     localStorage.removeItem('token');
 };
 
+// ฟังก์ชัน logout แบบครบถ้วน
+export const logoutUser = () => {
+    // ลบ token และข้อมูลที่เกี่ยวข้องทั้งหมด
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('container_cookie');
+    
+    console.log('🚪 User logged out successfully');
+};
+
 export const isAuthenticated = (): boolean => {
     const token = getToken();
     return !!token;
+
 };

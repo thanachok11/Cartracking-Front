@@ -48,6 +48,7 @@ export interface VehiclePosition {
         eventTypeIcon?: string | null;
         eventTypeDescription?: string | null;
     };
+    driver_notes?: string; // Add this field for driver notes
 }
 
 

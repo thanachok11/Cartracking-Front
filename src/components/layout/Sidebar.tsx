@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faHome,
     faMapMarkedAlt,
     faCar,
     faSignOutAlt,
@@ -11,16 +10,17 @@ import {
     faChevronRight,
     faUsers,
     faBox,
+    faTachometerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { logoutUser } from "../../api/auth/auth";
 import "../../styles/components/layout/Sidebar.css";
 
 interface SidebarProps {
     isSidebarOpen: boolean;
     toggleSidebar: () => void;
 }
-
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
     const [user, setUser] = useState<{
         name: string;
@@ -51,14 +51,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        // ใช้ logout function จาก auth.ts
+        logoutUser();
         setUser(null);
-        navigate("/");
-
-        // ✅ รีเฟรชหน้าใหม่
+        
+        // กลับไป landing page โดยตรง
+        navigate("/", { replace: true });
+        
+        // ✅ รีเฟรชหน้าใหม่เพื่อให้ App.tsx อัปเดต token state
         setTimeout(() => {
             window.location.reload();
-        }, 1000); // รอให้ navigate ทำงานก่อนเล็กน้อย
+        }, 500); // ลดเวลารอให้เร็วขึ้น
     };
 
 
@@ -82,12 +85,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
             </div>
 
             <div className="sidebar-title">
-                🚗 {isSidebarOpen && "Car Tracking"}
+                {isSidebarOpen && "Car Tracking"}
             </div>
 
             <nav className="sidebar-menu">
-                <button onClick={() => navigate("/")}>
-                    <FontAwesomeIcon icon={faHome} /> {isSidebarOpen && <span>Home</span>}
+                <button onClick={() => navigate("/dashboard")}>
+                    <FontAwesomeIcon icon={faTachometerAlt} /> {isSidebarOpen && <span>Dashboard</span>}
                 </button>
                 <button onClick={() => navigate("/map")}>
                     <FontAwesomeIcon icon={faMapMarkedAlt} /> {isSidebarOpen && <span>Map</span>}
@@ -111,8 +114,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                             <button onClick={() => navigate("/containers")}>
                                 <FontAwesomeIcon icon={faBox} /> Container
                             </button>
+
                         </div>
                     )}
+                    <button onClick={() => navigate("/track")}>
+                        <FontAwesomeIcon icon={faBox} /> {isSidebarOpen && <span>Track Containers</span>}
+                    </button>
                 </div>
             </nav>
 

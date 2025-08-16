@@ -119,7 +119,7 @@ export const createContainer = async (containerData: Omit<Containers, '_id'>): P
         if (error instanceof APIError) throw error;
         throw new APIError('Failed to create container');
     }
-};
+}; 
 
 export const updateContainer = async (id: string, containerData: Omit<Containers, '_id'>): Promise<Containers> => {
     try {

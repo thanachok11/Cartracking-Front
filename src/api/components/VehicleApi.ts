@@ -14,7 +14,6 @@ export interface Vehicle {
 }
 
 export interface VehicleTimelineEvent {
-    // Define based on actual API response
     timestamp: string;
     event: string;
     location?: {

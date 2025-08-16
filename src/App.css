@@ -3,9 +3,31 @@
   padding: 0;
   box-sizing: border-box;
 }
-/* App.css */
+/* App./* Track Container Page Responsive */
+.app-container.sidebar-open .track-container-page {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
 
-.app-container {
+.app-container.sidebar-closed .track-container-page {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+/* Dashboard Page Responsive */
+.app-container.sidebar-open .dashboard-container {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}
+
+.app-container.sidebar-closed .dashboard-container {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+}pp-container {
   display: flex;
   flex-direction: row;
   height: 100vh;
@@ -82,6 +104,21 @@
   transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
 }
 
+/* Dashboard Page Responsive */
+.app-container.sidebar-open .dashboard-container {
+  margin-left: 250px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+  width: calc(100% - 250px);
+}
+
+.app-container.sidebar-closed .dashboard-container {
+  margin-left: 70px;
+  margin-top: 10px;
+  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+  width: calc(100% - 70px);
+}
+
 .main-content {
   flex: 1;
   overflow: auto;
@@ -93,6 +130,8 @@
   .app-container.sidebar-open .vehicle-page,
   .app-container.sidebar-open .driver-page,
   .app-container.sidebar-open .container-page,
+  .app-container.sidebar-open .track-container-page,
+  .app-container.sidebar-open .dashboard-container,
   .app-container.sidebar-open .map-container-wrapper,
   .app-container.sidebar-open .vehicle-panel,
   .app-container.sidebar-open .vehicle-container {
@@ -103,11 +142,21 @@
   .app-container.sidebar-closed .vehicle-page,
   .app-container.sidebar-closed .driver-page,
   .app-container.sidebar-closed .container-page,
+  .app-container.sidebar-closed .track-container-page,
+  .app-container.sidebar-closed .dashboard-container,
   .app-container.sidebar-closed .map-container-wrapper,
   .app-container.sidebar-closed .vehicle-panel,
   .app-container.sidebar-closed .vehicle-container {
     margin-left: 60px;
     margin-top: 5px;
+  }
+
+  .app-container.sidebar-open .dashboard-container {
+    width: calc(100% - 240px);
+  }
+  
+  .app-container.sidebar-closed .dashboard-container {
+    width: calc(100% - 60px);
   }
 }
 
@@ -115,6 +164,8 @@
   .app-container.sidebar-open .vehicle-page,
   .app-container.sidebar-open .driver-page,
   .app-container.sidebar-open .container-page,
+  .app-container.sidebar-open .track-container-page,
+  .app-container.sidebar-open .dashboard-container,
   .app-container.sidebar-open .map-container-wrapper,
   .app-container.sidebar-open .vehicle-panel,
   .app-container.sidebar-open .vehicle-container {
@@ -125,10 +176,20 @@
   .app-container.sidebar-closed .vehicle-page,
   .app-container.sidebar-closed .driver-page,
   .app-container.sidebar-closed .container-page,
+  .app-container.sidebar-closed .track-container-page,
+  .app-container.sidebar-closed .dashboard-container,
   .app-container.sidebar-closed .map-container-wrapper,
   .app-container.sidebar-closed .vehicle-panel,
   .app-container.sidebar-closed .vehicle-container {
     margin-left: 50px;
     margin-top: 5px;
+  }
+
+  .app-container.sidebar-open .dashboard-container {
+    width: calc(100% - 200px);
+  }
+  
+  .app-container.sidebar-closed .dashboard-container {
+    width: calc(100% - 50px);
   }
 }

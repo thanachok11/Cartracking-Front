@@ -59,20 +59,50 @@
   font-size: 1rem;
 }
 
-.retry-button {
-  background-color: #2563eb;
+.retry-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
-  transition: background-color 0.3s ease;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.retry-button:hover {
-  background-color: #1e40af;
+.retry-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.retry-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.retry-btn:hover::before {
+  left: 100%;
+}
+
+.retry-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.retry-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
 }
 
 .search-container {
@@ -137,14 +167,41 @@
 .vehicle-card {
   background: white;
   padding: 1.25rem;
-  border-radius: 10px;
-  box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.vehicle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #7c3aed, #2563eb);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .vehicle-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 20px rgb(0 0 0 / 0.15);
+  box-shadow: 0 16px 32px rgb(0 0 0 / 0.12);
+  border-color: #e2e8f0;
+}
+
+.vehicle-card:hover::before {
+  opacity: 1;
 }
 
 .vehicle-registration {
@@ -152,17 +209,23 @@
   margin-bottom: 0.75rem;
   color: #1e3a8a;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 0.5rem;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.025em;
+  text-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
 }
 
 .vehicle-card p {
   margin: 0.5rem 0;
   color: #4b5563;
   font-size: 0.95rem;
-  padding: 4px 0;
+  padding: 2px 0;
 }
 
 .vehicle-card p strong {
@@ -199,6 +262,118 @@
   color: #dc2626;
   font-size: 1.2rem;
   font-weight: bold;
+}
+
+/* Profile Button Styling */
+.profile-btn {
+  width: 100%;
+  padding: 12px 16px;
+  margin-top: 15px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.profile-btn:hover {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.profile-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.profile-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+.profile-btn svg {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.profile-btn:hover svg {
+  transform: scale(1.1);
+}
+
+/* Enhanced button with gradient border effect */
+.profile-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 8px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-btn:hover::after {
+  opacity: 1;
+}
+
+/* ===== Popup Styles (NEW) ===== */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+}
+
+.popup-content {
+  width: min(640px, 92vw);
+  min-height: 360px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.popup-title {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.popup-body {
+  padding: 16px;
+}
+
+.close-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 /* Responsive Design */
@@ -243,5 +418,31 @@
   .alert-box {
     padding: 10px;
     margin-top: 10px;
+  }
+  
+  .profile-btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    margin-top: 12px;
+  }
+  
+  .profile-btn svg {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .vehicle-page {
+    padding: 8px;
+  }
+  
+  .vehicle-card {
+    padding: 0.75rem;
+  }
+  
+  .profile-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    gap: 6px;
   }
 }

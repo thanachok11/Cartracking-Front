@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser, saveToken } from "../../api/auth/auth";
 import "../../styles/components/auth/LoginPageModal.css";
 
@@ -17,6 +17,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
     const [isClosing, setIsClosing] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     if (!isVisible) return null;
 
@@ -31,10 +32,14 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             saveToken(data.token);
             localStorage.setItem("userEmail", email);
 
+            // ตรวจสอบว่ามีหน้าที่ต้องการเข้าถึงก่อน login หรือไม่
+            const from = location.state?.from?.pathname || "/dashboard";
+
             if (data.role === "employee") {
                 navigate("/employee-dashboard");
             } else {
-                navigate("/");
+                // redirect ไปหน้าที่ต้องการหรือ dashboard (เป็น default)
+                navigate(from, { replace: true });
             }
 
             setSuccessMessage("Login Success!");
@@ -46,13 +51,12 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
         }
     };
     const handleClose = () => {
-        setIsClosing(true); // เริ่ม animation ออก
+        setIsClosing(true);
 
-        // รอให้ animation จบก่อนค่อยปิด
         setTimeout(() => {
-            setIsClosing(false); // reset สำหรับรอบหน้า
-            onClose();           // ปิด modal จริง
-        }, 300); // ตรงกับเวลาใน animation CSS
+            setIsClosing(false);
+            onClose();
+        }, 300);
     };
 
     return (

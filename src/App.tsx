@@ -1,26 +1,38 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Header from "./components/layout/Header";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import VehicleTimelinePage from "./pages/VehicleTimeline";
-import MapView from "./pages/MapView";
+import MapView from "./pages/map/GoogleMapView";
 import HomePage from "./components/landingPage/LandingPage";
 import Sidebar from "./components/layout/Sidebar";
-import { GoogleMapsProvider } from './pages/GoogleMapsProvider';
-import Drivers from "./pages/DriverPage";
+import { GoogleMapsProvider } from "./pages/GoogleMapsProvider";
+import Drivers from "./pages/driver/DriverPage";
 import VehiclePage from "./pages/VehiclePage";
-import ContainerPage from "./pages/ContainerPage";
-import TrackContainer from "./pages/TrackContainer";
-
+import ContainerPage from "./pages/container/containerpage";
+import TrackContainersPage from "./pages/TrackContainer";
+import Dashboard from "./pages/Dashboard";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import DriverProfilePage from './pages/driver/components/DriverProfilePage';
+import TestPage from "./pages/driver/components/TestPage";
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
-// Interceptor เดิมของคุณ
+import { logoutUser } from "./api/auth/auth";
+
+// Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // localStorage.removeItem("token");
-      // window.location.href = "/";
+      // Logout อัตโนมัติเมื่อ token หมดอายุ
+      logoutUser();
+      window.location.href = "/";
     }
     return Promise.reject(error);
   }
@@ -56,7 +68,11 @@ const App: React.FC = () => {
     // เรียก API renewCookie ที่ backend เพื่อ renew session cookie ด้วย
     const renewSessionCookie = async () => {
       try {
-        await axios.post(`${API_BASE_URL}/renewCookie`, {}, { withCredentials: true });
+        await axios.post(
+          `${API_BASE_URL}/renewCookie`,
+          {},
+          { withCredentials: true }
+        );
         console.log("🔄 Session cookie renewed successfully");
       } catch (err) {
         console.error("❌ Failed to renew session cookie:", err);
@@ -80,7 +96,7 @@ const App: React.FC = () => {
           localStorage.setItem("token", data.token);
           lastRenewTime = Date.now(); // ✅ อัปเดตเวลาที่ renew ล่าสุด
           console.log("🔄 Token renewed successfully");
-           // เรียก renew session cookie ด้วย
+          // เรียก renew session cookie ด้วย
           await renewSessionCookie();
         }
       } catch (err) {
@@ -91,14 +107,14 @@ const App: React.FC = () => {
     const activityDetected = () => {
       clearTimeout(timeoutId);
 
-      const token = localStorage.getItem("token");
+      const currentToken = localStorage.getItem("token");
       const now = Date.now();
 
       const enoughTimePassed = now - lastRenewTime > COOLDOWN_MS;
-      const tokenIsExpiring = isTokenExpiringSoon(token, 60);
+      const tokenIsExpiring = isTokenExpiringSoon(currentToken, 60);
 
       if (tokenIsExpiring && enoughTimePassed) {
-        renewToken(token!);
+        renewToken(currentToken!);
       }
 
       timeoutId = setTimeout(() => {
@@ -114,28 +130,107 @@ const App: React.FC = () => {
       window.removeEventListener("mousemove", activityDetected);
       window.removeEventListener("keydown", activityDetected);
     };
-  }, []);
-
+  }, [token]);
 
   return (
     <Router>
       <GoogleMapsProvider>
-        <div className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
+        <div
+          className={`app-container ${
+            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+          }`}
+        >
           {!token && (
-            <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+            <Header
+              toggleSidebar={toggleSidebar}
+              isSidebarOpen={isSidebarOpen}
+            />
           )}
           {token && (
-            <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <Sidebar
+              isSidebarOpen={isSidebarOpen}
+              toggleSidebar={toggleSidebar}
+            />
           )}
           <div className="main-content">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/map" element={<MapView />} />
-              <Route path="/vehicles" element={<VehiclePage />} />
-              <Route path="/vehicle/:id/view" element={<VehicleTimelinePage />} />
-              <Route path="/Drivers" element={<Drivers />} />
-              <Route path="/containers" element={<ContainerPage />} />
-              <Route path="/track" element={<TrackContainer />} />
+              <Route
+                path="/"
+                element={
+                  token ? <Navigate to="/dashboard" replace /> : <HomePage />
+                }
+              />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/map"
+                element={
+                  <ProtectedRoute>
+                    <MapView />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/vehicles"
+                element={
+                  <ProtectedRoute>
+                    <VehiclePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/vehicle/:id/view"
+                element={
+                  <ProtectedRoute>
+                    <VehicleTimelinePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/Drivers"
+                element={
+                  <ProtectedRoute>
+                    <Drivers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="/drivers/:id" element={
+                  <ProtectedRoute>
+                    <DriverProfilePage />
+                  </ProtectedRoute>} />
+              <Route
+                path="/containers"
+                element={
+                  <ProtectedRoute>
+                    <ContainerPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/test"
+                element={
+                  <ProtectedRoute>
+                    <TestPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/track"
+                element={
+                  <ProtectedRoute>
+                    <TrackContainersPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>
