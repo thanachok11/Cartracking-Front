@@ -21,7 +21,8 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import DriverProfilePage from './pages/driver/components/DriverProfilePage';
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
@@ -137,9 +138,8 @@ const App: React.FC = () => {
     <Router>
       <GoogleMapsProvider>
         <div
-          className={`app-container ${
-            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
-          }`}
+          className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+            }`}
         >
           {!token && (
             <Header
@@ -169,6 +169,20 @@ const App: React.FC = () => {
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <ForgotPassword />
+                }
+              />
+              <Route
+                path="/reset-password"
+                element={
+
+                  <ResetPassword />
+
                 }
               />
               <Route
@@ -203,7 +217,7 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route 
+              <Route
                 path="/drivers/:id" element={
                   <ProtectedRoute>
                     <DriverProfilePage />
