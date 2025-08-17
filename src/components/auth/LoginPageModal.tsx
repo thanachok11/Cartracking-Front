@@ -32,13 +32,11 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             saveToken(data.token);
             localStorage.setItem("userEmail", email);
 
-            // ตรวจสอบว่ามีหน้าที่ต้องการเข้าถึงก่อน login หรือไม่
             const from = location.state?.from?.pathname || "/dashboard";
 
             if (data.role === "employee") {
                 navigate("/employee-dashboard");
             } else {
-                // redirect ไปหน้าที่ต้องการหรือ dashboard (เป็น default)
                 navigate(from, { replace: true });
             }
 
@@ -50,6 +48,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             setError(err.message || "Error logging in. Please try again.");
         }
     };
+
     const handleClose = () => {
         setIsClosing(true);
 
@@ -59,46 +58,60 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
         }, 300);
     };
 
+    const handleForgotPassword = () => {
+        onClose(); // ปิด modal ก่อน
+        navigate("/forgot-password");
+    };
+
     return (
         <div className="login-modal-overlay">
             <div className="login-model-content">
-            <div className={`login-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
-                <button onClick={handleClose} className="login-close-button">×</button>
-                <form onSubmit={handleLogin} className="login-form">
-                    <h2 className="login-title">Login</h2>
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="login-input"
-                        required
-                    />
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="login-input"
-                        required
-                    />
-                    <div className="login-checkbox-container">
+                <div className={`login-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
+                    <button onClick={handleClose} className="login-close-button">×</button>
+                    <form onSubmit={handleLogin} className="login-form">
+                        <h2 className="login-title">Login</h2>
                         <input
-                            type="checkbox"
-                            id="rememberMe"
-                            checked={rememberMe}
-                            onChange={() => setRememberMe(!rememberMe)}
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="login-input"
+                            required
                         />
-                        <label htmlFor="rememberMe" className="login-label">
-                            Remember me
-                        </label>
-                    </div>
-                    <button type="submit" className="login-button">Login</button>
-                    {error && <p className="login-error">{error}</p>}
-                    {successMessage && <p className="login-success">{successMessage}</p>}
-                </form>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="login-input"
+                            required
+                        />
+                        <div className="login-checkbox-container">
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                checked={rememberMe}
+                                onChange={() => setRememberMe(!rememberMe)}
+                            />
+                            <label htmlFor="rememberMe" className="login-label">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <button type="submit" className="login-button">Login</button>
+
+                        <p
+                            className="login-forgot"
+                            onClick={handleForgotPassword}
+                        >
+                            Forgot Password?
+                        </p>
+
+                        {error && <p className="login-error">{error}</p>}
+                        {successMessage && <p className="login-success">{successMessage}</p>}
+                    </form>
                 </div>
             </div>
         </div>
