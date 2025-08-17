@@ -18,9 +18,10 @@ import ContainerPage from "./pages/container/containerpage";
 import TrackContainersPage from "./pages/TrackContainer";
 import Dashboard from "./pages/Dashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
+import SettingsPage from "./pages/SettingsPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import DriverProfilePage from './pages/driver/components/DriverProfilePage';
-import TestPage from "./pages/driver/components/TestPage";
+
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
@@ -216,18 +217,18 @@ const App: React.FC = () => {
                 }
               />
               <Route
-                path="/test"
-                element={
-                  <ProtectedRoute>
-                    <TestPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/track"
                 element={
                   <ProtectedRoute>
                     <TrackContainersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage />
                   </ProtectedRoute>
                 }
               />

@@ -1,0 +1,226 @@
+.vehicle-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.vehicle-item:hover {
+    background-color: #f0f8ff;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.1);
+}
+
+/* Vehicle Header - แสดงหัวข้อและข้อมูลหลัก */
+.vehicle-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.vehicle-main-info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.vehicle-title-status {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.vehicle-main-info .registration {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.vehicle-main-info .status-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    width: fit-content;
+}
+
+.timestamp {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+}
+
+.timestamp svg {
+    width: 12px;
+    height: 12px;
+    color: #888;
+}
+
+/* Timestamp และ Speed Container */
+.timestamp-speed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.speed-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.speed-info svg {
+    color: #888;
+    width: 12px;
+    height: 12px;
+}
+
+.vehicle-location-driver-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.vehicle-location-driver {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #555;
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 4px;
+}
+
+.vehicle-location-driver svg {
+    color: #888;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.vehicle-location-driver span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Vehicle Stats - ข้อมูลสถิติ */
+.vehicle-stats {
+    display: flex;
+    gap: 12px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stat-item svg {
+    color: #666;
+    width: 14px;
+    height: 14px;
+}
+
+.stat-item span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.stat-item small {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+/* Vehicle Info - ข้อมูลเพิ่มเติม */
+.vehicle-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #666;
+}
+
+.info-item span {
+    white-space: nowrap;
+}
+
+.driver-info {
+    display: flex;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.driver-info svg {
+    color: #888;
+    width: 12px;
+    height: 12px;
+}
+
+/* Status Badge Colors - Neutral Style */
+.status-badge.status-driving,
+.status-badge.status-idling,
+.status-badge.status-stationary,
+.status-badge.status-ignition-off {
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+.status-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🚦 สีตามสถานะ */
+.status-driving { background-color: #00a326; }
+.status-idling { background-color: #ffc107; }
+.status-stationary { background-color: #00a326; }
+.status-ignition-off { background-color: #6c757d; }
+
+.stars { font-size: 14px; color: #f4b400; }

@@ -1,165 +1,173 @@
+/* ========== Reset ========== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-/* App./* Track Container Page Responsive */
-.app-container.sidebar-open .track-container-page {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
 
-.app-container.sidebar-closed .track-container-page {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-/* Dashboard Page Responsive */
-.app-container.sidebar-open .dashboard-container {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-.app-container.sidebar-closed .dashboard-container {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}pp-container {
+/* ========== App Layout ========== */
+.app-container {
   display: flex;
   flex-direction: row;
+  min-height: 100vh;
   height: 100vh;
-  /* ✅ สำคัญ: ให้ container สูงเต็มจอ */
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95));
 }
 
-.app-container.sidebar-open .map-container-wrapper{
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+/* ========== Sidebar (ขยาย/ยุบ ด้วย flex-basis) ========== */
+/* ปกติ: 250px */
+.sidebar {
+  flex: 0 0 250px;
+  width: 250px;
+  height: 100vh;
+  position: sticky;   /* เลื่อนตาม viewport */
+  top: 0;
+  z-index: 2;
+  /* จำกัด transition เฉพาะที่จำเป็น */
+  transition: flex-basis .25s ease, width .25s ease;
 }
 
-.app-container.sidebar-open .vehicle-page {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-.app-container.sidebar-closed .vehicle-page {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
+/* ยุบแล้ว: 60px */
+.app-container.sidebar-closed .sidebar {
+  flex-basis: 60px;
+  width: 60px;
+  overflow: hidden; /* ซ่อน label ที่ยาว */
 }
 
-.app-container.sidebar-closed .map-container-wrapper {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-.app-container.sidebar-open .vehicle-panel {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-.app-container.sidebar-closed .vehicle-panel {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-.app-container.sidebar-open .vehicle-container{
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
+/* ถ้าต้องการให้ label เมนูจางตอนยุบ */
+.sidebar .item-label { opacity: 1; white-space: nowrap; transition: opacity .2s; }
+.app-container.sidebar-closed .sidebar .item-label { opacity: 0; pointer-events: none; }
 
-.app-container.sidebar-closed .vehicle-container{
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-/* Driver Page Responsive */
-.app-container.sidebar-open .driver-page {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-.app-container.sidebar-closed .driver-page {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-/* Container Page Responsive */
-.app-container.sidebar-open .container-page {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-.app-container.sidebar-closed .container-page {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-}
-
-/* Dashboard Page Responsive */
-.app-container.sidebar-open .dashboard-container {
-  margin-left: 250px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-  width: calc(100% - 250px);
-}
-
-.app-container.sidebar-closed .dashboard-container {
-  margin-left: 70px;
-  margin-top: 10px;
-  transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out;
-  width: calc(100% - 70px);
-}
-
+/* ========== Main Content ========== */
 .main-content {
-  flex: 1;
+  flex: 1;            /* กินพื้นที่ที่เหลือทั้งหมด */
+  min-width: 0;       /* กันเนื้อหาดันแตก */
   overflow: auto;
   position: relative;
 }
 
-/* Mobile Responsive Design */
+/* ========== Page wrappers (ไม่ต้องเหลือ margin-left อีก) ========== */
+.app-container.sidebar-open .vehicle-page,
+.app-container.sidebar-open .driver-page,
+.app-container.sidebar-open .container-page,
+.app-container.sidebar-open .track-container-page,
+.app-container.sidebar-open .dashboard-container,
+.app-container.sidebar-open .vehicle-container,
+.app-container.sidebar-open .settings-page {
+  margin: 0;
+  margin-top: 10px;
+  padding: 0 1rem;
+  transition: padding .3s ease, margin-top .3s ease;
+}
+
+.app-container.sidebar-closed .vehicle-page,
+.app-container.sidebar-closed .driver-page,
+.app-container.sidebar-closed .container-page,
+.app-container.sidebar-closed .track-container-page,
+.app-container.sidebar-closed .dashboard-container,
+.app-container.sidebar-closed .vehicle-container,
+.app-container.sidebar-closed .settings-page {
+  margin: 0;
+  margin-top: 10px;
+  padding: 0 1rem;
+  transition: padding .3s ease, margin-top .3s ease;
+}
+
+/* ========== Map page ให้เต็มสูง (ไม่ใช้ margin-left) ========== */
+.app-container.sidebar-open .map-page,
+.app-container.sidebar-closed .map-page {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100vh !important;
+}
+
+/* ถ้าใน main-content ยังจัดสองคอลัมน์ (vehicle-panel + map-container) */
+.main-content .map-container-wrapper,
+.main-content .map-page {
+  display: flex;
+}
+
+/* ========== Scrollbar ของ main-content ========== */
+.main-content::-webkit-scrollbar { width: 8px; }
+.main-content::-webkit-scrollbar-track { background: rgba(248, 250, 252, 0.5); }
+.main-content::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 4px; }
+.main-content::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
+
+/* ========== Tablet (<=1200px) ========== */
+@media (max-width: 1200px) {
+  /* ไม่ต้อง margin-left ที่ main-content */
+  .app-container.sidebar-open .map-page,
+  .app-container.sidebar-closed .map-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100vh !important;
+  }
+}
+
+/* ========== Mobile (<=768px) ========== */
 @media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;     /* เรียงบน-ล่าง */
+    height: 100vh;
+  }
+
+  /* Sidebar บนมือถือเป็นบล็อกธรรมดา ไม่ sticky/เต็มสูง */
+  .sidebar {
+    position: static;
+    height: auto;
+    width: 100%;
+    flex: 0 0 auto;
+  }
+  .app-container.sidebar-closed .sidebar {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  /* Main-content เต็มกว้าง */
+  .app-container.sidebar-open .main-content,
+  .app-container.sidebar-closed .main-content {
+    width: 100%;
+  }
+
+  /* Map view เต็มจอ */
+  .app-container.sidebar-open .map-page,
+  .app-container.sidebar-closed .map-page {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100vh !important;
+  }
+
+  /* เพจเนื้อหาอื่น ๆ */
   .app-container.sidebar-open .vehicle-page,
   .app-container.sidebar-open .driver-page,
   .app-container.sidebar-open .container-page,
   .app-container.sidebar-open .track-container-page,
   .app-container.sidebar-open .dashboard-container,
-  .app-container.sidebar-open .map-container-wrapper,
-  .app-container.sidebar-open .vehicle-panel,
-  .app-container.sidebar-open .vehicle-container {
-    margin-left: 240px;
-    margin-top: 5px;
-  }
-  
+  .app-container.sidebar-open .vehicle-container,
+  .app-container.sidebar-open .settings-page,
   .app-container.sidebar-closed .vehicle-page,
   .app-container.sidebar-closed .driver-page,
   .app-container.sidebar-closed .container-page,
   .app-container.sidebar-closed .track-container-page,
   .app-container.sidebar-closed .dashboard-container,
-  .app-container.sidebar-closed .map-container-wrapper,
-  .app-container.sidebar-closed .vehicle-panel,
-  .app-container.sidebar-closed .vehicle-container {
-    margin-left: 60px;
+  .app-container.sidebar-closed .vehicle-container,
+  .app-container.sidebar-closed .settings-page {
+    margin: 0;
     margin-top: 5px;
+    padding: 0 0.75rem;
+    width: 100%;
   }
 
-  .app-container.sidebar-open .dashboard-container {
-    width: calc(100% - 240px);
-  }
-  
-  .app-container.sidebar-closed .dashboard-container {
-    width: calc(100% - 60px);
+  /* ถ้าคุณมี .map-container-wrapper / .vehicle-panel ใน mobile */
+  .app-container.sidebar-closed .map-container-wrapper,
+  .app-container.sidebar-closed .vehicle-panel {
+    margin: 0;
+    padding: 0 0.75rem;
+    width: 100%;
   }
 }
 
+/* ========== Extra Small (<=480px) ========== */
 @media (max-width: 480px) {
   .app-container.sidebar-open .vehicle-page,
   .app-container.sidebar-open .driver-page,
@@ -168,11 +176,8 @@
   .app-container.sidebar-open .dashboard-container,
   .app-container.sidebar-open .map-container-wrapper,
   .app-container.sidebar-open .vehicle-panel,
-  .app-container.sidebar-open .vehicle-container {
-    margin-left: 200px;
-    margin-top: 5px;
-  }
-  
+  .app-container.sidebar-open .vehicle-container,
+  .app-container.sidebar-open .settings-page,
   .app-container.sidebar-closed .vehicle-page,
   .app-container.sidebar-closed .driver-page,
   .app-container.sidebar-closed .container-page,
@@ -180,16 +185,11 @@
   .app-container.sidebar-closed .dashboard-container,
   .app-container.sidebar-closed .map-container-wrapper,
   .app-container.sidebar-closed .vehicle-panel,
-  .app-container.sidebar-closed .vehicle-container {
-    margin-left: 50px;
-    margin-top: 5px;
-  }
-
-  .app-container.sidebar-open .dashboard-container {
-    width: calc(100% - 200px);
-  }
-  
-  .app-container.sidebar-closed .dashboard-container {
-    width: calc(100% - 50px);
+  .app-container.sidebar-closed .vehicle-container,
+  .app-container.sidebar-closed .settings-page {
+    margin: 0;
+    margin-top: 0;
+    padding: 0 0.5rem;
+    width: 100%;
   }
 }

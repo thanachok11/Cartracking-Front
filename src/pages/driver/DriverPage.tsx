@@ -16,20 +16,7 @@ export default function DriverPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
   const [saving, setSaving] = useState(false);
-
-  // เก็บค่าฟอร์ม (ไม่รวม _id)
-  const [formData, setFormData] = useState<Omit<Driver, '_id'>>({
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    position: '',
-    company: '',
-    detail: '',
-    profile_img: ''
-  });
-
-  // 👉 เพิ่ม state สำหรับไฟล์
-  const [file, setFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState<Omit<Driver, '_id'>>({ firstName: '', lastName: '', phoneNumber: '', position: '', company: '', detail: '', profile_img: '' });
 
   const handleApiError = (error: any, defaultMessage: string) => {
     if (error?.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -49,9 +36,7 @@ export default function DriverPage() {
       const fullName = `${driver?.firstName || ''} ${driver?.lastName || ''}`;
       const company = driver?.company || '';
       const position = driver?.position || '';
-      const searchMatch = fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        position.toLowerCase().includes(searchTerm.toLowerCase());
+      const searchMatch = fullName.toLowerCase().includes(searchTerm.toLowerCase()) || company.toLowerCase().includes(searchTerm.toLowerCase()) || position.toLowerCase().includes(searchTerm.toLowerCase());
       let categoryMatch = true;
       if (filterBy === 'po-chern') categoryMatch = company.includes('ป๋อเฉิน');
       else if (filterBy === 'rot-ruam') categoryMatch = company.includes('รถร่วม');
@@ -78,14 +63,13 @@ export default function DriverPage() {
     setShowModal(false);
     setEditingDriver(null);
     setError(null);
-    setFile(null); // reset file ทุกครั้งที่ปิด modal
   }, []);
 
   const handleCreate = useCallback(async () => {
     try {
       setSaving(true);
       setError(null);
-      await createDriver(formData, file || undefined); // ✅ ส่ง file ไปด้วย
+      await createDriver(formData);
       await loadDrivers();
       handleCloseModal();
     } catch (error) {
@@ -93,14 +77,14 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
-  }, [formData, file, loadDrivers, handleCloseModal]);
+  }, [formData, loadDrivers, handleCloseModal]);
 
   const handleUpdate = useCallback(async () => {
     if (!editingDriver) return;
     try {
       setSaving(true);
       setError(null);
-      await updateDriver(editingDriver._id!, formData, file || undefined); // ✅ ส่ง file ไปด้วย
+      await updateDriver(editingDriver._id!, formData);
       await loadDrivers();
       handleCloseModal();
     } catch (error) {
@@ -108,7 +92,7 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
-  }, [editingDriver, formData, file, loadDrivers, handleCloseModal]);
+  }, [editingDriver, formData, loadDrivers, handleCloseModal]);
 
   const handleDelete = useCallback(async (id: string) => {
     if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบคนขับคนนี้?')) return;
@@ -123,28 +107,11 @@ export default function DriverPage() {
   const handleOpenModal = useCallback((driver?: Driver) => {
     if (driver) {
       setEditingDriver(driver);
-      setFormData({
-        firstName: driver.firstName || '',
-        lastName: driver.lastName || '',
-        phoneNumber: driver.phoneNumber || '',
-        position: driver.position || '',
-        company: driver.company || '',
-        detail: driver.detail || '',
-        profile_img: driver.profile_img || ''
-      });
+      setFormData({ firstName: driver.firstName || '', lastName: driver.lastName || '', phoneNumber: driver.phoneNumber || '', position: driver.position || '', company: driver.company || '', detail: driver.detail || '', profile_img: driver.profile_img || '' });
     } else {
       setEditingDriver(null);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        position: '',
-        company: '',
-        detail: '',
-        profile_img: ''
-      });
+      setFormData({ firstName: '', lastName: '', phoneNumber: '', position: '', company: '', detail: '', profile_img: '' });
     }
-    setFile(null); // reset file ตอนเปิด modal
     setShowModal(true);
   }, []);
 
@@ -161,7 +128,7 @@ export default function DriverPage() {
   if (error) {
     return (
       <div className="driver-page">
-        <DriverHeader onRefresh={() => { }} onAdd={() => { }} />
+        <DriverHeader onRefresh={() => {}} onAdd={() => {}} />
         <ErrorBanner message={error} onRetry={() => loadDrivers()} />
       </div>
     );
@@ -171,13 +138,7 @@ export default function DriverPage() {
     <div className="driver-page">
       <DriverHeader onRefresh={loadDrivers} onAdd={() => handleOpenModal()} />
 
-      <SearchFilterBar
-        searchTerm={searchTerm}
-        filterBy={filterBy}
-        onSearch={setSearchTerm}
-        onFilter={setFilterBy}
-        resultsCount={filteredDrivers.length}
-      />
+      <SearchFilterBar searchTerm={searchTerm} filterBy={filterBy} onSearch={setSearchTerm} onFilter={setFilterBy} resultsCount={filteredDrivers.length} />
 
       <DriverGrid items={filteredDrivers} onEdit={handleOpenModal} onDelete={handleDelete} />
 
@@ -190,7 +151,6 @@ export default function DriverPage() {
         onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
         onClose={handleCloseModal}
         onSave={handleSave}
-        onFileChange={setFile} // ✅ ส่ง callback สำหรับเลือกไฟล์ไปที่ modal
       />
     </div>
   );

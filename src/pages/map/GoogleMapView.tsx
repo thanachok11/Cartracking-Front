@@ -1,30 +1,43 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// File: src/components/map/GoogleMapView.tsx
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { GoogleMap, DirectionsRenderer } from '@react-google-maps/api';
 import { useGoogleMaps } from '../../pages/GoogleMapsProvider';
 import Sidebar from './Sidebar';
 import BottomEventPanel from './BottomEventPanel';
-import { fetchVehicle, VehiclePosition, Geofence, fetchGeofences, fetchVehicleEvents } from '../../api/components/MapApi';
-import { statusColorMap } from './constants/status';
+import {
+  fetchVehicle,
+  VehiclePosition,
+  Geofence,
+  fetchGeofences,
+  fetchVehicleEvents,
+} from '../../api/components/MapApi';
 import { useDirectionsFromEvents } from './hooks/useDirectionsFromEvents';
-import '../../styles/pages/GoogleMapView.css'
+import '../../styles/pages/GoogleMapView/index.css';
 
 const containerStyle = { width: '100%', height: '100%' } as const;
+// ✅ ใช้ LatLngLiteral เพื่อไม่ล็อกเป็น literal type แบบ as const
 const defaultCenter: google.maps.LatLngLiteral = { lat: 18.7904, lng: 98.9847 };
 
 export default function GoogleMapView() {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
   const [geofences, setGeofences] = useState<Geofence[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['driving', 'idling', 'stationary', 'ignition-off']);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([
+    'driving',
+    'idling',
+    'stationary',
+    'ignition-off',
+  ]);
+
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null);
   const [vehicleEvents, setVehicleEvents] = useState<any[]>([]);
   const [showEventList, setShowEventList] = useState(false);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [sensorMap, setSensorMap] = useState<Record<string, string>>({});
 
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  // ✅ พิมพ์ชนิดชัดเจน จะได้ setMapCenter({lat, lng}) ได้ทุกค่า
+  const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>(defaultCenter);
   const [mapZoom, setMapZoom] = useState(6);
   const [panelHeight, setPanelHeight] = useState(35);
   const [isResizing, setIsResizing] = useState(false);
@@ -32,13 +45,15 @@ export default function GoogleMapView() {
   const { isLoaded } = useGoogleMaps();
   const mapRef = useRef<google.maps.Map | null>(null);
   const clustererRef = useRef<MarkerClusterer | null>(null);
-  const navigate = useNavigate();
 
   // Load vehicles & geofences
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [vehicleData, geofenceData] = await Promise.all([fetchVehicle(), fetchGeofences()]);
+        const [vehicleData, geofenceData] = await Promise.all([
+          fetchVehicle(),
+          fetchGeofences(),
+        ]);
         setVehicles(vehicleData);
         setGeofences(geofenceData);
       } catch (err) {
@@ -50,19 +65,66 @@ export default function GoogleMapView() {
     return () => clearInterval(interval);
   }, []);
 
-  // Cluster markers based on filters
+  // ✅ ใช้ useCallback กัน stale closure และใช้เป็น dependency ได้
+  const handleClick = useCallback(
+    async (vehicleId: string) => {
+      const v = vehicles.find((x) => x.vehicle_id === vehicleId);
+      if (!v) return;
+
+      setLoadingEvents(true);
+      setSelectedVehicle(v);
+      setShowEventList(true);
+
+      const lat = parseFloat(v.latitude);
+      const lng = parseFloat(v.longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setMapCenter({ lat, lng });
+        setMapZoom(16);
+      }
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const data = await fetchVehicleEvents(vehicleId, today);
+        const events = Array.isArray(data) ? data : (data as any)?.events || [];
+        setVehicleEvents(events);
+
+        if (!Array.isArray(data) && (data as any)?.sensorByNumber) {
+          const sm = ((data as any).sensorByNumber || []).reduce(
+            (acc: Record<string, string>, s: any) => {
+              acc[s.sensorNumber] = s.name;
+              return acc;
+            },
+            {}
+          );
+          setSensorMap(sm);
+        }
+      } catch (err) {
+        console.error('Error fetching vehicle events:', err);
+        setVehicleEvents([]);
+      } finally {
+        setLoadingEvents(false);
+      }
+    },
+    [vehicles]
+  );
+
+  // วาด/อัปเดต Marker + ผูกคลิกให้เรียก handleClick
   useEffect(() => {
     if (!mapRef.current || !isLoaded) return;
     if (clustererRef.current) clustererRef.current.clearMarkers();
 
     let filtered = vehicles.filter((v) => {
-      const matchesSearch = v.registration.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = v.registration
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
       const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-');
       const matchesStatus = selectedStatuses.includes(status || '');
       return matchesSearch && matchesStatus;
     });
 
-    if (selectedVehicle && showEventList) filtered = filtered.filter((v) => v.vehicle_id === selectedVehicle.vehicle_id);
+    if (selectedVehicle && showEventList) {
+      filtered = filtered.filter((v) => v.vehicle_id === selectedVehicle.vehicle_id);
+    }
 
     const markers = filtered
       .map((v) => {
@@ -70,68 +132,45 @@ export default function GoogleMapView() {
         const lng = parseFloat(v.longitude);
         if (isNaN(lat) || isNaN(lng)) return null;
 
-        const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-');
-        const circleColor = statusColorMap[status || ''] || '#999999';
-
         const marker = new google.maps.Marker({
           position: { lat, lng },
-          icon: { url: '/container.png', scaledSize: new google.maps.Size(50, 50), anchor: new google.maps.Point(25, 25) },
+          icon: {
+            url: '/container.png',
+            scaledSize: new google.maps.Size(50, 50),
+            anchor: new google.maps.Point(25, 25),
+          },
           title: `Vehicle: ${v.registration}`,
         });
-        marker.addListener('click', () => {
-          const today = new Date().toISOString().split('T')[0];
-          navigate(`/vehicle/${v.vehicle_id}/view?date=${today}`);
-        });
+
+        // ✅ คลิก marker = เปิดแผงด้านล่างเหมือนคลิกการ์ด
+        marker.addListener('click', () => handleClick(v.vehicle_id));
         return marker;
       })
       .filter(Boolean) as google.maps.Marker[];
 
-    clustererRef.current = new MarkerClusterer({ markers, map: mapRef.current });
-  }, [vehicles, searchTerm, selectedStatuses, selectedVehicle, showEventList, isLoaded]);
+    clustererRef.current = new MarkerClusterer({
+      markers,
+      map: mapRef.current,
+    });
+  }, [
+    vehicles,
+    searchTerm,
+    selectedStatuses,
+    selectedVehicle,
+    showEventList,
+    isLoaded,
+    handleClick, // สำคัญ
+  ]);
 
+  // ฟิลเตอร์รายการใน Sidebar
   const filteredVehicles = vehicles.filter((v) => {
-    const matchesSearch = v.registration.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = v.registration
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-');
     const matchesStatus = selectedStatuses.includes(status || '');
     return matchesSearch && matchesStatus;
   });
-
-  async function handleClick(vehicleId: string) {
-    const v = vehicles.find((x) => x.vehicle_id === vehicleId);
-    if (!v) return;
-
-    setLoadingEvents(true);
-    setSelectedVehicle(v);
-    setShowEventList(true);
-
-    const lat = parseFloat(v.latitude);
-    const lng = parseFloat(v.longitude);
-    if (!isNaN(lat) && !isNaN(lng)) {
-      setMapCenter({ lat, lng });
-      setMapZoom(16);
-    }
-
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const data = await fetchVehicleEvents(vehicleId, today);
-      if (data) {
-        const events = Array.isArray(data) ? data : (data as any)?.events || [];
-        setVehicleEvents(events);
-        if (!Array.isArray(data) && (data as any)?.sensorByNumber) {
-          const sm = ((data as any).sensorByNumber || []).reduce((acc: Record<string, string>, s: any) => {
-            acc[s.sensorNumber] = s.name;
-            return acc;
-          }, {});
-          setSensorMap(sm);
-        }
-      } else setVehicleEvents([]);
-    } catch (err) {
-      console.error('Error fetching vehicle events:', err);
-      setVehicleEvents([]);
-    } finally {
-      setLoadingEvents(false);
-    }
-  }
 
   function closeEventList() {
     setShowEventList(false);
@@ -166,10 +205,15 @@ export default function GoogleMapView() {
   }
 
   function toggleStatusFilter(status: string) {
-    setSelectedStatuses((prev) => (prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]));
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
   }
 
-  const directionsResponse = useDirectionsFromEvents(vehicleEvents, isLoaded && showEventList);
+  const directionsResponse = useDirectionsFromEvents(
+    vehicleEvents,
+    isLoaded && showEventList
+  );
 
   if (!isLoaded) return <div>Loading Map...</div>;
 
@@ -185,9 +229,19 @@ export default function GoogleMapView() {
       />
 
       <div className={`main-content ${showEventList ? 'with-bottom-panel' : ''}`}>
-        <div className={`map-container ${showEventList ? 'split-view' : ''}`} style={showEventList ? { height: `${100 - panelHeight}%` } : {}}>
-          <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={mapZoom} onLoad={(m) => void (mapRef.current = m)}>
-            {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
+        <div
+          className={`map-container ${showEventList ? 'split-view' : ''}`}
+          style={showEventList ? { height: `${100 - panelHeight}%` } : {}}
+        >
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={mapCenter}
+            zoom={mapZoom}
+            onLoad={(m) => void (mapRef.current = m)}
+          >
+            {directionsResponse && (
+              <DirectionsRenderer directions={directionsResponse} />
+            )}
           </GoogleMap>
         </div>
 

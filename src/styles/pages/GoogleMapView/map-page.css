@@ -1,0 +1,55 @@
+.map-page {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    background-color: #f4f6f8;
+    /* Remove fixed positioning to work with main sidebar */
+}
+
+.map-page.mobile-layout {
+    flex-direction: column;
+}
+
+.map-page.mobile-layout .vehicle-panel {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.map-page.mobile-layout .main-content {
+    height: calc(100vh - 200px);
+}
+
+.map-area {
+    flex: 1;
+    height: 100%;
+    position: relative;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+}
+
+.main-content.with-bottom-panel {
+    overflow: hidden;
+}
+
+/* Map Container */
+.map-container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: height 0.3s ease;
+}
+
+.map-container.split-view {
+    /* Height will be set via inline style */
+    flex: none;
+    transition: height 0.1s ease;
+}
