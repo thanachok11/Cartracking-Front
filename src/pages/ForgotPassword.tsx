@@ -5,6 +5,7 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
+    const [isClosing, setIsClosing] = useState(false); // สำหรับ fade out
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,7 +26,7 @@ export default function ForgotPassword() {
 
     return (
         <div className="forgot-container">
-            <div className="forgot-card">
+            <div className={`forgot-card ${isClosing ? "fade-out" : "fade-in"}`}>
                 <h2 className="forgot-title">Forgot Password</h2>
                 <p className="forgot-subtitle">
                     Enter your email to receive a password reset link.

@@ -138,8 +138,9 @@ const App: React.FC = () => {
     <Router>
       <GoogleMapsProvider>
         <div
-          className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"
-            }`}
+          className={`app-container ${
+            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+          }`}
         >
           {!token && (
             <Header
@@ -174,15 +175,15 @@ const App: React.FC = () => {
               <Route
                 path="/forgot-password"
                 element={
-                  <ForgotPassword />
+                    <ForgotPassword />     
                 }
               />
               <Route
                 path="/reset-password"
                 element={
-
-                  <ResetPassword />
-
+                  
+                    <ResetPassword />
+                  
                 }
               />
               <Route
@@ -217,7 +218,7 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route
+              <Route 
                 path="/drivers/:id" element={
                   <ProtectedRoute>
                     <DriverProfilePage />

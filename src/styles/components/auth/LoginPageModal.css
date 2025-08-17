@@ -130,3 +130,16 @@
     margin-top: 0.5rem;
     text-align: center;
 }
+.login-forgot {
+    margin-top: 10px;
+    text-align: right;
+    color: #4a90e2;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.login-forgot:hover {
+    color: #3577c2;
+    text-decoration: underline;
+}

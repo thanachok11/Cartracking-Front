@@ -6,6 +6,7 @@ export default function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
+    const [isClosing, setIsClosing] = useState(false); // fade out
 
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token");
@@ -29,13 +30,13 @@ export default function ResetPassword() {
 
     return (
         <div className="reset-container">
-            <div className="reset-card">
+            <div className={`reset-card ${isClosing ? "fade-out" : "fade-in"}`}>
                 <h2 className="reset-title">Reset Password</h2>
                 <p className="reset-subtitle">
                     Enter your new password below to reset your account password.
                 </p>
                 <form onSubmit={handleSubmit} className="reset-form">
-                    <div>
+                    <div className="reset-input-group">
                         <label className="reset-label">New Password</label>
                         <input
                             type="password"
