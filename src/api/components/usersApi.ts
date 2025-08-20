@@ -7,7 +7,9 @@ import {
     updateUser as authUpdateUser,
     deleteUser as authDeleteUser,
     updateUserRole as authUpdateUserRole,
-    getUserPermissions 
+    getUserPermissions,
+    changePassword as authChangePassword,
+    updateProfileWithImage as authUpdateProfileWithImage
 } from '../auth/auth';
 import { UserRole } from '../../types/User';
 
@@ -17,6 +19,8 @@ export const createUser = authCreateUser;
 export const updateUser = authUpdateUser;
 export const deleteUser = authDeleteUser;
 export const updateUserRole = authUpdateUserRole;
+export const changePassword = authChangePassword;
+export const updateProfileWithImage = authUpdateProfileWithImage;
 
 // ฟังก์ชันดึงข้อมูลผู้ใช้ปัจจุบัน
 export const getCurrentUserInfo = async () => {
@@ -34,8 +38,11 @@ export const getCurrentUserInfo = async () => {
 };
 
 // Helper function สำหรับแปลง UserRole enum เป็น string สำหรับ backend
+// Backend รองรับ: 'super admin', 'admin', 'manager', 'viewer', 'user'
 export const roleToString = (role: UserRole): string => {
     switch (role) {
+        case UserRole.LEVEL_5:
+            return 'super admin';
         case UserRole.LEVEL_4:
             return 'admin';
         case UserRole.LEVEL_3:
@@ -52,6 +59,8 @@ export const roleToString = (role: UserRole): string => {
 // Helper function สำหรับแปลง string เป็น UserRole enum
 export const stringToRole = (roleString: string): UserRole => {
     switch (roleString?.toLowerCase()) {
+        case 'super admin':
+            return UserRole.LEVEL_5;
         case 'admin':
             return UserRole.LEVEL_4;
         case 'manager':

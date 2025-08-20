@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import '../../styles/pages/DriverPage.css';
-import { fetchAllDrivers, createDriver, updateDriver, deleteDriver, Driver } from '../../api/components/driversApi';
+import { fetchAllDrivers, createDriver, updateDriver, deleteDriver, Driver, createDriverWithImage, updateDriverWithImage } from '../../api/components/driversApi';
 import ErrorBanner from './components/ErrorBanner';
 import DriverHeader from './components/DriverHeader';
 import SearchFilterBar from './components/SearchFilterBar';
@@ -17,6 +17,9 @@ export default function DriverPage() {
   const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Omit<Driver, '_id'>>({ firstName: '', lastName: '', phoneNumber: '', position: '', company: '', detail: '', profile_img: '' });
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
 
   const handleApiError = (error: any, defaultMessage: string) => {
     if (error?.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -63,13 +66,21 @@ export default function DriverPage() {
     setShowModal(false);
     setEditingDriver(null);
     setError(null);
+    setImageFile(null);
   }, []);
 
   const handleCreate = useCallback(async () => {
     try {
       setSaving(true);
       setError(null);
-      await createDriver(formData);
+
+      
+      if (imageFile) {
+        await createDriverWithImage(formData, imageFile);
+      } else {
+        await createDriver(formData);
+      }
+      
       await loadDrivers();
       handleCloseModal();
     } catch (error) {
@@ -77,14 +88,20 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
-  }, [formData, loadDrivers, handleCloseModal]);
+  }, [formData, imageFile, loadDrivers, handleCloseModal]);
 
   const handleUpdate = useCallback(async () => {
     if (!editingDriver) return;
     try {
       setSaving(true);
       setError(null);
-      await updateDriver(editingDriver._id!, formData);
+      
+      if (imageFile) {
+        await updateDriverWithImage(editingDriver._id!, formData, imageFile);
+      } else {
+        await updateDriver(editingDriver._id!, formData);
+      }
+      
       await loadDrivers();
       handleCloseModal();
     } catch (error) {
@@ -92,7 +109,7 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
-  }, [editingDriver, formData, loadDrivers, handleCloseModal]);
+  }, [editingDriver, formData, imageFile, loadDrivers, handleCloseModal]);
 
   const handleDelete = useCallback(async (id: string) => {
     if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบคนขับคนนี้?')) return;
@@ -105,6 +122,7 @@ export default function DriverPage() {
   }, [loadDrivers]);
 
   const handleOpenModal = useCallback((driver?: Driver) => {
+    setImageFile(null);
     if (driver) {
       setEditingDriver(driver);
       setFormData({ firstName: driver.firstName || '', lastName: driver.lastName || '', phoneNumber: driver.phoneNumber || '', position: driver.position || '', company: driver.company || '', detail: driver.detail || '', profile_img: driver.profile_img || '' });
@@ -151,6 +169,8 @@ export default function DriverPage() {
         onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
         onClose={handleCloseModal}
         onSave={handleSave}
+        imageFile={imageFile}
+        onImageFileChange={setImageFile}
       />
     </div>
   );

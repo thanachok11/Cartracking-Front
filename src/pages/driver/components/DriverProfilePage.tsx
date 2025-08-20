@@ -1,7 +1,13 @@
 // src/pages/driver/DriverProfilePage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchAllDrivers, updateDriver, deleteDriver, type Driver } from '../../../api/components/driversApi';
+import {
+  fetchAllDrivers,
+  updateDriver,
+  updateDriverWithImage, // 🆕 import ตัวนี้ด้วย
+  deleteDriver,
+  type Driver
+} from '../../../api/components/driversApi';
 import DriverModal from './DriverModal';
 
 export default function DriverProfilePage() {
@@ -18,6 +24,9 @@ export default function DriverProfilePage() {
     firstName: '', lastName: '', phoneNumber: '',
     position: '', company: '', detail: '', profile_img: ''
   });
+
+  // 🆕 ถือไฟล์รูป
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -36,6 +45,7 @@ export default function DriverProfilePage() {
           detail: found.detail || '',
           profile_img: found.profile_img || '',
         });
+        setImageFile(null); // รีเซ็ตไฟล์ทุกครั้งที่โหลด
       }
     } catch (e: any) {
       setError(e?.message || 'โหลดข้อมูลโปรไฟล์ไม่สำเร็จ');
@@ -51,15 +61,23 @@ export default function DriverProfilePage() {
     try {
       setSaving(true);
       setError(null);
-      await updateDriver(driver._id, form);
+
+      // ✅ เลือก API ให้เหมาะสม
+      if (imageFile) {
+        await updateDriverWithImage(driver._id, form, imageFile);
+      } else {
+        await updateDriver(driver._id, form);
+      }
+
       await load();
       setShowEdit(false);
+      setImageFile(null);
     } catch (e: any) {
       setError(e?.response?.data?.message || e?.message || 'บันทึกไม่สำเร็จ');
     } finally {
       setSaving(false);
     }
-  }, [driver?._id, form, load]);
+  }, [driver?._id, form, imageFile, load]);
 
   const handleDelete = useCallback(async () => {
     if (!driver?._id) return;
@@ -70,7 +88,7 @@ export default function DriverProfilePage() {
       setSaving(true);
       setError(null);
       await deleteDriver(driver._id);
-      navigate('/drivers'); // กลับหน้ารายการ
+      navigate('/drivers');
     } catch (e: any) {
       setError(e?.response?.data?.message || e?.message || 'ลบไม่สำเร็จ');
     } finally {
@@ -96,16 +114,9 @@ export default function DriverProfilePage() {
       <div className="header-row">
         <h2 className="page-title">โปรไฟล์คนขับ</h2>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="back-btn" onClick={() => navigate(-1)}>
-    ⬅ ย้อนกลับ
-  </button>
+          <button className="back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
           <button className="add-driver-button" onClick={() => setShowEdit(true)}>แก้ไข</button>
-          <button
-            className="delete-btn"
-            onClick={handleDelete}
-            disabled={saving}
-            style={{ backgroundColor: '#ef4444' }}
-          >
+          <button className="delete-btn" onClick={handleDelete} disabled={saving} style={{ backgroundColor: '#ef4444' }}>
             {saving ? 'กำลังลบ...' : 'ลบ'}
           </button>
         </div>
@@ -134,6 +145,8 @@ export default function DriverProfilePage() {
         onChange={(patch) => setForm((prev) => ({ ...prev, ...patch }))}
         onClose={() => setShowEdit(false)}
         onSave={handleSave}
+        imageFile={imageFile}                
+        onImageFileChange={setImageFile}     
       />
     </div>
   );

@@ -4,6 +4,22 @@ import { faClock, faCog, faMapMarkerAlt, faTachometerAlt, faTimes, faTruck } fro
 import EventPosition from './EventPosition';
 import { convertFuelRawToLiters, filterEventsLast4Hours } from '../utils/events';
 import { formatDate, getTimeRangeText } from '../utils/format';
+import { statusTypes, statusColorMap } from '../constants/status';
+
+// ฟังก์ชันแปลง status เป็นภาษาไทย
+function getStatusLabel(statusClassName: string | undefined): string {
+  if (!statusClassName) return 'ไม่ทราบสถานะ';
+  const statusKey = statusClassName.toLowerCase().replace(/\s+/g, '-');
+  const statusType = statusTypes.find(s => s.key === statusKey);
+  return statusType?.label || statusClassName;
+}
+
+// ฟังก์ชันดึงสี status
+function getStatusColor(statusClassName: string | undefined): string {
+  if (!statusClassName) return '#6c757d';
+  const statusKey = statusClassName.toLowerCase().replace(/\s+/g, '-');
+  return statusColorMap[statusKey] || '#6c757d';
+}
 
 interface Props {
   selectedVehicle: any;
@@ -30,7 +46,11 @@ export default function BottomEventPanel({ selectedVehicle, events, loading, onC
           </div>
           <div>
             <h3>{selectedVehicle.registration}</h3>
-            <span className={`status-badge status-${selectedVehicle.statusClassName?.toLowerCase().replace(/\s+/g, '-')}`}>{selectedVehicle.statusClassName}</span>
+            <span 
+              className={`status-badge status-${selectedVehicle.statusClassName?.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              {getStatusLabel(selectedVehicle.statusClassName)}
+            </span>
           </div>
         </div>
         <button className="close-button" onClick={onClose}>
@@ -68,7 +88,11 @@ export default function BottomEventPanel({ selectedVehicle, events, loading, onC
                         <strong>เวลา:</strong> {formatDate(event.date || event.event_ts)}
                       </div>
                       {event.vehicleStatus && (
-                        <span className={`event-status-badge status-${event.vehicleStatus?.toLowerCase().replace(/\s+/g, '-')}`}>{event.vehicleStatus}</span>
+                        <span 
+                          className={`event-status-badge status-${event.vehicleStatus?.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          {getStatusLabel(event.vehicleStatus)}
+                        </span>
                       )}
                     </div>
 

@@ -2,9 +2,23 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faMapMarkerAlt, faTachometerAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { VehiclePosition } from '../../../api/components/MapApi';
+import { statusColorMap, statusTypes } from '../constants/status';
 
 function getDriverName(vehicle: VehiclePosition) {
   return vehicle.driver_name?.name || null;
+}
+
+function getStatusColor(statusClassName: string | undefined): string {
+  if (!statusClassName) return '#6c757d';
+  const statusKey = statusClassName.toLowerCase().replace(/\s+/g, '-');
+  return statusColorMap[statusKey] || '#6c757d';
+}
+
+function getStatusLabel(statusClassName: string | undefined): string {
+  if (!statusClassName) return 'ไม่ทราบสถานะ';
+  const statusKey = statusClassName.toLowerCase().replace(/\s+/g, '-');
+  const statusType = statusTypes.find(s => s.key === statusKey);
+  return statusType?.label || statusClassName;
 }
 
 export default function VehicleItem({ v, onClick }: { v: VehiclePosition; onClick: () => void }) {
@@ -14,7 +28,12 @@ export default function VehicleItem({ v, onClick }: { v: VehiclePosition; onClic
         <div className="vehicle-main-info">
           <div className="vehicle-title-status">
             <div className="registration">{v.registration}</div>
-            <span className={`status-badge status-${v.statusClassName?.toLowerCase().replace(/\s+/g, '-')}`}>{v.statusClassName}</span>
+            <span 
+              className={`status-badge status-${v.statusClassName?.toLowerCase().replace(/\s+/g, '-')}`}
+              style={{ backgroundColor: getStatusColor(v.statusClassName), color: '#fff' }}
+            >
+              {getStatusLabel(v.statusClassName)}
+            </span>
           </div>
           <div className="timestamp-speed-container">
             <div className="timestamp">

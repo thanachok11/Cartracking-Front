@@ -121,14 +121,20 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
             },
             withCredentials: true
         });
-        
+
         console.log('📋 Raw users from backend:', response.data);
-        
-        // แปลงข้อมูลผู้ใช้จาก backend format เป็น frontend format
-        const users = response.data.users.map((user: any) => {
-            // แปลง role จาก string เป็น UserRole enum
+
+        // ดึง role ของ user ปัจจุบันจาก token หรือ backend
+        const currentUserRole = localStorage.getItem('role')?.toLowerCase();
+        // หรือดึงจาก JWT decode ก็ได้
+
+        // กำหนด type ให้ users เป็น array ของ User
+        let users: User[] = response.data.users.map((user: any) => {
             let userRole = UserRole.LEVEL_2; // default
             switch (user.role?.toLowerCase()) {
+                case 'super admin':
+                    userRole = UserRole.LEVEL_5;
+                    break;
                 case 'admin':
                     userRole = UserRole.LEVEL_4;
                     break;
@@ -144,7 +150,7 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 default:
                     userRole = UserRole.LEVEL_2;
             }
-            
+
             return {
                 id: user._id || user.id,
                 firstName: user.firstName || '',
@@ -157,7 +163,12 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 profile_img: user.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
             };
         });
-        
+
+        // กรอง super admin ถ้า currentUser ไม่ใช่ super admin
+        if (currentUserRole !== 'super admin') {
+            users = users.filter((u: User) => u.role !== UserRole.LEVEL_5);
+        }
+
         console.log('✅ Converted users for frontend:', users);
         return { users };
     } catch (error: any) {
@@ -165,6 +176,7 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
         throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
 };
+
 
 // สร้างผู้ใช้ใหม่โดย Admin/Manager - ปรับตาม backend requirements
 export const createUser = async (userData: RegisterWithRoleData) => {
@@ -215,23 +227,17 @@ export const updateUser = async (userId: string, userData: { firstName: string; 
             throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
         }
 
-        // Get current user role from token
-        const { jwtDecode } = require('jwt-decode');
-        const decoded: any = jwtDecode(token);
-        const currentUserRole = decoded.role;
-
-        // ปรับ request body ให้ตรงกับที่ backend ต้องการ
+        // ส่งเฉพาะข้อมูลส่วนตัว ไม่ส่ง role เหมือน usermanagement
         const requestBody = {
             userId: userId,
             firstName: userData.firstName,
             lastName: userData.lastName,
-            email: userData.email,
-            role: currentUserRole // ส่ง role ของ current user สำหรับ permission check
+            email: userData.email
         };
 
         console.log('🔍 Update user request body:', requestBody);
 
-        // ใช้ PATCH /auth/update ที่มีอยู่แล้วใน backend
+        // ใช้ PUT /users/update สำหรับอัปเดตข้อมูลทั่วไป
         const response = await axios.patch(`${API_BASE_URL}/auth/update`, requestBody, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -292,39 +298,31 @@ export const updateUserRole = async (userId: string, newRole: string) => {
         // Get current user role from token
         const { jwtDecode } = require('jwt-decode');
         const decoded: any = jwtDecode(token);
-        const currentUserRole = decoded.role;
         const currentUserId = decoded.userId || decoded.id;
+        const currentUserRole = decoded.role;
+
+        // ตรวจสอบสิทธิ์ใน frontend ก่อน
+        if (currentUserRole !== 'super admin' && currentUserRole !== 'admin') {
+            throw new Error('คุณไม่มีสิทธิ์ในการแก้ไข role ของผู้ใช้');
+        }
 
         const requestBody = {
             userId: userId,
             newRole: newRole,
-            role: currentUserRole,
-            currentUserRole: currentUserRole,
-            currentUserId: currentUserId
+            currentUserId: currentUserId,
+            role: currentUserRole  // เปลี่ยนจาก currentUserRole เป็น role ตาม middleware
         };
 
         console.log('🔍 Update role request body:', requestBody);
 
-        // ลองใช้หลาย endpoint
-        let response;
-        try {
-            response = await axios.put(`${API_BASE_URL}/auth/users/${userId}/role`, requestBody, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            });
-        } catch (putError) {
-            console.log('🔄 PUT failed, trying PATCH...');
-            response = await axios.patch(`${API_BASE_URL}/auth/update`, requestBody, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true
-            });
-        }
+        // ใช้ PATCH endpoint ตาม backend routes
+        const response = await axios.patch(`${API_BASE_URL}/auth/update`, requestBody, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        });
 
         console.log('✅ Role updated successfully:', response.data);
         return response.data;
@@ -380,6 +378,8 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
 // แปลง role string เป็น UserRole enum
 export const getRoleFromString = (roleString: string): UserRole => {
     switch (roleString?.toLowerCase()) {
+        case 'super admin':
+            return UserRole.LEVEL_5;
         case 'admin':
             return UserRole.LEVEL_4;
         case 'manager':
@@ -396,6 +396,8 @@ export const getRoleFromString = (roleString: string): UserRole => {
 // แปลง UserRole enum เป็น string
 export const roleToString = (role: UserRole): string => {
     switch (role) {
+        case UserRole.LEVEL_5:
+            return 'super admin';
         case UserRole.LEVEL_4:
             return 'admin';
         case UserRole.LEVEL_3:
@@ -448,4 +450,81 @@ export const isAuthenticated = (): boolean => {
 
 // ปรับ export สำหรับความเข้ากันได้
 export const getUsers = fetchAllUsers;
+
+// เปลี่ยนรหัสผ่าน
+export const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
+        }
+
+        const response = await axios.post(`${API_BASE_URL}/auth/change-password`, {
+            currentPassword,
+            newPassword
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        });
+
+        console.log('✅ Password changed successfully:', response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('❌ Error changing password:', error);
+        throw new Error(error.response?.data?.message || 'ไม่สามารถเปลี่ยนรหัสผ่านได้');
+    }
+};
+
+// อัพเดตโปรไฟล์พร้อมรูปภาพ
+export const updateProfileWithImage = async (profileData: { firstName: string; lastName: string; email: string }, imageFile?: File) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
+        }
+
+        // Get current user ID from token
+        const { jwtDecode } = require('jwt-decode');
+        const decoded: any = jwtDecode(token);
+        const userId = decoded.userId || decoded.id;
+
+        console.log('🔍 Update profile - userId:', userId);
+        console.log('🔍 Update profile - data:', profileData);
+
+        if (imageFile) {
+            // ใช้ FormData สำหรับอัพโหลดรูป
+            const formData = new FormData();
+            formData.append('userId', userId);
+            formData.append('firstName', profileData.firstName);
+            formData.append('lastName', profileData.lastName);
+            formData.append('email', profileData.email);
+            formData.append('role', decoded.role); // เพิ่ม role สำหรับ backend validation
+            formData.append('image', imageFile); // backend ต้องการ field name 'image'
+
+            console.log('📤 Sending FormData to backend');
+
+            // ใช้ endpoint ที่มีอยู่ใน backend
+            const response = await axios.patch(`${API_BASE_URL}/auth/update`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+                withCredentials: true
+            });
+
+            return response.data;
+        } else {
+            // ไม่มีรูป ใช้ updateUser ธรรมดา
+            console.log('📤 Updating without image');
+            return await updateUser(userId, profileData);
+        }
+    } catch (error: any) {
+        console.error('❌ Error updating profile:', error);
+        console.error('❌ Error response:', error.response?.data);
+        throw new Error(error.response?.data?.message || 'ไม่สามารถอัพเดตโปรไฟล์ได้');
+    }
+};
 export const getAllUsers = fetchAllUsers;

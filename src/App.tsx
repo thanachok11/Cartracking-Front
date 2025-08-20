@@ -18,11 +18,13 @@ import ContainerPage from "./pages/container/containerpage";
 import TrackContainersPage from "./pages/TrackContainer";
 import Dashboard from "./pages/Dashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
-import SettingsPage from "./pages/SettingsPage";
+import UserManagement from "./pages/usermanagement/usermanagement";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import DriverProfilePage from './pages/driver/components/DriverProfilePage';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Userinfo from "./pages/userinfo/userinfo";
+
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
@@ -240,10 +242,18 @@ const App: React.FC = () => {
                 }
               />
               <Route
+                path="/management"
+                element={
+                  <ProtectedRoute>
+                    <UserManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/settings"
                 element={
                   <ProtectedRoute>
-                    <SettingsPage />
+                    <Userinfo />
                   </ProtectedRoute>
                 }
               />

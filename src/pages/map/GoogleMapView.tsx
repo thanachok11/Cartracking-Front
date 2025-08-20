@@ -1,4 +1,3 @@
-// File: src/components/map/GoogleMapView.tsx
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { GoogleMap, DirectionsRenderer } from '@react-google-maps/api';
@@ -8,11 +7,10 @@ import BottomEventPanel from './BottomEventPanel';
 import {
   fetchVehicle,
   VehiclePosition,
-  Geofence,
-  fetchGeofences,
   fetchVehicleEvents,
 } from '../../api/components/MapApi';
 import { useDirectionsFromEvents } from './hooks/useDirectionsFromEvents';
+import { statusTypes, StatusKey } from './constants/status';
 import '../../styles/pages/GoogleMapView/index.css';
 
 const containerStyle = { width: '100%', height: '100%' } as const;
@@ -21,14 +19,10 @@ const defaultCenter: google.maps.LatLngLiteral = { lat: 18.7904, lng: 98.9847 };
 
 export default function GoogleMapView() {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
-  const [geofences, setGeofences] = useState<Geofence[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([
-    'driving',
-    'idling',
-    'stationary',
-    'ignition-off',
-  ]);
+  const [selectedStatuses, setSelectedStatuses] = useState<StatusKey[]>(
+    statusTypes.map(status => status.key)
+  );
 
   const [selectedVehicle, setSelectedVehicle] = useState<VehiclePosition | null>(null);
   const [vehicleEvents, setVehicleEvents] = useState<any[]>([]);
@@ -36,7 +30,6 @@ export default function GoogleMapView() {
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [sensorMap, setSensorMap] = useState<Record<string, string>>({});
 
-  // ✅ พิมพ์ชนิดชัดเจน จะได้ setMapCenter({lat, lng}) ได้ทุกค่า
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral>(defaultCenter);
   const [mapZoom, setMapZoom] = useState(6);
   const [panelHeight, setPanelHeight] = useState(35);
@@ -46,16 +39,14 @@ export default function GoogleMapView() {
   const mapRef = useRef<google.maps.Map | null>(null);
   const clustererRef = useRef<MarkerClusterer | null>(null);
 
-  // Load vehicles & geofences
+  // Load vehicles
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [vehicleData, geofenceData] = await Promise.all([
-          fetchVehicle(),
-          fetchGeofences(),
-        ]);
+        const vehicleData = await fetchVehicle();
         setVehicles(vehicleData);
-        setGeofences(geofenceData);
+        // TODO: Add geofence display later
+        // const geofenceData = await fetchGeofences();
       } catch (err) {
         console.error('Error loading data:', err);
       }
@@ -117,8 +108,8 @@ export default function GoogleMapView() {
       const matchesSearch = v.registration
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-');
-      const matchesStatus = selectedStatuses.includes(status || '');
+      const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-') as StatusKey;
+      const matchesStatus = selectedStatuses.includes(status);
       return matchesSearch && matchesStatus;
     });
 
@@ -167,8 +158,8 @@ export default function GoogleMapView() {
     const matchesSearch = v.registration
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-');
-    const matchesStatus = selectedStatuses.includes(status || '');
+    const status = v.statusClassName?.toLowerCase().replace(/\s+/g, '-') as StatusKey;
+    const matchesStatus = selectedStatuses.includes(status);
     return matchesSearch && matchesStatus;
   });
 
@@ -204,7 +195,7 @@ export default function GoogleMapView() {
     document.addEventListener('mouseup', up);
   }
 
-  function toggleStatusFilter(status: string) {
+  function toggleStatusFilter(status: StatusKey) {
     setSelectedStatuses((prev) =>
       prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
     );
@@ -218,7 +209,7 @@ export default function GoogleMapView() {
   if (!isLoaded) return <div>Loading Map...</div>;
 
   return (
-    <div style={{ width: '100%', height: '100vh', display: 'flex' }}>
+    <div style={{ width: '100%', height: '100vh', display: 'flex', cursor: isResizing ? 'row-resize' : 'default' }}>
       <Sidebar
         vehicles={filteredVehicles}
         searchTerm={searchTerm}

@@ -13,6 +13,7 @@ import {
     faTachometerAlt,
     faBars,
     faTimes,
+    faUserCog,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getUserPermissions, logoutUser } from "../../api/auth/auth";
@@ -119,12 +120,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         { path: "/dashboard", icon: faTachometerAlt, label: "Dashboard", tooltip: "Dashboard" },
         { path: "/map", icon: faMapMarkedAlt, label: "Map", tooltip: "Map View" },
         { path: "/track", icon: faBox, label: "Track Containers", tooltip: "Track Containers" },
+        { path: "/management", icon: faUserCog, label: "User Management", tooltip: "User Management" }
     ];
 
     const informationItems = [
         { path: "/vehicles", icon: faCar, label: "Vehicles", tooltip: "Vehicles" },
         { path: "/drivers", icon: faUsers, label: "Drivers", tooltip: "Drivers" },
         { path: "/containers", icon: faBox, label: "Container", tooltip: "Container" },
+        
     ];
 
     return (

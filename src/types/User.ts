@@ -4,9 +4,9 @@ export enum UserRole {
     LEVEL_1 = 1, // viewer
     LEVEL_2 = 2, // user
     LEVEL_3 = 3, // manager
-    LEVEL_4 = 4  // admin
+    LEVEL_4 = 4,  // admin
+    LEVEL_5 = 5 // super admin
 }
-
 export interface User {
     id: string;
     firstName: string;
@@ -16,7 +16,7 @@ export interface User {
     createdAt: string;
     lastLogin: string;
     isActive: boolean;
-    profile_img?: string;
+    image?: string;
 }
 
 export interface UserPermissions {
@@ -29,6 +29,8 @@ export interface UserPermissions {
 // Helper function to get role name from UserRole enum
 export const getRoleName = (role: UserRole): string => {
     switch (role) {
+        case UserRole.LEVEL_5: // Super Admin
+            return 'Super Admin';
         case UserRole.LEVEL_4:
             return 'Admin';
         case UserRole.LEVEL_3:
@@ -45,6 +47,13 @@ export const getRoleName = (role: UserRole): string => {
 // Helper function to get permissions based on role
 export const getRolePermissions = (role: UserRole): UserPermissions => {
     switch (role) {
+        case UserRole.LEVEL_5: // Super Admin
+            return {
+                canViewAll: true,
+                canEdit: true,
+                canManageUsers: true,
+                canAccessSettings: true
+            }
         case UserRole.LEVEL_4: // Admin
             return {
                 canViewAll: true,
@@ -64,14 +73,14 @@ export const getRolePermissions = (role: UserRole): UserPermissions => {
                 canViewAll: true,
                 canEdit: true,
                 canManageUsers: false,
-                canAccessSettings: false
+                canAccessSettings: true // ผู้ใช้สามารถแก้ไขข้อมูลส่วนตัวได้
             };
         case UserRole.LEVEL_1: // Viewer
             return {
                 canViewAll: true,
                 canEdit: false,
                 canManageUsers: false,
-                canAccessSettings: false
+                canAccessSettings: true // ผู้ใช้สามารถแก้ไขข้อมูลส่วนตัวได้
             };
         default:
             return {
@@ -86,6 +95,8 @@ export const getRolePermissions = (role: UserRole): UserPermissions => {
 // Helper function to convert backend string role to UserRole enum
 export const stringToRole = (roleString: string): UserRole => {
     switch (roleString?.toLowerCase()) {
+        case 'super admin':
+            return UserRole.LEVEL_5;
         case 'admin':
             return UserRole.LEVEL_4;
         case 'manager':
@@ -102,6 +113,8 @@ export const stringToRole = (roleString: string): UserRole => {
 // Helper function to convert UserRole enum to backend string
 export const roleToString = (role: UserRole): string => {
     switch (role) {
+        case UserRole.LEVEL_5:
+            return 'super admin';
         case UserRole.LEVEL_4:
             return 'admin';
         case UserRole.LEVEL_3:
@@ -126,6 +139,6 @@ export const userFromDatabase = (dbUser: any): User => {
         createdAt: dbUser.createdAt || new Date().toISOString(),
         lastLogin: dbUser.lastLogin || dbUser.updatedAt || new Date().toISOString(),
         isActive: dbUser.isActive !== false,
-        profile_img: dbUser.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
+        image: dbUser.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
     };
 };

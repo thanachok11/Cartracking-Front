@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, UserRole } from '../types/User';
+import { User, UserRole } from '../../types/User';
 import { 
     getAllUsers, 
     createUser, 
@@ -8,8 +8,8 @@ import {
     updateUserRole,
     getCurrentUserInfo,
     roleToString
-} from '../api/components/usersApi';
-import '../styles/pages/SettingsPage.css';
+} from '../../api/components/usersApi';
+import '../../styles/pages/SettingsPage.css';
 
 interface UserFormData {
     firstName: string;
@@ -22,6 +22,7 @@ interface UserFormData {
 // Helper function to get role display name
 const getRoleDisplayName = (role: UserRole): string => {
     switch (role) {
+        case UserRole.LEVEL_5: return 'Super Admin';
         case UserRole.LEVEL_4: return 'Admin';
         case UserRole.LEVEL_3: return 'Manager';
         case UserRole.LEVEL_2: return 'User';
@@ -30,7 +31,25 @@ const getRoleDisplayName = (role: UserRole): string => {
     }
 };
 
-const SettingsPage: React.FC = () => {
+// Helper function to check if current user can assign a specific role
+const canAssignRole = (currentUserRole: UserRole, targetRole: UserRole): boolean => {
+    // Super Admin can assign any role
+    if (currentUserRole === UserRole.LEVEL_5) return true;
+    
+    // Admin can assign roles up to Admin level (but not Super Admin)
+    if (currentUserRole === UserRole.LEVEL_4) {
+        return targetRole <= UserRole.LEVEL_4;
+    }
+    
+    // Manager can assign roles up to Manager level
+    if (currentUserRole === UserRole.LEVEL_3) {
+        return targetRole <= UserRole.LEVEL_3;
+    }
+    
+    return false;
+};
+
+const UserManagement: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
@@ -112,6 +131,13 @@ const SettingsPage: React.FC = () => {
             setLoading(true);
             setError('');
             
+            // Check if current user can assign the selected role
+            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+            if (!canAssignRole(currentRole, formData.role)) {
+                setError('You do not have permission to assign this role');
+                return;
+            }
+            
             const userData = {
                 email: formData.email,
                 password: formData.password,
@@ -154,6 +180,13 @@ const SettingsPage: React.FC = () => {
         try {
             setLoading(true);
             setError('');
+            
+            // Check if current user can assign the selected role
+            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+            if (formData.role !== editingUser.role && !canAssignRole(currentRole, formData.role)) {
+                setError('You do not have permission to assign this role');
+                return;
+            }
             
             // อัพเดตข้อมูลผู้ใช้ทั่วไป
             await updateUser(editingUser.id, {
@@ -218,6 +251,13 @@ const SettingsPage: React.FC = () => {
             setLoading(true);
             setError('');
             
+            // Check if current user can assign the selected role
+            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+            if (!canAssignRole(currentRole, newRole)) {
+                setError('You do not have permission to assign this role');
+                return;
+            }
+            
             const newRoleString = roleToString(newRole);
             console.log('🔍 Changing role for user:', userId, 'to:', newRoleString);
             
@@ -258,6 +298,29 @@ const SettingsPage: React.FC = () => {
         });
     };
 
+    // Get available roles for current user
+    const getAvailableRoles = () => {
+        const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+        const roles = [];
+        
+        roles.push({ value: UserRole.LEVEL_1, label: 'Viewer' });
+        roles.push({ value: UserRole.LEVEL_2, label: 'User' });
+        
+        if (currentRole >= UserRole.LEVEL_3) {
+            roles.push({ value: UserRole.LEVEL_3, label: 'Manager' });
+        }
+        
+        if (currentRole >= UserRole.LEVEL_4) {
+            roles.push({ value: UserRole.LEVEL_4, label: 'Admin' });
+        }
+        
+        if (currentRole >= UserRole.LEVEL_5) {
+            roles.push({ value: UserRole.LEVEL_5, label: 'Super Admin' });
+        }
+        
+        return roles;
+    };
+
     // Check permissions
     if (!currentUser?.permissions?.canManageUsers) {
         return (
@@ -268,7 +331,7 @@ const SettingsPage: React.FC = () => {
                     {currentUser && (
                         <p>Your current role: <strong>{getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2)}</strong></p>
                     )}
-                    <p>Only Admin and Manager roles can manage users.</p>
+                    <p>Only Manager, Admin and Super Admin roles can manage users.</p>
                 </div>
             </div>
         );
@@ -281,6 +344,8 @@ const SettingsPage: React.FC = () => {
             </div>
         );
     }
+
+    const availableRoles = getAvailableRoles();
 
     return (
         <div className="settings-page">
@@ -389,11 +454,15 @@ const SettingsPage: React.FC = () => {
                                     onChange={handleInputChange}
                                     required
                                 >
-                                    <option value={UserRole.LEVEL_1}>Viewer</option>
-                                    <option value={UserRole.LEVEL_2}>User</option>
-                                    <option value={UserRole.LEVEL_3}>Manager</option>
-                                    <option value={UserRole.LEVEL_4}>Admin</option>
+                                    {availableRoles.map(role => (
+                                        <option key={role.value} value={role.value}>
+                                            {role.label}
+                                        </option>
+                                    ))}
                                 </select>
+                                <small className="role-hint">
+                                    You can only assign roles up to your current level or below
+                                </small>
                             </div>
                             
                             <div className="form-actions">
@@ -430,58 +499,69 @@ const SettingsPage: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(user => (
-                            <tr key={user.id}>
-                                <td>
-                                    <div className="user-info">
-                                        <div className="user-avatar">
-                                            {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
-                                            {user.lastName?.charAt(0) || ''}
+                        {users.map(user => {
+                            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+                            const canEditThisUser = canAssignRole(currentRole, user.role);
+                            
+                            return (
+                                <tr key={user.id}>
+                                    <td>
+                                        <div className="user-info">
+                                            <div className="user-avatar">
+                                                {user.firstName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                                                {user.lastName?.charAt(0) || ''}
+                                            </div>
+                                            <span>{`${user.firstName} ${user.lastName}`.trim() || user.email}</span>
                                         </div>
-                                        <span>{`${user.firstName} ${user.lastName}`.trim() || user.email}</span>
-                                    </div>
-                                </td>
-                                <td>{user.email}</td>
-                                <td>
-                                    <select
-                                        value={user.role}
-                                        onChange={(e) => handleRoleChange(user.id, parseInt(e.target.value) as UserRole)}
-                                        className="role-select"
-                                        disabled={loading}
-                                        title={`Current role: ${getRoleDisplayName(user.role)}`}
-                                    >
-                                        <option value={UserRole.LEVEL_1}>Viewer</option>
-                                        <option value={UserRole.LEVEL_2}>User</option>
-                                        <option value={UserRole.LEVEL_3}>Manager</option>
-                                        <option value={UserRole.LEVEL_4}>Admin</option>
-                                    </select>
-                                </td>
-                                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                <td>
-                                    <span className={`status ${user.isActive ? 'active' : 'inactive'}`}>
-                                        {user.isActive ? 'Active' : 'Inactive'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div className="action-buttons">
-                                        <button
-                                            className="btn-edit"
-                                            onClick={() => startEdit(user)}
-                                            disabled={loading}
+                                    </td>
+                                    <td>{user.email}</td>
+                                    <td>
+                                        <select
+                                            value={user.role}
+                                            onChange={(e) => handleRoleChange(user.id, parseInt(e.target.value) as UserRole)}
+                                            className="role-select"
+                                            disabled={loading || !canEditThisUser}
+                                            title={canEditThisUser ? `Current role: ${getRoleDisplayName(user.role)}` : 'You cannot modify this user\'s role'}
                                         >
-                                            Edit
-                                        </button>
-                                        <button
-                                            className="btn-delete"
-                                            onClick={() => handleDeleteUser(user.id)}
-                                            disabled={loading}
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                            {availableRoles.map(role => (
+                                                <option key={role.value} value={role.value}>
+                                                    {role.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {!canEditThisUser && (
+                                            <small className="permission-note">Cannot modify</small>
+                                        )}
+                                    </td>
+                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                        <span className={`status ${user.isActive ? 'active' : 'inactive'}`}>
+                                            {user.isActive ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button
+                                                className="btn-edit"
+                                                onClick={() => startEdit(user)}
+                                                disabled={loading || !canEditThisUser}
+                                                title={canEditThisUser ? 'Edit user' : 'You cannot edit this user'}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                className="btn-delete"
+                                                onClick={() => handleDeleteUser(user.id)}
+                                                disabled={loading || !canEditThisUser}
+                                                title={canEditThisUser ? 'Delete user' : 'You cannot delete this user'}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
                 
@@ -495,4 +575,4 @@ const SettingsPage: React.FC = () => {
     );
 };
 
-export default SettingsPage;
+export default UserManagement;
