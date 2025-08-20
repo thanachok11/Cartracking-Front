@@ -83,13 +83,21 @@ const cleanContainerData = (containerData: Omit<Containers, '_id'>): ContainerRe
 // API Functions - Optimized for performance
 export const fetchAllContainers = async (): Promise<Containers[]> => {
     try {
-        const { data } = await api.get<Containers[]>('/containers');
-        return Array.isArray(data) ? data : [];
+        const response = await api.get<{ success: boolean; data: Containers[] }>('/containers');
+
+        // ตรวจสอบ success ก่อน
+        if (!response.data.success) {
+            throw new APIError('Failed to fetch containers', 500);
+        }
+
+        // return array จริง ๆ
+        return Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error) {
         if (error instanceof APIError) throw error;
         throw new APIError('Failed to fetch containers');
     }
 };
+
 
 export const fetchContainerById = async (id: string): Promise<Containers> => {
     try {

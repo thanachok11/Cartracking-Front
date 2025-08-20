@@ -67,16 +67,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     const permissions = await getUserPermissions();
                     if (permissions) {
                         setUserPermissions(permissions);
+
                         const user = permissions.user as any;
-                        const displayName = user.firstName && user.lastName 
+
+                        // กำหนด display name
+                        const displayName = user.firstName && user.lastName
                             ? `${user.firstName} ${user.lastName}`.trim()
                             : user.email;
-                            
+
+                        // โหลด profile image และ fallback ถ้าไม่มี
+                        const profileImg = user.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg';
+
                         setUser({
                             name: displayName,
                             email: user.email,
                             role: getRoleName(user.role as UserRole),
-                            profileImg: "https://res.cloudinary.com/dboau6axv/image/upload/v1735641173/qa9dfyxn_yxhcg6.jpg"
+                            profileImg
                         });
                     }
                 } catch (error) {
@@ -89,6 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
         loadUserData();
     }, []);
+
 
     const handleLogout = () => {
         logoutUser();
