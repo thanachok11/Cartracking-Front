@@ -150,7 +150,6 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 default:
                     userRole = UserRole.LEVEL_2;
             }
-
             return {
                 id: user._id || user.id,
                 firstName: user.firstName || '',
@@ -176,7 +175,6 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
         throw new Error(error.response?.data?.message || 'Failed to fetch users');
     }
 };
-
 
 // สร้างผู้ใช้ใหม่โดย Admin/Manager - ปรับตาม backend requirements
 export const createUser = async (userData: RegisterWithRoleData) => {

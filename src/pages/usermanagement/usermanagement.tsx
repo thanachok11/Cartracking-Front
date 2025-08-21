@@ -314,8 +314,26 @@ const UserManagement: React.FC = () => {
             roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
         }
         
-        if (currentRole >= UserRole.LEVEL_5) {
-            roles.push({ value: UserRole.LEVEL_5, label: 'ผู้ดูแลระบบสูงสุด' });
+        // if (currentRole >= UserRole.LEVEL_5) {
+        //     roles.push({ value: UserRole.LEVEL_5, label: 'ผู้ดูแลระบบสูงสุด' });
+        // }
+        
+        return roles;
+    };
+
+    const getCreateRoles = () => {
+        const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+        const roles = [];
+        
+        roles.push({ value: UserRole.LEVEL_1, label: 'ผู้ชม' });
+        roles.push({ value: UserRole.LEVEL_2, label: 'ผู้ใช้' });
+        
+        if (currentRole >= UserRole.LEVEL_3) {
+            roles.push({ value: UserRole.LEVEL_3, label: 'ผู้จัดการ' });
+        }
+        
+        if (currentRole >= UserRole.LEVEL_4) {
+            roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
         }
         
         return roles;
@@ -346,6 +364,7 @@ const UserManagement: React.FC = () => {
     }
 
     const availableRoles = getAvailableRoles();
+    const forCreateRoles = getCreateRoles();
 
     return (
         <div className="settings-page">
@@ -374,6 +393,15 @@ const UserManagement: React.FC = () => {
                     }}
                 >
                     สร้างผู้ใช้ใหม่
+                </button>
+                <button
+                    className="refresh-user-btn"
+                    onClick={() => {
+                        // Refresh the user list
+                        loadData();
+                    }}
+                >
+                    รีเฟรช
                 </button>
             </div>
 
@@ -454,7 +482,7 @@ const UserManagement: React.FC = () => {
                                     onChange={handleInputChange}
                                     required
                                 >
-                                    {availableRoles.map(role => (
+                                    {forCreateRoles.map(role => (
                                         <option key={role.value} value={role.value}>
                                             {role.label}
                                         </option>

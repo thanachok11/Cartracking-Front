@@ -96,7 +96,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         loadUserData();
     }, []);
 
-
     const handleLogout = () => {
         logoutUser();
         setUser(null);

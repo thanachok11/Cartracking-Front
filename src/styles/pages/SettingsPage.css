@@ -15,7 +15,7 @@
 
 .settings-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 2rem;
     background: rgba(255, 255, 255, 0.9);
@@ -24,8 +24,14 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(226, 232, 240, 0.6);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    gap: 10px;
 }
 
+.settings-header > button:first-of-type,
+.settings-header > .btn:first-of-type,
+.settings-header > a.button:first-of-type {
+    margin-left: auto;
+}
 .settings-header h1 {
     color: #1e293b;
     margin: 0;
@@ -61,6 +67,25 @@
 }
 
 .create-user-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+.refresh-user-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.refresh-user-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -247,53 +272,117 @@
     box-shadow: 0 8px 25px rgba(148, 163, 184, 0.2);
 }
 
-/* Users Table - Light theme */
+/* ===== Container ===== */
 .users-table-container {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(226, 232, 240, 0.6);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226, 232, 240, 0.6);
 }
 
+/* ===== Table Base ===== */
 .users-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin: 0;
+  /* ถ้าอยากล็อคความกว้างคอลัมน์ให้เสถียรยิ่งขึ้น เปิดบรรทัดด้านล่าง */
+  /* table-layout: fixed; */
 }
 
+/* ===== Head ===== */
 .users-table thead {
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
-    color: #1e293b;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
+  color: #1e293b;
 }
 
 .users-table th {
-    padding: 1.5rem 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-shadow: none;
+  padding: 10px 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: none;
 }
 
+/* ===== Body / Cells ===== */
 .users-table td {
-    padding: 1.5rem 1rem;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    vertical-align: middle;
-    color: #475569;
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  vertical-align: middle;
+  color: #475569;
 }
 
 .users-table tbody tr {
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.5);
+  transition: background-color .25s ease, box-shadow .25s ease;
+  background: rgba(255, 255, 255, 0.5);
 }
 
+/* ❌ เลี่ยง scale บนแถวเพราะทำให้ระยะดูเพี้ยน */
 .users-table tbody tr:hover {
-    background: rgba(59, 130, 246, 0.05);
-    transform: scale(1.01);
+  background: rgba(59, 130, 246, 0.05);
+  box-shadow: inset 0 0 0 9999px rgba(59, 130, 246, 0.03);
 }
+
+/* ===== Actions column: ให้อยู่กึ่งกลาง + กว้างคงที่ + ปุ่มขนาดเท่ากัน ===== */
+
+/* เฮดเดอร์คอลัมน์สุดท้าย (การจัดการ) ให้อยู่กึ่งกลาง */
+.users-table thead th:last-child {
+  text-align: center;
+}
+
+/* ล็อคความกว้างคอลัมน์ปุ่มให้เท่ากันทุกแถว */
+.users-table thead th:last-child,
+.users-table tbody td:last-child {
+  width: 160px;               /* ปรับได้ เช่น 150-180px */
+  /* ถ้าใช้ table-layout: fixed; จะชัวร์ยิ่งขึ้น */
+}
+
+/* จัดปุ่มให้อยู่กลางและเว้นระยะเท่ากัน */
+.users-table tbody td:last-child {
+  display: flex;              
+  justify-content: center;    
+  align-items: center;        
+  gap: 12px;                  
+  white-space: nowrap;        
+  padding-right: 0;
+}
+
+/* กัน margin เดิม และกำหนดขนาดปุ่มให้คงที่ */
+.users-table tbody td:last-child > * {
+  margin: 0;
+}
+
+/* ทำให้ปุ่มทุกแถวดูเท่ากันจริง ๆ */
+.users-table tbody td:last-child button,
+.users-table tbody td:last-child .btn,
+.users-table tbody td:last-child a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;            /* ทำให้ปุ่ม 'แก้ไข' กับ 'ลบ' กว้างเท่ากัน */
+  height: 36px;               /* ความสูงคงที่ */
+  padding: 0 12px;            /* ไม่ให้ตัวหนังสือติดขอบ */
+  line-height: 1;             /* ป้องกันสูง-ต่ำไม่เท่ากันในบางฟอนต์ */
+}
+
+/* Responsive tweaks (ปรับได้ตามดีไซน์) */
+@media (max-width: 900px) {
+  .users-table th,
+  .users-table td { padding: 8px 8px; font-size: .9rem; }
+  .users-table thead th:last-child,
+  .users-table tbody td:last-child { width: 140px; }
+}
+
+@media (max-width: 640px) {
+  .users-table th,
+  .users-table td { padding: 8px 6px; font-size: .85rem; }
+  .users-table tbody td:last-child { gap: 8px; }
+}
+
 
 .user-info {
     display: flex;
