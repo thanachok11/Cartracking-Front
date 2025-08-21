@@ -149,7 +149,7 @@ const UserManagement: React.FC = () => {
             console.log('🔍 Creating user with data:', userData);
             
             await createUser(userData);
-            setSuccess('User created successfully!');
+            setSuccess('สร้างผู้ใช้สำเร็จ!');
             
             // Reset form and close
             setFormData({
@@ -165,8 +165,8 @@ const UserManagement: React.FC = () => {
             await loadData();
             
         } catch (err: any) {
-            console.error('❌ Create user error:', err);
-            setError(err.message || 'Failed to create user');
+            console.error('❌ ข้อผิดพลาดในการสร้างผู้ใช้:', err);
+            setError(err.message || 'ไม่สามารถสร้างผู้ใช้ได้');
         } finally {
             setLoading(false);
         }
@@ -184,7 +184,7 @@ const UserManagement: React.FC = () => {
             // Check if current user can assign the selected role
             const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
             if (formData.role !== editingUser.role && !canAssignRole(currentRole, formData.role)) {
-                setError('You do not have permission to assign this role');
+                setError('คุณไม่มีสิทธิ์มอบหมายบทบาทนี้');
                 return;
             }
             
@@ -201,7 +201,7 @@ const UserManagement: React.FC = () => {
                 await updateUserRole(editingUser.id, newRoleString);
             }
             
-            setSuccess('User updated successfully!');
+            setSuccess('อัปเดตผู้ใช้สำเร็จ!');
             setEditingUser(null);
             
             // Reset form
@@ -217,15 +217,15 @@ const UserManagement: React.FC = () => {
             await loadData();
             
         } catch (err: any) {
-            console.error('❌ Update user error:', err);
-            setError(err.message || 'Failed to update user');
+            console.error('❌ ข้อผิดพลาดในการอัปเดตผู้ใช้:', err);
+            setError(err.message || 'ไม่สามารถอัปเดตผู้ใช้ได้');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDeleteUser = async (userId: string) => {
-        if (!window.confirm('Are you sure you want to delete this user?')) {
+        if (!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?')) {
             return;
         }
         
@@ -234,13 +234,13 @@ const UserManagement: React.FC = () => {
             setError('');
             
             await deleteUser(userId);
-            setSuccess('User deleted successfully!');
-            
+            setSuccess('ลบผู้ใช้สำเร็จ!');
+
             // Reload users
             await loadData();
             
         } catch (err: any) {
-            setError(err.message || 'Failed to delete user');
+            setError(err.message || 'ไม่สามารถลบผู้ใช้ได้');
         } finally {
             setLoading(false);
         }
@@ -254,22 +254,22 @@ const UserManagement: React.FC = () => {
             // Check if current user can assign the selected role
             const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
             if (!canAssignRole(currentRole, newRole)) {
-                setError('You do not have permission to assign this role');
+                setError('คุณไม่มีสิทธิ์ในการมอบหมายบทบาทนี้');
                 return;
             }
             
             const newRoleString = roleToString(newRole);
-            console.log('🔍 Changing role for user:', userId, 'to:', newRoleString);
+            console.log('🔍 กำลังเปลี่ยนบทบาทของผู้ใช้:', userId, 'เป็น:', newRoleString);
             
             await updateUserRole(userId, newRoleString);
-            setSuccess('User role updated successfully!');
-            
+            setSuccess('อัปเดตบทบาทผู้ใช้สำเร็จ!');
+
             // Reload users
             await loadData();
             
         } catch (err: any) {
-            console.error('❌ Role change error:', err);
-            setError(err.message || 'Failed to update user role');
+            console.error('❌ ข้อผิดพลาดในการเปลี่ยนบทบาท:', err);
+            setError(err.message || 'ไม่สามารถอัปเดตบทบาทผู้ใช้ได้');
         } finally {
             setLoading(false);
         }
@@ -303,19 +303,19 @@ const UserManagement: React.FC = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
         const roles = [];
         
-        roles.push({ value: UserRole.LEVEL_1, label: 'Viewer' });
-        roles.push({ value: UserRole.LEVEL_2, label: 'User' });
+        roles.push({ value: UserRole.LEVEL_1, label: 'ผู้ชม' });
+        roles.push({ value: UserRole.LEVEL_2, label: 'ผู้ใช้' });
         
         if (currentRole >= UserRole.LEVEL_3) {
-            roles.push({ value: UserRole.LEVEL_3, label: 'Manager' });
+            roles.push({ value: UserRole.LEVEL_3, label: 'ผู้จัดการ' });
         }
         
         if (currentRole >= UserRole.LEVEL_4) {
-            roles.push({ value: UserRole.LEVEL_4, label: 'Admin' });
+            roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
         }
         
         if (currentRole >= UserRole.LEVEL_5) {
-            roles.push({ value: UserRole.LEVEL_5, label: 'Super Admin' });
+            roles.push({ value: UserRole.LEVEL_5, label: 'ผู้ดูแลระบบสูงสุด' });
         }
         
         return roles;
@@ -326,12 +326,12 @@ const UserManagement: React.FC = () => {
         return (
             <div className="settings-page">
                 <div className="access-denied">
-                    <h2>Access Denied</h2>
-                    <p>You don't have permission to access user management.</p>
+                    <h2>ไม่มีสิทธิ์เข้าถึง</h2>
+                    <p>คุณไม่มีสิทธิ์เข้าถึงการจัดการผู้ใช้</p>
                     {currentUser && (
-                        <p>Your current role: <strong>{getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2)}</strong></p>
+                        <p>บทบาทปัจจุบันของคุณ: <strong>{getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2)}</strong></p>
                     )}
-                    <p>Only Manager, Admin and Super Admin roles can manage users.</p>
+                    <p>เฉพาะผู้จัดการ, ผู้ดูแลระบบ และผู้ดูแลระบบสูงสุดเท่านั้นที่สามารถจัดการผู้ใช้ได้</p>
                 </div>
             </div>
         );
@@ -340,7 +340,7 @@ const UserManagement: React.FC = () => {
     if (loading && !users.length) {
         return (
             <div className="settings-page">
-                <div className="loading">Loading...</div>
+                <div className="loading">กำลังโหลดข้อมูล...</div>
             </div>
         );
     }
@@ -351,10 +351,10 @@ const UserManagement: React.FC = () => {
         <div className="settings-page">
             <div className="settings-header">
                 <div>
-                    <h1>User Management</h1>
+                    <h1>การจัดการผู้ใช้</h1>
                     {currentUser && (
                         <p className="current-user-info">
-                            Logged in as: <strong>{currentUser.user?.firstName} {currentUser.user?.lastName}</strong> 
+                            ลงชื่อเข้าใช้ในชื่อ: <strong>{currentUser.user?.firstName} {currentUser.user?.lastName}</strong> 
                             ({getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2)})
                         </p>
                     )}
@@ -373,7 +373,7 @@ const UserManagement: React.FC = () => {
                         });
                     }}
                 >
-                    Create New User
+                    สร้างผู้ใช้ใหม่
                 </button>
             </div>
 
@@ -396,11 +396,11 @@ const UserManagement: React.FC = () => {
             {(showCreateForm || editingUser) && (
                 <div className="user-form-container">
                     <div className="user-form">
-                        <h3>{editingUser ? 'Edit User' : 'Create New User'}</h3>
+                        <h3>{editingUser ? 'แก้ไขผู้ใช้' : 'เพิ่มผู้ใช้ใหม่'}</h3>
                         <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser}>
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>First Name:</label>
+                                    <label>ชื่อจริง:</label>
                                     <input
                                         type="text"
                                         name="firstName"
@@ -410,7 +410,7 @@ const UserManagement: React.FC = () => {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>Last Name:</label>
+                                    <label>นามสกุล:</label>
                                     <input
                                         type="text"
                                         name="lastName"
@@ -422,7 +422,7 @@ const UserManagement: React.FC = () => {
                             </div>
                             
                             <div className="form-group">
-                                <label>Email:</label>
+                                <label>อีเมล:</label>
                                 <input
                                     type="email"
                                     name="email"
@@ -434,7 +434,7 @@ const UserManagement: React.FC = () => {
                             
                             {!editingUser && (
                                 <div className="form-group">
-                                    <label>Password:</label>
+                                    <label>รหัสผ่าน:</label>
                                     <input
                                         type="password"
                                         name="password"
@@ -447,7 +447,7 @@ const UserManagement: React.FC = () => {
                             )}
                             
                             <div className="form-group">
-                                <label>Role:</label>
+                                <label>บทบาท:</label>
                                 <select
                                     name="role"
                                     value={formData.role}
@@ -461,13 +461,13 @@ const UserManagement: React.FC = () => {
                                     ))}
                                 </select>
                                 <small className="role-hint">
-                                    You can only assign roles up to your current level or below
+                                    คุณสามารถมอบหมายบทบาทได้เฉพาะระดับที่เท่ากับหรือต่ำกว่าระดับของคุณเท่านั้น
                                 </small>
                             </div>
                             
                             <div className="form-actions">
                                 <button type="submit" className="btn-primary" disabled={loading}>
-                                    {loading ? 'Processing...' : (editingUser ? 'Update User' : 'Create User')}
+                                    {loading ? 'Processing...' : (editingUser ? 'อัปเดตผู้ใช้' : 'เพิ่มผู้ใช้')}
                                 </button>
                                 <button 
                                     type="button" 
@@ -477,7 +477,7 @@ const UserManagement: React.FC = () => {
                                         cancelEdit();
                                     }}
                                 >
-                                    Cancel
+                                    ยกเลิก
                                 </button>
                             </div>
                         </form>
@@ -490,12 +490,12 @@ const UserManagement: React.FC = () => {
                 <table className="users-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Created</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>ชื่อ</th>
+                            <th>อีเมล</th>
+                            <th>บทบาท</th>
+                            <th>วันที่สร้าง</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -530,13 +530,13 @@ const UserManagement: React.FC = () => {
                                             ))}
                                         </select>
                                         {!canEditThisUser && (
-                                            <small className="permission-note">Cannot modify</small>
+                                            <small className="permission-note">ไม่สามารถแก้ไขได้</small>
                                         )}
                                     </td>
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td>
                                         <span className={`status ${user.isActive ? 'active' : 'inactive'}`}>
-                                            {user.isActive ? 'Active' : 'Inactive'}
+                                            {user.isActive ? 'เปิดใช้งาน' : 'ปดการใช้งาน'}
                                         </span>
                                     </td>
                                     <td>
@@ -545,17 +545,17 @@ const UserManagement: React.FC = () => {
                                                 className="btn-edit"
                                                 onClick={() => startEdit(user)}
                                                 disabled={loading || !canEditThisUser}
-                                                title={canEditThisUser ? 'Edit user' : 'You cannot edit this user'}
+                                                title={canEditThisUser ? 'แก้ไขผู้ใช้' : 'คุณไม่สามารถแก้ไขผู้ใช้นี้ได้'}
                                             >
-                                                Edit
+                                                แก้ไข
                                             </button>
                                             <button
                                                 className="btn-delete"
                                                 onClick={() => handleDeleteUser(user.id)}
                                                 disabled={loading || !canEditThisUser}
-                                                title={canEditThisUser ? 'Delete user' : 'You cannot delete this user'}
+                                                title={canEditThisUser ? 'ลบผู้ใช้' : 'คุณไม่สามารถลบผู้ใช้นี้ได้'}
                                             >
-                                                Delete
+                                                ลบ
                                             </button>
                                         </div>
                                     </td>
@@ -567,7 +567,7 @@ const UserManagement: React.FC = () => {
                 
                 {users.length === 0 && !loading && (
                     <div className="no-users">
-                        <p>No users found.</p>
+                        <p>ไม่พบผู้ใช้</p>
                     </div>
                 )}
             </div>

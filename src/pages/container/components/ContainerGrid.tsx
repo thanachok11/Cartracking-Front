@@ -6,8 +6,8 @@ export default function ContainerGrid({ items, onEdit, onDelete }: { items: Cont
   if (!items.length)
     return (
       <div className="no-results">
-        <h3>No containers found</h3>
-        <p>Try adjusting your search or filter criteria</p>
+        <h3>ไม่พบข้อมูลตู้คอนเทนเนอร์</h3>
+        <p>ลองปรับคำค้นหรือเงื่อนไขการกรอง</p>
       </div>
     );
 

@@ -14,13 +14,13 @@ export default function SearchFilterBar({ searchTerm, filterBy, onSearch, onFilt
       <div className="search-and-sort">
         <input
           type="text"
-          placeholder="Search container number or company..."
+          placeholder="ค้นหาหมายเลขตู้คอนเทนเนอร์หรือชื่อบริษัท..."
           value={searchTerm}
           onChange={(e) => onSearch(e.target.value)}
           className="search-input"
         />
         <select value={filterBy} onChange={(e) => onFilter(e.target.value)} className="filter-select">
-          <option value="all">All</option>
+          <option value="ทั้งหมด">ทั้งหมด</option>
           <option value="ป๋อเฉิน">ป๋อเฉิน</option>
           <option value="รถร่วม">รถร่วม</option>
         </select>

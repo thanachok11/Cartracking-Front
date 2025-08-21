@@ -219,13 +219,13 @@ const VehiclePage: React.FC = () => {
         );
     };
 
-    if (loading) return <div className="loading">Loading vehicle data...</div>;
+    if (loading) return <div className="loading">กำลังโหลดข้อมูล...</div>;
 
     if (error) {
         return (
             <div className="vehicle-page">
                 <div className="header-row">
-                    <h1 className="page-title">Vehicle Data</h1>
+                    <h1 className="page-title">ข้อมูลยานพาหนะ</h1>
                 </div>
                 <div className="error-container">
                     <div className="error-message">
@@ -235,7 +235,7 @@ const VehiclePage: React.FC = () => {
                             className="retry-btn"
                             onClick={() => window.location.reload()}
                         >
-                            ลองใหม่
+                            ลองอีกครั้ง
                         </button>
                     </div>
                 </div>
@@ -246,7 +246,7 @@ const VehiclePage: React.FC = () => {
     return (
         <div className="vehicle-page">
             <div className="header-row">
-                <h1 className="page-title">Vehicle Tracking</h1>
+                <h1 className="page-title">ติดตาม ยานพาหนะ</h1>
                 <div className="search-container">
                     <input
                         type="text"

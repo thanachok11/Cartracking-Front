@@ -98,7 +98,6 @@ export const fetchAllContainers = async (): Promise<Containers[]> => {
     }
 };
 
-
 export const fetchContainerById = async (id: string): Promise<Containers> => {
     try {
         const { data } = await api.get<Containers>(`/containers/${id}`);

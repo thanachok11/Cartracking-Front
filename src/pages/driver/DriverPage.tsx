@@ -141,7 +141,7 @@ export default function DriverPage() {
     loadDrivers();
   }, [loadDrivers]);
 
-  if (loading) return <div className="loading">Loading Driver Data...</div>;
+  if (loading) return <div className="loading">กำลังโหลดข้อมูล...</div>;
 
   if (error) {
     return (

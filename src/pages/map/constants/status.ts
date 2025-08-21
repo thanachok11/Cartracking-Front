@@ -1,5 +1,5 @@
 export const statusColorMap: Record<string, string> = {
-  driving: '#3a61eeff',
+  driving: '#00a326',
   idling: '#ffc107',
   stationary: '#00a326',
   'ignition-off': '#6c757d',

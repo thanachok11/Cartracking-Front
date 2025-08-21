@@ -118,24 +118,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    
+
     // Get current page for active state
     const isActivePage = (path: string) => {
         return location.pathname === path;
     };
 
     const menuItems = [
-        { path: "/dashboard", icon: faTachometerAlt, label: "Dashboard", tooltip: "Dashboard" },
-        { path: "/map", icon: faMapMarkedAlt, label: "Map", tooltip: "Map View" },
-        { path: "/track", icon: faBox, label: "Track Containers", tooltip: "Track Containers" },
-        { path: "/management", icon: faUserCog, label: "User Management", tooltip: "User Management" }
-    ];
-
-    const informationItems = [
-        { path: "/vehicles", icon: faCar, label: "Vehicles", tooltip: "Vehicles" },
-        { path: "/drivers", icon: faUsers, label: "Drivers", tooltip: "Drivers" },
-        { path: "/containers", icon: faBox, label: "Container", tooltip: "Container" },
+        { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard" },
+        { path: "/map", icon: faMapMarkedAlt, label: "แผนที่", tooltip: "Map View" },
+        { path: "/track", icon: faBox, label: "ติดตามตู้คอนเทนเนอร์", tooltip: "Track Containers" },
+        { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management" },
+        { path: "/vehicles", icon: faCar, label: "ยานพาหนะ", tooltip: "Vehicles" },
+        { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers" },
+        { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container" },
         
     ];
+
+    // const informationItems = [
+    //     { path: "/vehicles", icon: faCar, label: "Vehicles", tooltip: "Vehicles" },
+    //     { path: "/drivers", icon: faUsers, label: "Drivers", tooltip: "Drivers" },
+    //     { path: "/containers", icon: faBox, label: "Container", tooltip: "Container" },
+        
+    // ];
 
     return (
         <>
@@ -146,19 +152,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     onClick={toggleSidebar}
                 />
             )}
-            
-            <aside className={`sidebar ${isSidebarOpen ? "open" : "collapsed"}`}>
-                {/* Toggle Button */}
-                <div className="sidebar-toggle" onClick={toggleSidebar}>
-                    <FontAwesomeIcon 
-                        icon={isMobile ? (isSidebarOpen ? faTimes : faBars) : (isSidebarOpen ? faChevronLeft : faChevronRight)} 
-                    />
-                </div>
 
-                <div className="sidebar-title">
-                    {(isSidebarOpen || isMobile) && "Car Tracking"}
-                </div>
-
+                <aside className={`sidebar ${isSidebarOpen ? "open" : "collapsed"}`}>
+                    {/* Header (Title + Toggle button) */}
+                    <div className="sidebar-header">
+                        <div className="sidebar-title">
+                            {(isSidebarOpen || isMobile) && "Car Tracking"}
+                        </div>
+                        <div className="sidebar-toggle" onClick={toggleSidebar}>
+                            <FontAwesomeIcon 
+                                icon={isMobile 
+                                    ? (isSidebarOpen ? faTimes : faBars) 
+                                    : (isSidebarOpen ? faChevronLeft : faChevronRight)} 
+                            />
+                        </div>
+                    </div>
 
                 <nav className="sidebar-menu">
                     {/* Main menu items */}
@@ -175,7 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     ))}
                     
                     {/* Information dropdown menu */}
-                    <div className="vehicle-menu-container">
+                    {/* <div className="vehicle-menu-container">
                         <div className="vehicle-menu-button">
                             <FontAwesomeIcon icon={faCar} />
                             {(isSidebarOpen || isMobile) && <span>Information</span>}
@@ -195,7 +203,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                                 ))}
                             </div>
                         )}
-                    </div>
+                    </div> */}
                 </nav>
 
                 {/* User Info */}

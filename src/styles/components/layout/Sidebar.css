@@ -1,535 +1,259 @@
+/* ===== Sidebar container ===== */
 .sidebar {
-    position: fixed;
-    width: 250px;
-    height: 100vh;
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95));
-    color: #334155;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(226, 232, 240, 0.5);
+  position: fixed;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95));
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(226, 232, 240, 0.5);
+  transition: transform 0.3s ease, width 0.3s ease; /* ลดจาก all */
 }
 
-.sidebar.collapsed {
-    width: 60px;
+/* กล่องครอบ Title + Toggle */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;   /* ปกติ: ชื่อซ้าย ปุ่มขวา */
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  background: rgba(248, 250, 252, 0.8);
+  min-height: 52px;                 /* ให้มีความสูงคงที่ */
 }
 
-/* Mobile sidebar - slides in from left */
+.sidebar.collapsed { width: 60px; }
+/* Mobile: slides in */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 280px;
-        transform: translateX(-100%);
-        border-radius: 0 15px 15px 0;
-        left: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
-    }
-    
-    .sidebar.open {
-        transform: translateX(0);
-    }
-    
-    .sidebar.collapsed {
-        width: 280px;
-        transform: translateX(-100%);
-    }
+  .sidebar {
+    width: 280px;
+    transform: translateX(-100%);
+    border-radius: 0 15px 15px 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar.collapsed { width: 280px; transform: translateX(-100%); }
 }
-
 @media (max-width: 480px) {
-    .sidebar {
-        width: 260px;
-    }
+  .sidebar { width: 260px; }
 }
 
+/* ===== Toggle ===== */
 .sidebar-toggle {
-    padding: 12px;
-    cursor: pointer;
-    text-align: right;
-    font-size: 18px;
-    background: rgba(241, 245, 249, 0.8);
-    color: #475569;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+  margin-left: auto;                 /* ปกติ: ดันไปขวา */
+  cursor: pointer;
+  font-size: 18px;
+  width: 36px;                       /* hit area พอดีมือ */
+  height: 36px;
+  display: grid;                     /* จัดไอคอนให้อยู่กลาง */
+  place-items: center;
+  background: none;
+  border: none;
+  color: #475569;
+  border-radius: 8px;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
-.sidebar-toggle:hover {
-    background: rgba(226, 232, 240, 0.9);
-    color: #334155;
+/* ✅ ตอนยุบ: ซ่อน title แล้ว “จัดกึ่งกลางทั้งแถว” */
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;           /* กลางแถว */
+  padding: 12px;                     /* ลด padding ข้าง */
+}
+.sidebar.collapsed .sidebar-title {
+  display: none;                     /* ซ่อนตัวหนังสือ */
+}
+.sidebar.collapsed .sidebar-toggle {
+  margin-left: 0;                    /* ยกเลิกดันขวา */
 }
 
-/* Mobile toggle button */
-@media (max-width: 768px) {
-    .sidebar-toggle {
-        padding: 15px;
-        font-size: 20px;
-        text-align: center;
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-    }
-    
-    .sidebar-toggle:hover {
-        background: rgba(59, 130, 246, 0.15);
-        color: #2563eb;
-    }
-}
-
+/* ===== Title ===== */
 .sidebar-title {
-    font-size: 18px;
-    font-weight: bold;
-    padding: 16px;
-    text-align: center;
-    background: rgba(248, 250, 252, 0.8);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    color: #1e293b;
-    text-shadow: none;
+  padding-left: 28px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
 }
-
-/* Mobile title adjustments */
 @media (max-width: 768px) {
-    .sidebar-title {
-        font-size: 16px;
-        padding: 12px;
-    }
+  .sidebar-title { font-size: 16px; padding: 12px; }
 }
-
 @media (max-width: 480px) {
-    .sidebar-title {
-        font-size: 15px;
-        padding: 10px;
-    }
+  .sidebar-title { font-size: 15px; padding: 10px; }
 }
 
-.sidebar-menu button {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border: none;
-    background: none;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 2px 8px;
-    width: calc(100% - 16px);
-}
-
-.sidebar-menu button:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    transform: translateX(4px);
-}
-
-.sidebar-menu button span {
-    margin-left: 10px;
-    font-weight: 500;
-}
-
-.sidebar.collapsed .sidebar-menu button span {
-    display: none;
-}
-
-.sidebar.collapsed .sidebar-menu button {
-    justify-content: center;
-    margin: 2px 4px;
-    width: calc(100% - 8px);
-}
-
-/* Mobile menu adjustments */
-@media (max-width: 768px) {
-    .sidebar-menu button {
-        padding: 14px 16px;
-        font-size: 15px;
-        margin: 3px 8px;
-    }
-    
-    .sidebar-menu button:hover {
-        transform: translateX(6px);
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar-menu button {
-        padding: 12px 14px;
-        font-size: 14px;
-        margin: 2px 6px;
-    }
-}
-
-.sidebar-user {
-    margin-top: auto;
-    padding: 12px;
-    border-top: 1px solid rgba(226, 232, 240, 0.6);
-    background: rgba(248, 250, 252, 0.8);
-    backdrop-filter: blur(5px);
-}
-
-.user-summary {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.user-summary:hover {
-    background: rgba(59, 130, 246, 0.05);
-}
-
-.user-summary .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    margin-right: 0.75rem;
-    border: 2px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.user-details {
-    flex: 1;
-    overflow: hidden;
-}
-
-.username {
-    font-size: 0.9rem;
-    display: block;
-    font-weight: 600;
-    color: #334155;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.role {
-    font-size: 0.75rem;
-    color: #64748b;
-    display: block;
-}
-
-.caret-icon {
-    margin-left: auto;
-    color: #94a3b8;
-    transition: transform 0.3s ease;
-}
-
-/* Mobile user section */
-@media (max-width: 768px) {
-    .sidebar-user {
-        padding: 15px 12px;
-    }
-    
-    .user-summary .avatar {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .username {
-        font-size: 0.95rem;
-    }
-    
-    .role {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar-user {
-        padding: 12px 10px;
-    }
-    
-    .user-summary .avatar {
-        width: 38px;
-        height: 38px;
-    }
-}
-
-.user-dropdown-menu {
-    position: absolute;
-    bottom: 70px;
-    left: 1rem;
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 12px;
-    padding: 0.5rem;
-    z-index: 10;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* ===== Base button (ใช้ร่วมกัน) ===== */
+.sidebar-menu button,
+.vehicle-menu-button,
+.vehicle-dropdown-menu button,
 .user-dropdown-menu button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: #475569;
-    padding: 12px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  color: #64748b;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 8px;
+  position: relative; /* จำเป็นสำหรับ ::before */
+  transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease, padding 0.2s ease;
+  font-size: 0.95rem;
 }
 
-.user-dropdown-menu button:last-child {
-    margin-bottom: 0;
+/* Sidebar menu spacing/size specifics */
+.sidebar-menu button {
+  display: grid;
+  grid-template-columns: 22px 1fr;   
+  align-items: center;
+  column-gap: 12px;
+  position: relative;                
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  color: #64748b;
+  cursor: pointer;
+  width: calc(100% - 16px);
+  margin: 2px 8px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: background .2s ease, color .2s ease; /* ตัดการขยับ */
 }
+.sidebar-menu button:hover { background: rgba(59, 130, 246, 0.1); color: #3b82f6; transform: translateX(4px); }
+.sidebar-menu button span { margin-left: 10px; font-weight: 500; }
+.sidebar.collapsed .sidebar-menu button { justify-content: center; margin: 2px 4px; width: calc(100% - 8px); }
+.sidebar.collapsed .sidebar-menu button span { display: none; }
 
-.user-dropdown-menu button:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    transform: translateX(4px);
-}
-
-/* Mobile dropdown adjustments */
-@media (max-width: 768px) {
-    .user-dropdown-menu {
-        bottom: 80px;
-        left: 0.5rem;
-        right: 0.5rem;
-    }
-    
-    .user-dropdown-menu button {
-        padding: 14px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .user-dropdown-menu {
-        bottom: 75px;
-        left: 0.25rem;
-        right: 0.25rem;
-    }
-    
-    .user-dropdown-menu button {
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-}
-
-/* Vehicle dropdown menu styles */
-.vehicle-menu-container {
-    position: relative;
-}
-
-.vehicle-menu-button {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    border: none;
-    background: none;
-    color: #64748b;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-    position: relative;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 2px 8px;
-    width: calc(100% - 16px);
-}
-
-.vehicle-menu-button:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    transform: translateX(4px);
-}
-
-.vehicle-menu-button span {
-    margin-left: 10px;
-    font-weight: 500;
-}
-
-.dropdown-arrow {
-    margin-left: auto;
-    margin-right: 8px;
-    transition: transform 0.2s ease;
-    color: #94a3b8;
-}
-
-.dropdown-arrow.open {
-    transform: rotate(180deg);
-    color: #3b82f6;
-}
-
-.vehicle-dropdown-menu {
-    background: rgba(248, 250, 252, 0.98);
-    border-radius: 8px;
-    margin: 4px 8px;
-    width: calc(100% - 16px);
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    backdrop-filter: blur(5px);
-}
-
-.vehicle-dropdown-menu button {
-    width: 100%;
-    background: none;
-    border: none;
-    color: #64748b;
-    padding: 10px 16px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-}
-
-.vehicle-dropdown-menu button:last-child {
-    border-bottom: none;
-}
-
-.vehicle-dropdown-menu button:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    padding-left: 20px;
-}
-
-.vehicle-dropdown-menu button svg {
-    width: 14px;
-    height: 14px;
-    opacity: 0.8;
-}
-
-/* Mobile vehicle menu */
-@media (max-width: 768px) {
-    .vehicle-menu-button {
-        padding: 14px 16px;
-        font-size: 15px;
-        margin: 3px 8px;
-    }
-    
-    .vehicle-dropdown-menu {
-        margin: 4px 8px;
-        width: calc(100% - 16px);
-    }
-    
-    .vehicle-dropdown-menu button {
-        padding: 12px 16px;
-        font-size: 0.95rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .vehicle-menu-button {
-        padding: 12px 14px;
-        font-size: 14px;
-        margin: 2px 6px;
-    }
-    
-    .vehicle-dropdown-menu {
-        margin: 3px 6px;
-        width: calc(100% - 12px);
-    }
-    
-    .vehicle-dropdown-menu button {
-        padding: 10px 14px;
-        font-size: 0.85rem;
-    }
-}
-
-/* Mobile overlay for sidebar */
-@media (max-width: 768px) {
-    .sidebar-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.3);
-        z-index: 999;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .sidebar-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    .sidebar.open ~ .sidebar-overlay {
-        opacity: 1;
-        visibility: visible;
-    }
-}
-
-/* Smooth transitions for all states */
-.sidebar * {
-    transition: all 0.3s ease;
-}
-
-/* Focus states for accessibility */
-.sidebar-menu button:focus,
-.sidebar-toggle:focus,
-.user-summary:focus {
-    outline: 2px solid rgba(59, 130, 246, 0.5);
-    outline-offset: 2px;
-}
-
-/* Active state for current page */
+/* Active state */
 .sidebar-menu button.active {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-    font-weight: 600;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.sidebar-menu button svg {
+  width: 16px; height: 16px;
+  justify-self: center;
+  opacity: .95;
 }
 
 .sidebar-menu button.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 80%;
-    background: #3b82f6;
-    border-radius: 0 2px 2px 0;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10%;
+  width: 4px;
+  height: 80%;
+  border-radius: 0 2px 2px 0;
+  background: #3b82f6; /* เติมสีกั้นขอบ */
 }
 
-/* Tooltip for collapsed sidebar */
-.sidebar.collapsed .sidebar-menu button {
-    position: relative;
+/* ===== User card at bottom ===== */
+.sidebar-user {
+  margin-top: auto;
+  padding: 12px;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  background: rgba(248, 250, 252, 0.8);
+  backdrop-filter: blur(5px);
+}
+.user-summary {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.25s ease;
+}
+.user-summary:hover { background: rgba(59, 130, 246, 0.05); }
+.user-summary .avatar {
+  width: 36px; height: 36px; border-radius: 50%; margin-right: 0.75rem;
+  border: 2px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.user-details { flex: 1; overflow: hidden; }
+.username {
+  font-size: 0.9rem; display: block; font-weight: 600; color: #334155;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.role { font-size: 0.75rem; color: #64748b; display: block; }
+.caret-icon { margin-left: auto; color: #94a3b8; transition: transform 0.3s ease; }
+
+/* User dropdown */
+.user-dropdown-menu {
+  position: absolute;
+  bottom: 70px; left: 1rem; right: 1rem;
+  background: rgba(255,255,255,0.98);
+  border-radius: 12px;
+  padding: 0.5rem;
+  z-index: 10;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border: 1px solid rgba(226,232,240,0.8);
+  animation: slideUp 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.user-dropdown-menu button { color: #475569; margin-bottom: 4px; }
+.user-dropdown-menu button:last-child { margin-bottom: 0; }
+.user-dropdown-menu button:hover { background: rgba(59,130,246,0.1); color: #3b82f6; transform: translateX(4px); }
+
+/* ===== Overlay (mobile) ===== */
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .sidebar-overlay.active,
+  .sidebar.open ~ .sidebar-overlay { opacity: 1; visibility: visible; }
 }
 
-.sidebar.collapsed .sidebar-menu button:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 70px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.98);
-    color: #475569;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    white-space: nowrap;
-    z-index: 1001;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+/* ===== Responsive tweaks ===== */
+@media (max-width: 768px) {
+  .sidebar-menu button,
+  .vehicle-menu-button { padding: 14px 16px; font-size: 15px; margin: 3px 8px; }
+  .vehicle-dropdown-menu { margin: 4px 8px; width: calc(100% - 16px); }
+  .vehicle-dropdown-menu button { padding: 12px 16px; font-size: 0.95rem; }
+  .sidebar-user { padding: 15px 12px; }
+  .user-summary .avatar { width: 40px; height: 40px; }
+  .username { font-size: 0.95rem; }
+  .role { font-size: 0.8rem; }
+}
+@media (max-width: 480px) {
+  .sidebar-menu button,
+  .vehicle-menu-button { padding: 12px 14px; font-size: 14px; margin: 2px 6px; }
+  .vehicle-dropdown-menu { margin: 3px 6px; width: calc(100% - 12px); }
+  .vehicle-dropdown-menu button { padding: 10px 14px; font-size: 0.85rem; }
+  .sidebar-user { padding: 12px 10px; }
+  .user-summary .avatar { width: 38px; height: 38px; }
+}
+
+/* ===== Accessibility ===== */
+.sidebar-menu button:focus,
+.sidebar-toggle:focus,
+.user-summary:focus,
+.user-dropdown-menu button:focus,
+.vehicle-menu-button:focus,
+.vehicle-dropdown-menu button:focus {
+   outline: none !important;
+  outline-offset: 2px;
+}
+
+/* ลด motion สำหรับผู้ใช้ที่ตั้งค่าไว้ */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

@@ -1,4 +1,4 @@
-/* VehiclePage.css - เฉพาะคลาสที่ใช้จริงใน TSX */
+/* VehiclePage.css — Lean version (เฉพาะที่จำเป็นจริง) */
 
 .vehicle-page {
   padding: 20px;
@@ -37,7 +37,7 @@
 }
 
 .error-message {
-  background: white;
+  background: #fff;
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
@@ -60,46 +60,26 @@
 }
 
 .retry-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
+  background: #dc2626;
+  color: #fff;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
 }
-
-.retry-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
 .retry-btn:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: #b91c1c;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
 }
-
-.retry-btn:hover::before {
-  left: 100%;
-}
-
 .retry-btn:active {
-  transform: translateY(0px);
+  transform: translateY(0);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
-
 .retry-btn:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
@@ -116,28 +96,19 @@
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-color: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
 }
-
 .search-input:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-
 .search-input::placeholder {
   color: #94a3b8;
 }
 
-.search-results {
-  margin-top: 8px;
-  margin-bottom: 0;
-  font-size: 0.9rem;
-  color: #64748b;
-  font-weight: 500;
-}
-
+/* grid */
 .vehicle-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -148,77 +119,45 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 2rem;
-  background: white;
+  background: #fff;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
 }
-
 .no-results p {
   margin: 0.5rem 0;
   color: #64748b;
 }
-
 .no-results p:first-child {
   font-weight: 600;
   font-size: 1.1rem;
   color: #374151;
 }
 
+/* card */
 .vehicle-card {
-  background: white;
+  background: #fff;
   padding: 1.25rem;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid #f1f5f9;
   position: relative;
-  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: default; /* ป้องกันเคอร์เซอร์ pointer ทั้งใบ */
 }
-
-.vehicle-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #2563eb, #7c3aed, #2563eb);
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 .vehicle-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 32px rgb(0 0 0 / 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgb(0 0 0 / 0.12);
   border-color: #e2e8f0;
 }
 
-.vehicle-card:hover::before {
-  opacity: 1;
-}
-
 .vehicle-registration {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem 0;
   color: #1e3a8a;
   font-size: 1.2rem;
   font-weight: 700;
   text-align: center;
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 0.5rem;
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.025em;
-  text-shadow: 0 2px 4px rgba(30, 58, 138, 0.1);
 }
 
 .vehicle-card p {
@@ -227,7 +166,6 @@
   font-size: 0.95rem;
   padding: 2px 0;
 }
-
 .vehicle-card p strong {
   color: #1f2937;
   font-weight: 600;
@@ -257,81 +195,52 @@
   align-items: center;
   gap: 8px;
 }
-
 .alert-icon {
-  color: #dc2626;
-  font-size: 1.2rem;
-  font-weight: bold;
+  width: 18px;
+  height: 18px;
 }
 
-/* Profile Button Styling */
+/* button */
 .profile-btn {
   width: 100%;
   padding: 12px 16px;
   margin-top: 15px;
   background: linear-gradient(135deg, #2563eb, #1e40af);
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: pointer;
+  cursor: pointer; /* ปุ่มเท่านั้นที่เป็น pointer */
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  position: relative;
 }
-
 .profile-btn:hover {
   background: linear-gradient(135deg, #1e40af, #1e3a8a);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
 }
-
 .profile-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
-
 .profile-btn:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
-
 .profile-btn svg {
   font-size: 1rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
-
 .profile-btn:hover svg {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-/* Enhanced button with gradient border effect */
-.profile-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 8px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.profile-btn:hover::after {
-  opacity: 1;
-}
-
-/* ===== Popup Styles (NEW) ===== */
+/* popup */
 .popup-overlay {
   position: fixed;
   inset: 0;
@@ -376,73 +285,23 @@
   font-size: 1rem;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-  .vehicle-page {
-    padding: 10px;
-  }
-  
-  .header-row {
-    flex-direction: column;
-    gap: 15px;
-    align-items: stretch;
-  }
-  
-  .page-title {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-  
-  .vehicle-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .vehicle-card {
-    padding: 1rem;
-  }
-  
-  .vehicle-registration {
-    font-size: 1.1rem;
-  }
-  
-  .vehicle-card p {
-    font-size: 0.9rem;
-  }
-  
-  .vehicle-card p strong {
-    min-width: 70px;
-    font-size: 0.85rem;
-  }
-  
-  .alert-box {
-    padding: 10px;
-    margin-top: 10px;
-  }
-  
-  .profile-btn {
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    margin-top: 12px;
-  }
-  
-  .profile-btn svg {
-    font-size: 0.9rem;
-  }
+  .vehicle-page { padding: 10px; }
+  .header-row { flex-direction: column; gap: 15px; align-items: stretch; }
+  .page-title { font-size: 1.5rem; text-align: center; }
+  .vehicle-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .vehicle-card { padding: 1rem; }
+  .vehicle-registration { font-size: 1.1rem; }
+  .vehicle-card p { font-size: 0.9rem; }
+  .vehicle-card p strong { min-width: 70px; font-size: 0.85rem; }
+  .alert-box { padding: 10px; margin-top: 10px; }
+  .profile-btn { padding: 10px 14px; font-size: 0.9rem; margin-top: 12px; }
+  .profile-btn svg { font-size: 0.9rem; }
 }
 
 @media (max-width: 480px) {
-  .vehicle-page {
-    padding: 8px;
-  }
-  
-  .vehicle-card {
-    padding: 0.75rem;
-  }
-  
-  .profile-btn {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    gap: 6px;
-  }
+  .vehicle-page { padding: 8px; }
+  .vehicle-card { padding: 0.75rem; }
+  .profile-btn { padding: 8px 12px; font-size: 0.85rem; gap: 6px; }
 }
