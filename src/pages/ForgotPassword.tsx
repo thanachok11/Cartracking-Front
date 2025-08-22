@@ -10,7 +10,7 @@ export default function ForgotPassword() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+            const res = await fetch("https://cartracking.up.railway.app/api/auth/forgot-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
