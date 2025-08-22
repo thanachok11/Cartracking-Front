@@ -99,11 +99,9 @@ export default function UserInfo() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🚀 handleProfileUpdate called');
-    
+
     const userId = user?._id || user?.id;
     if (!userId) {
-      console.error('❌ No user ID found:', user);
       setError('ไม่พบข้อมูลผู้ใช้');
       return;
     }
@@ -113,37 +111,31 @@ export default function UserInfo() {
       setError(null);
       setSuccess(null);
 
-      console.log('🔧 Profile update data:', profileForm);
-      console.log('🖼️ Image file:', imageFile);
-      console.log('👤 Current user:', user);
-      console.log('🆔 Using user ID:', userId);
+      let result;
 
-      // ใช้ฟังก์ชันที่ถูกต้องตาม API
       if (imageFile) {
-        console.log('📤 Updating profile with image');
-        const result = await updateProfileWithImage(profileForm, imageFile);
-        console.log('✅ Update with image result:', result);
+        // อัปเดตพร้อมรูปภาพ
+        result = await updateProfileWithImage(profileForm, imageFile);
       } else {
-        console.log('📤 Updating profile without image');
-        const result = await updateUser(userId, profileForm); // ใช้ฟังก์ชันใหม่
-        console.log('✅ Update without image result:', result);
+        // อัปเดตเฉพาะข้อมูล
+        result = await updateUser(userId, profileForm);
+      }
+
+      // ✅ แทนที่ token เดิมด้วย token ใหม่
+      if (result?.token) {
+        localStorage.setItem('token', result.token);
+        console.log('🔄 Token updated:', result.token);
       }
 
       setSuccess('อัพเดตข้อมูลส่วนตัวสำเร็จ');
       setShowProfileEdit(false);
       setImageFile(null);
       setImagePreview(null);
-      
-      // Reload user data
-      console.log('🔄 Reloading user data...');
+
+      // ✅ โหลดข้อมูล user ใหม่จาก backend หรือ token ใหม่
       await loadUserData();
     } catch (err: any) {
       console.error('❌ Profile update error:', err);
-      console.error('❌ Error details:', {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status
-      });
       setError(err.message || 'ไม่สามารถอัพเดตข้อมูลได้');
     } finally {
       setSaving(false);

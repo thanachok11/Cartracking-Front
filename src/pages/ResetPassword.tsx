@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/pages/ResetPassword.css";
 
 export default function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
-    const [isClosing, setIsClosing] = useState(false); // fade out
+    const [isClosing, setIsClosing] = useState(false);
 
     const [searchParams] = useSearchParams();
     const token = searchParams.get("token");
+    const navigate = useNavigate(); // ✅ ใช้สำหรับ redirect
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,6 +23,13 @@ export default function ResetPassword() {
             const data = await res.json();
             setMessage(data.message);
             setIsError(!res.ok);
+
+            if (res.ok) {
+                // ✅ ถ้า reset สำเร็จ
+                setTimeout(() => {
+                    navigate("/"); // redirect ไปหน้าแรก
+                }, 1500); // รอให้ user เห็นข้อความสักครู่ก่อน
+            }
         } catch (err) {
             setMessage("Error resetting password");
             setIsError(true);
