@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUserInfo, changePassword, updateProfileWithImage, updateUser } from '../../api/components/usersApi';
 import '../../styles/pages/UserInfo.css';
+import { UserRole } from '../../types/User';
 
 interface UserProfile {
   _id?: string;
-  id?: string; // เพิ่ม id field สำหรับ backend ใหม่
+  id?: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role?: UserRole;
   profile_img?: string;
-  image?: string; // เพิ่ม field image สำหรับ backend ใหม่
 }
-
 interface PasswordChange {
   currentPassword: string;
   newPassword: string;
@@ -38,7 +37,8 @@ export default function UserInfo() {
   const [profileForm, setProfileForm] = useState({
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    profile_img: ''
   });
   
   // Password form
@@ -86,7 +86,8 @@ export default function UserInfo() {
         setProfileForm({
           firstName: userInfo.user.firstName || '',
           lastName: userInfo.user.lastName || '',
-          email: userInfo.user.email || ''
+          email: userInfo.user.email || '',
+          profile_img: userInfo.user.profileImage || ''
         });
       }
     } catch (err: any) {
@@ -209,17 +210,26 @@ export default function UserInfo() {
     setImagePreview(null);
   };
 
-  const getRoleDisplayName = (role: string) => {
-    switch (role) {
-      case 'super admin': return 'Super Admin';
-      case 'admin': return 'Admin';
-      case 'manager': return 'Manager';
-      case 'user': return 'User';
-      case 'viewer': return 'Viewer';
-      default: return role;
-    }
-  };
-
+  // const getRoleDisplayName = (role: string) => {
+  //   switch (role) {
+  //     case 'super admin': return 'Super Admin';
+  //     case 'admin': return 'Admin';
+  //     case 'manager': return 'Manager';
+  //     case 'user': return 'User';
+  //     case 'viewer': return 'Viewer';
+  //     default: return role;
+  //   }
+  // };
+  const getRoleDisplayName = (role: UserRole): string => {
+      switch (role) {
+          case UserRole.LEVEL_5: return 'Super Admin';
+          case UserRole.LEVEL_4: return 'Admin';
+          case UserRole.LEVEL_3: return 'Manager';
+          case UserRole.LEVEL_2: return 'User';
+          case UserRole.LEVEL_1: return 'Viewer';
+          default: return 'User';
+      }
+};
   if (loading) {
     return (
       <div className="userinfo-page">
@@ -275,41 +285,45 @@ export default function UserInfo() {
         {/* User Profile Card */}
         <div className="profile-card">
           <div className="profile-avatar">
-            {(user.image || user.profile_img) ? (
+            {(user.profile_img || profileForm.profile_img) ? (
               <img 
-                src={user.image || user.profile_img} 
+                src={user.profile_img || profileForm.profile_img} 
                 alt={`${user.firstName} ${user.lastName}`}
                 className="avatar-image"
                 onError={(e) => {
-                  console.error('❌ Image load error for user image:', user.image || user.profile_img);
                   (e.target as HTMLImageElement).src = 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg';
                 }}
               />
             ) : (
-              <div className="avatar-placeholder">
-                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-              </div>
+              <img
+                src="https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg"
+                alt="Default Avatar"
+                className="avatar-image"
+              />
             )}
           </div>
-          
-          <div className="profile-info">
-            <h3>{user.firstName} {user.lastName}</h3>
-            <p className="user-email">{user.email}</p>
-            <p className="user-role">{getRoleDisplayName(user.role)}</p>
-          </div>
+          <div className="profile-details"></div>
+            <div className="profile-info">
+              <h3>{user.firstName} {user.lastName}</h3>
+              <p className="user-email">{user.email}</p>
+              <p className="user-role">{getRoleDisplayName(user.role ?? UserRole.LEVEL_1)}</p>
+            </div>
         </div>
 
         {/* Action Buttons */}
         <div className="action-buttons">
-          <button 
+          <button
             onClick={() => setShowProfileEdit(true)}
-            className="btn-primary"
+            disabled={user?.role === UserRole.LEVEL_5} // type-safe
+            className={`btn-edit ${user?.role === UserRole.LEVEL_5 ? "btn-disabled" : ""}`}
           >
             แก้ไขข้อมูลส่วนตัว
           </button>
-          <button 
+
+          <button
             onClick={() => setShowPasswordChange(true)}
-            className="btn-secondary"
+            disabled={user?.role === UserRole.LEVEL_5} // ป้องกัน super admin
+            className={`btn-secondary ${user?.role === UserRole.LEVEL_5 ? "btn-disabled" : ""}`}
           >
             เปลี่ยนรหัสผ่าน
           </button>
@@ -382,9 +396,9 @@ export default function UserInfo() {
                           ×
                         </button>
                       </div>
-                    ) : (user.image || user.profile_img) ? (
+                    ) : (user.profile_img || profileForm.profile_img) ? (
                       <div className="current-image">
-                        <img src={user.image || user.profile_img} alt="Current" />
+                        <img src={user.profile_img || profileForm.profile_img} alt="Current" />
                         <p>รูปปัจจุบัน</p>
                       </div>
                     ) : null}

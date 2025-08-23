@@ -96,6 +96,12 @@
     gap: 0.5rem;
 }
 
+.password-toggle-icon {
+    margin-top: -45px;
+    margin-left: 360px;
+    margin-bottom: 30px;
+}
+
 .login-label {
     font-size: 0.9rem;
     color: #444;
@@ -130,6 +136,7 @@
     margin-top: 0.5rem;
     text-align: center;
 }
+
 .login-forgot {
     margin-top: 10px;
     text-align: right;

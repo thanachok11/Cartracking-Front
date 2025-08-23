@@ -351,7 +351,8 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
             roleFromJWT: decoded.role,
             roleConverted: getRoleFromString(decoded.role),
             displayName: `${decoded.firstname || decoded.firstName || ''} ${decoded.lastname || decoded.lastName || ''}`.trim(),
-            permissions: getRolePermissions(getRoleFromString(decoded.role))
+            permissions: getRolePermissions(getRoleFromString(decoded.role)),
+            profileImage: decoded.profile_img || ''
         };
 
         console.log('🔍 User permissions from JWT:', userPermissions);
@@ -363,7 +364,8 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
                 firstName: decoded.firstname || decoded.firstName || '',
                 lastName: decoded.lastname || decoded.lastName || '',
                 role: userPermissions.roleConverted,
-                displayName: userPermissions.displayName
+                displayName: userPermissions.displayName,
+                profileImage: userPermissions.profileImage
             },
             permissions: userPermissions.permissions
         };

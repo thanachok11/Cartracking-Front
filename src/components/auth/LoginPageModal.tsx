@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser, saveToken } from "../../api/auth/auth";
 import "../../styles/components/auth/LoginPageModal.css";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface LoginProps {
     isVisible: boolean;
@@ -15,6 +17,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
     const [successMessage, setSuccessMessage] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -79,15 +82,22 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
                             className="login-input"
                             required
                         />
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="login-input"
-                            required
-                        />
+                            <input
+                                type={showPassword ? "text" : "password"} // สลับ type
+                                name="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="login-input"
+                                required
+                            />
+                            <span
+                                className="password-toggle-icon"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                            </span>
+                       
                         <div className="login-checkbox-container">
                             <input
                                 type="checkbox"

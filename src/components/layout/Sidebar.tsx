@@ -20,18 +20,21 @@ import { getUserPermissions, logoutUser } from "../../api/auth/auth";
 import { getRoleName, UserRole } from "../../types/User";
 import "../../styles/components/layout/Sidebar.css";
 
+// Define UserProfile type
+type UserProfile = {
+    name: string;
+    email: string;
+    role: string;
+    profile_img?: string;
+};
+
 interface SidebarProps {
     isSidebarOpen: boolean;
     toggleSidebar: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
-    const [user, setUser] = useState<{
-        name: string;
-        email: string;
-        role: string;
-        profileImg: string;
-    } | null>(null);
+    const [user, setUser] = useState<UserProfile | null>(null);
     const [userPermissions, setUserPermissions] = useState<any>(null);
     const [userDropdown, setUserDropdown] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -76,13 +79,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                             : user.email;
 
                         // โหลด profile image และ fallback ถ้าไม่มี
-                        const profileImg = user.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg';
+                        const profileImg = user.profileImage || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg';
 
                         setUser({
                             name: displayName,
                             email: user.email,
                             role: getRoleName(user.role as UserRole),
-                            profileImg
+                            profile_img: profileImg
                         });
                     }
                 } catch (error) {
@@ -212,7 +215,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                             className="user-summary"
                             onClick={() => setUserDropdown(!userDropdown)}
                         >
-                            <img src={user.profileImg} alt="avatar" className="avatar" />
+                            <img src={user.profile_img} alt="avatar" className="avatar" />
                             {(isSidebarOpen || isMobile) && (
                                 <>
                                     <div className="user-details">

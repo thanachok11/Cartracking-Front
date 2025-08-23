@@ -229,7 +229,11 @@
 .btn-secondary:hover {
   background-color: #4b5563;
 }
-
+.btn-disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #ccc;
+}
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
