@@ -29,18 +29,18 @@ import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
 
-// Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
-// axios.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response && error.response.status === 401) {
-//       // Logout อัตโนมัติเมื่อ token หมดอายุ
-//       logoutUser();
-//       window.location.href = "/";
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+//Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Logout อัตโนมัติเมื่อ token หมดอายุ
+      logoutUser();
+      window.location.href = "/";
+    }
+    return Promise.reject(error);
+  }
+);
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const App: React.FC = () => {
