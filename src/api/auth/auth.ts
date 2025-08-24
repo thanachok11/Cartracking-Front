@@ -218,19 +218,23 @@ export const createUser = async (userData: RegisterWithRoleData) => {
 };
 
 // อัพเดตข้อมูลผู้ใช้ - ใช้ PATCH /auth/update ที่มีอยู่ใน backend
-export const updateUser = async (userId: string, userData: { firstName: string; lastName: string; email: string }) => {
+export const updateUser = async (userId: string, userData: { firstName: string; lastName: string;}) => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
         }
 
+        const { jwtDecode } = require('jwt-decode');
+        const decoded: any = jwtDecode(token);
+        const currentUserId = decoded.userId || decoded.id;
+
         // ส่งเฉพาะข้อมูลส่วนตัว ไม่ส่ง role เหมือน usermanagement
         const requestBody = {
-            userId: userId,
+            targetUserId: userId,
+            userId: currentUserId,
             firstName: userData.firstName,
             lastName: userData.lastName,
-            email: userData.email
         };
 
         console.log('🔍 Update user request body:', requestBody);
@@ -480,7 +484,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
 };
 
 // อัพเดตโปรไฟล์พร้อมรูปภาพ
-export const updateProfileWithImage = async (profileData: { firstName: string; lastName: string; email: string }, imageFile?: File) => {
+export const updateProfileWithImage = async (profileData: { firstName: string; lastName: string; }, imageFile?: File) => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -501,7 +505,6 @@ export const updateProfileWithImage = async (profileData: { firstName: string; l
             formData.append('userId', userId);
             formData.append('firstName', profileData.firstName);
             formData.append('lastName', profileData.lastName);
-            formData.append('email', profileData.email);
             formData.append('role', decoded.role); // เพิ่ม role สำหรับ backend validation
             formData.append('image', imageFile); // backend ต้องการ field name 'image'
 
