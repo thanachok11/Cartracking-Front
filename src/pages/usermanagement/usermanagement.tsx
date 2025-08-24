@@ -10,7 +10,8 @@ import {
     roleToString
 } from '../../api/components/usersApi';
 import '../../styles/pages/SettingsPage.css';
-
+import CreateUserForm from './components/CreateUserForm';
+import EditUserForm from './components/EditUserForm';
 interface UserFormData {
     firstName: string;
     lastName: string;
@@ -192,7 +193,6 @@ const UserManagement: React.FC = () => {
             await updateUser(editingUser.id, {
                 firstName: formData.firstName,
                 lastName: formData.lastName,
-                email: formData.email
             });
             
             // อัพเดต role หากมีการเปลี่ยนแปลง
@@ -421,96 +421,64 @@ const UserManagement: React.FC = () => {
             )}
 
             {/* User Form */}
-            {(showCreateForm || editingUser) && (
-                <div className="user-form-container">
-                    <div className="user-form">
-                        <h3>{editingUser ? 'แก้ไขผู้ใช้' : 'เพิ่มผู้ใช้ใหม่'}</h3>
-                        <form onSubmit={editingUser ? handleUpdateUser : handleCreateUser}>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>ชื่อจริง:</label>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        value={formData.firstName}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>นามสกุล:</label>
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        value={formData.lastName}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="form-group">
-                                <label>อีเมล:</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            
-                            {!editingUser && (
-                                <div className="form-group">
-                                    <label>รหัสผ่าน:</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        required
-                                        minLength={6}
-                                    />
-                                </div>
-                            )}
-                            
-                            <div className="form-group">
-                                <label>บทบาท:</label>
-                                <select
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    {forCreateRoles.map(role => (
-                                        <option key={role.value} value={role.value}>
-                                            {role.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <small className="role-hint">
-                                    คุณสามารถมอบหมายบทบาทได้เฉพาะระดับที่เท่ากับหรือต่ำกว่าระดับของคุณเท่านั้น
-                                </small>
-                            </div>
-                            
-                            <div className="form-actions">
-                                <button type="submit" className="btn-primary" disabled={loading}>
-                                    {loading ? 'Processing...' : (editingUser ? 'อัปเดตผู้ใช้' : 'เพิ่มผู้ใช้')}
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="btn-secondary"
-                                    onClick={() => {
-                                        setShowCreateForm(false);
-                                        cancelEdit();
-                                    }}
-                                >
-                                    ยกเลิก
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+            {showCreateForm && (
+                <CreateUserForm
+                    loading={loading}
+                    availableRoles={forCreateRoles}
+                    onCreate={async (data) => {
+                        // parent handles API call and reload
+                        try {
+                            setLoading(true);
+                            await createUser({
+                                email: data.email,
+                                password: data.password,
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                                role: roleToString(data.role)
+                            });
+                            setSuccess('สร้างผู้ใช้สำเร็จ!');
+                            setShowCreateForm(false);
+                            await loadData();
+                        } catch (err: any) {
+                            setError(err.message || 'ไม่สามารถสร้างผู้ใช้ได้');
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    onCancel={() => {
+                        setShowCreateForm(false);
+                    }}
+                />
+            )}
+
+            {editingUser && (
+                <EditUserForm
+                    loading={loading}
+                    editingUser={editingUser}
+                    availableRoles={availableRoles}
+                    onUpdate={async (id, data) => {
+                        try {
+                            setLoading(true);
+                            await updateUser(id, {
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                            });
+                            if (data.role !== undefined && data.role !== editingUser.role) {
+                                await updateUserRole(id, roleToString(data.role as UserRole));
+                            }
+                            setSuccess('อัปเดตผู้ใช้สำเร็จ!');
+                            setEditingUser(null);
+                            await loadData();
+                        } catch (err: any) {
+                            setError(err.message || 'ไม่สามารถอัปเดตผู้ใช้ได้');
+                        } finally {
+                            setLoading(false);
+                        }
+                    }}
+                    onCancel={() => {
+                        cancelEdit();
+                    }}
+                />
             )}
 
             {/* Users Table */}
