@@ -305,7 +305,8 @@ export const updateUserRole = async (userId: string, newRole: string) => {
         }
 
         const requestBody = {
-            userId: userId,
+            userId: currentUserId,
+            targetUserId: userId,
             newRole: newRole,
             currentUserId: currentUserId,
             role: currentUserRole  // เปลี่ยนจาก currentUserRole เป็น role ตาม middleware

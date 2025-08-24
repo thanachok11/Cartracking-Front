@@ -120,30 +120,64 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    
+    // helper: แปลง role string/number เป็น UserRole level
+    const roleStringToLevel = (roleValue?: string | number | null): UserRole => {
+        if (typeof roleValue === 'number') return roleValue as UserRole;
+        const r = (roleValue || '').toString().toLowerCase();
+        switch (r) {
+            case 'super admin':
+            case 'level_5':
+            case 'level5':
+            case '5':
+                return UserRole.LEVEL_5;
+            case 'admin':
+            case 'level_4':
+            case 'level4':
+            case '4':
+                return UserRole.LEVEL_4;
+            case 'manager':
+            case 'level_3':
+            case 'level3':
+            case '3':
+                return UserRole.LEVEL_3;
+            case 'user':
+            case 'level_2':
+            case 'level2':
+            case '2':
+                return UserRole.LEVEL_2;
+            case 'viewer':
+            case 'level_1':
+            case 'level1':
+            case '1':
+                return UserRole.LEVEL_1;
+            default:
+                return UserRole.LEVEL_2; // default fallback
+        }
+    };
 
     // Get current page for active state
     const isActivePage = (path: string) => {
         return location.pathname === path;
     };
 
-    const menuItems = [
-        { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard" },
-        { path: "/map", icon: faMapMarkedAlt, label: "แผนที่", tooltip: "Map View" },
-        { path: "/track", icon: faBox, label: "ติดตามตู้คอนเทนเนอร์", tooltip: "Track Containers" },
-        { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management" },
-        { path: "/vehicles", icon: faCar, label: "ยานพาหนะ", tooltip: "Vehicles" },
-        { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers" },
-        { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container" },
-        
+    const menuItems: Array<{
+        path: string;
+        icon: any;
+        label: string;
+        tooltip?: string;
+        minRole?: UserRole; // ถ้าจำเป็นต้องมี role ขั้นต่ำ
+    }> = [
+        { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_1 },
+        { path: "/map", icon: faMapMarkedAlt, label: "แผนที่", tooltip: "Map View", minRole: UserRole.LEVEL_1 },
+        { path: "/track", icon: faBox, label: "ติดตามตู้คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_3 },
+        { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_4 },
+        { path: "/vehicles", icon: faCar, label: "ยานพาหนะ", tooltip: "Vehicles", minRole: UserRole.LEVEL_3 },
+        { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_3 },
+        { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_3 },
     ];
 
-    // const informationItems = [
-    //     { path: "/vehicles", icon: faCar, label: "Vehicles", tooltip: "Vehicles" },
-    //     { path: "/drivers", icon: faUsers, label: "Drivers", tooltip: "Drivers" },
-    //     { path: "/containers", icon: faBox, label: "Container", tooltip: "Container" },
-        
-    // ];
+    // ก่อน render ให้คำนวณ role ของผู้ใช้และกรองเมนู
+    const currentRoleLevel = roleStringToLevel(userPermissions?.user?.role || (user && user.role) || UserRole.LEVEL_2);
 
     return (
         <>
@@ -171,41 +205,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     </div>
 
                 <nav className="sidebar-menu">
-                    {/* Main menu items */}
-                    {menuItems.map((item) => (
+                    {menuItems
+                        .filter(item => (item.minRole ? currentRoleLevel >= item.minRole : true))
+                        .map((item) =>
                         <button
                             key={item.path}
-                            onClick={() => navigate(item.path)}
-                            className={isActivePage(item.path) ? "active" : ""}
+                            onClick={() => {
+                                if (item.path === "/track") {
+                                    window.open("https://ucontainers.com.cn/login.php", "_blank");
+                                } else {
+                                    navigate(item.path);
+                                }
+                            }}
+                            className={isActivePage(item.path) ? "active sidebar-link" : "sidebar-link"}
                             data-tooltip={item.tooltip}
+                            style={{ textAlign: "left", display: "flex", alignItems: "center" }}
                         >
                             <FontAwesomeIcon icon={item.icon} />
                             {(isSidebarOpen || isMobile) && <span>{item.label}</span>}
                         </button>
-                    ))}
-                    
-                    {/* Information dropdown menu */}
-                    {/* <div className="vehicle-menu-container">
-                        <div className="vehicle-menu-button">
-                            <FontAwesomeIcon icon={faCar} />
-                            {(isSidebarOpen || isMobile) && <span>Information</span>}
-                        </div>
-                        
-                        {(isSidebarOpen || isMobile) && (
-                            <div className="vehicle-dropdown-menu">
-                                {informationItems.map((item) => (
-                                    <button
-                                        key={item.path}
-                                        onClick={() => navigate(item.path)}
-                                        className={isActivePage(item.path) ? "active" : ""}
-                                    >
-                                        <FontAwesomeIcon icon={item.icon} />
-                                        {item.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div> */}
+                    )}
                 </nav>
 
                 {/* User Info */}

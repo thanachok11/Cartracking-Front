@@ -5,7 +5,7 @@ export enum UserRole {
     LEVEL_2 = 2, // user
     LEVEL_3 = 3, // manager
     LEVEL_4 = 4,  // admin
-    LEVEL_5 = 5 // super admin
+    LEVEL_5 = 5, // super admin
 }
 export interface User {
     id: string;

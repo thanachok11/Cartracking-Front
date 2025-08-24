@@ -528,7 +528,7 @@ const UserManagement: React.FC = () => {
                     </thead>
                     <tbody>
                         {users.map(user => {
-                            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
+                            const currentRole = currentUser?.user?.role;
                             const canEditThisUser = canAssignRole(currentRole, user.role);
                             
                             return (

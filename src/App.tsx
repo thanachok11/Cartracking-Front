@@ -233,14 +233,14 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route
+              {/* <Route
                 path="/track"
                 element={
                   <ProtectedRoute>
                     <TrackContainersPage />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
               <Route
                 path="/management"
                 element={
@@ -258,6 +258,7 @@ const App: React.FC = () => {
                 }
               />
             </Routes>
+
           </div>
         </div>
       </GoogleMapsProvider>

@@ -290,14 +290,14 @@ const VehiclePage: React.FC = () => {
                                     )}
                                 </div>
                             )}
-                            <button 
+                            {/* <button 
                                 className="profile-btn"
                                 onClick={() => { console.log('openNotePopup clicked'); setIsNotePopupOpen(true); }}
                                 title="ดูโน๊ต"
                             >
                                 <FontAwesomeIcon icon={faNoteSticky} />
                                 <span>ดูโน๊ต</span>
-                            </button>
+                            </button> */}
                         </div>
                     ))
                 )}
