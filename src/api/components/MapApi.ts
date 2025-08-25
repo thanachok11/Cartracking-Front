@@ -7,110 +7,91 @@ export interface VehiclePosition {
     longitude: string;
     registration: string;
     speed: number;
-    road_speed:string;
+    road_speed: string;
     ignition: string;
     statusClassName: string;
     running_status: string;
     event_ts: string;
-    driver_name?: {
-        name: string | null;
-        client_driver_id: string | null;
-    };
+    driver_name?: { name: string | null; client_driver_id: string | null };
     position_description?: {
-        principal?: {
-            description?: string;
-        };
-        alternatives?: {
-            description_al?: string;
-        };
+        principal?: { description?: string };
+        alternatives?: { description_al?: string };
     };
     alertsActions?: {
-        batteryAlerts?: {
-            powerOFF?: boolean;
-            batteryPercentage?: number;
-        };
-        actionAlerts?: {
-            actions?: any[];
-            actions2?: any[];
-            eventType?: string;
-            eventTypeIcon?: string | null;
-            eventTypeDescription?: string | null;
-        };
+        batteryAlerts?: { powerOFF?: boolean; batteryPercentage?: number };
+        actionAlerts?: { actions?: any[]; actions2?: any[]; eventType?: string; eventTypeIcon?: string | null; eventTypeDescription?: string | null };
     };
-    batteryAlerts?: {
-        powerOFF?: boolean;
-        batteryPercentage?: number;
-    };
-    actionAlerts?: {
-        actions?: any[];
-        actions2?: any[];
-        eventType?: string;
-        eventTypeIcon?: string | null;
-        eventTypeDescription?: string | null;
-    };
-    driver_notes?: string; // Add this field for driver notes
+    batteryAlerts?: { powerOFF?: boolean; batteryPercentage?: number };
+    actionAlerts?: { actions?: any[]; actions2?: any[]; eventType?: string; eventTypeIcon?: string | null; eventTypeDescription?: string | null };
+    driver_notes?: string;
 }
-
 
 export interface Driver {
     out_driver_id: string;
     out_driver_name: string;
     out_driver_surname: string;
     out_vehicle_registration: string | null;
-    // เพิ่ม field อื่นถ้าต้องใช้
 }
-
 
 export interface Geofence {
     geofence_id: string;
     geofence_name: string;
     vehicle_ids: string[];
-    position_description?: {
-        principal?: {
-            description?: string;
-        };
-    };
-    // เพิ่ม field อื่น ๆ ตามจริงได้เลยถ้ามี
+    position_description?: { principal?: { description?: string } };
 }
 
-export const fetchVehicle = async (): Promise<VehiclePosition[]> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/car`);
-    const positionsArray: VehiclePosition[] = Object.values(response.data);
-    return positionsArray;
+// ฟังก์ชันช่วยดึง token
+const getAuthHeader = () => {
+    const token = localStorage.getItem('token');
+    return { Authorization: `Bearer ${token || ''}` };
 };
 
+export const fetchVehicle = async (): Promise<VehiclePosition[]> => {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/car`, {
+        headers: getAuthHeader(),
+    });
+    return Object.values(response.data) as VehiclePosition[];
+};
 
 export const fetchVehiclePositions = async (): Promise<VehiclePosition[]> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/vehicles`);
-    const positionsArray: VehiclePosition[] = Object.values(response.data);
-    return positionsArray;
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/vehicles`, {
+        headers: getAuthHeader(),
+    });
+    return Object.values(response.data) as VehiclePosition[];
 };
 
-
 export const fetchDrivers = async (): Promise<Driver[]> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/drivers`);
-    const driversArray: Driver[] = response.data;
-    return driversArray;
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/drivers`, {
+        headers: getAuthHeader(),
+    });
+    return response.data as Driver[];
 };
 
 export const fetchGeofences = async (): Promise<Geofence[]> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/geofences`);
-    const geofencesArray: Geofence[] = response.data;
-    return geofencesArray;
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/geofences`, {
+        headers: getAuthHeader(),
+    });
+    return response.data as Geofence[];
 };
 
 export const fetchVehicleEvents = async (vehicleId: string, date?: string): Promise<any[]> => {
     const params = date ? `?date=${date}` : '';
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/vehicle/${vehicleId}/view${params}`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/vehicle/${vehicleId}/view${params}`, {
+        headers: getAuthHeader(),
+    });
     return response.data;
 };
 
 export const fetchContainers = async (): Promise<Containers[]> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/containers`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/containers`, {
+        headers: getAuthHeader(),
+    });
     return response.data;
 };
 
 export const fetchContainerById = async (id: string): Promise<Containers> => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/containers/${id}`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/containers/${id}`, {
+        headers: getAuthHeader(),
+    });
     return response.data;
 };
