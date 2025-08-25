@@ -9,7 +9,8 @@ import {
     updateUserRole as authUpdateUserRole,
     getUserPermissions,
     changePassword as authChangePassword,
-    updateProfileWithImage as authUpdateProfileWithImage
+    updateProfileWithImage as authUpdateProfileWithImage,
+    updateStatus as authUpdateStatus
 } from '../auth/auth';
 import { UserRole } from '../../types/User';
 
@@ -21,7 +22,7 @@ export const deleteUser = authDeleteUser;
 export const updateUserRole = authUpdateUserRole;
 export const changePassword = authChangePassword;
 export const updateProfileWithImage = authUpdateProfileWithImage;
-
+export const updateStatus = authUpdateStatus;
 // ฟังก์ชันดึงข้อมูลผู้ใช้ปัจจุบัน
 export const getCurrentUserInfo = async () => {
     try {

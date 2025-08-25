@@ -274,6 +274,7 @@
 
 /* ===== Container ===== */
 .users-table-container {
+  padding: 20px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 20px;
   overflow: hidden;
@@ -427,7 +428,54 @@
     border-color: rgba(59, 130, 246, 0.6);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+/* Toggle switch container */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
 
+/* Hide default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 26px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Checked (ON) */
+.switch input:checked+.slider {
+    background-color: #4caf50;
+}
+
+.switch input:checked+.slider:before {
+    transform: translateX(24px);
+}
 .status {
     padding: 6px 12px;
     border-radius: 20px;

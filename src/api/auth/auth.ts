@@ -218,7 +218,7 @@ export const createUser = async (userData: RegisterWithRoleData) => {
 };
 
 // อัพเดตข้อมูลผู้ใช้ - ใช้ PATCH /auth/update ที่มีอยู่ใน backend
-export const updateUser = async (userId: string, userData: { firstName: string; lastName: string;}) => {
+export const updateUser = async (userId: string, userData: { firstName: string; lastName: string; }) => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -254,6 +254,46 @@ export const updateUser = async (userId: string, userData: { firstName: string; 
         console.error('❌ Error updating user:', error);
         console.error('❌ Error response:', error.response?.data);
         throw new Error(error.response?.data?.message || 'การอัพเดตผู้ใช้ล้มเหลว');
+    }
+};
+// อัพเดตสถานะการใช้งานผู้ใช้ (isActive)
+export const updateStatus = async (userId: string, isActive: boolean) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
+        }
+
+        const { jwtDecode } = require('jwt-decode');
+        const decoded: any = jwtDecode(token);
+        const currentUserId = decoded.userId || decoded.id;
+
+        const requestBody = {
+            targetUserId: userId,
+            userId: currentUserId,
+            isActive: isActive,
+        };
+
+        console.log('🔍 Update status request body:', requestBody);
+
+        const response = await axios.patch(
+            `${API_BASE_URL}/auth/update-status`,
+            requestBody,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
+            }
+        );
+
+
+        console.log(`✅ User status updated to ${isActive ? 'Active' : 'Inactive'}:`, response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('❌ Error updating user status:', error);
+        throw new Error(error.response?.data?.message || 'การอัปเดตสถานะผู้ใช้ล้มเหลว');
     }
 };
 

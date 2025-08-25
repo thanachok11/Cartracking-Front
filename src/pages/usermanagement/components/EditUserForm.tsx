@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole } from '../../../types/User';
-
+import '../../../styles/pages/UserForm.css';
 interface Props {
     loading: boolean;
     editingUser: User;
     availableRoles: { value: UserRole; label: string }[];
-    onUpdate: (id: string, data: { firstName: string; lastName: string; role?: UserRole }) => void;
+    onUpdate: (id: string, data: { firstName: string; lastName: string; role?: UserRole; isActive?: boolean; }) => void;
     onCancel: () => void;
 }
 
@@ -73,7 +73,7 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
 
                     <div className="form-actions">
                         <button type="submit" className="btn-primary" disabled={loading}>
-                            {loading ? 'Processing...' : 'อัปเดตผู้ใช้'}
+                            {loading ? 'กำลังอัพเดทข้อมูล...' : 'อัปเดตผู้ใช้'}
                         </button>
                         <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
                     </div>

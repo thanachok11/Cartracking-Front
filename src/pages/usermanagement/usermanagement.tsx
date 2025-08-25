@@ -7,7 +7,8 @@ import {
     deleteUser, 
     updateUserRole,
     getCurrentUserInfo,
-    roleToString
+    roleToString,
+    updateStatus
 } from '../../api/components/usersApi';
 import '../../styles/pages/SettingsPage.css';
 import CreateUserForm from './components/CreateUserForm';
@@ -18,6 +19,7 @@ interface UserFormData {
     email: string;
     password: string;
     role: UserRole;
+    isActive?:boolean;
 }
 
 // Helper function to get role display name
@@ -65,7 +67,8 @@ const UserManagement: React.FC = () => {
         lastName: '',
         email: '',
         password: '',
-        role: UserRole.LEVEL_2
+        role: UserRole.LEVEL_2,
+       
     });
 
     // Load current user and all users
@@ -112,113 +115,6 @@ const UserManagement: React.FC = () => {
         } catch (err: any) {
             console.error('❌ Error loading data:', err);
             setError(err.message || 'Failed to load data');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === 'role' ? parseInt(value) as UserRole : value
-        }));
-    };
-
-    const handleCreateUser = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        try {
-            setLoading(true);
-            setError('');
-            
-            // Check if current user can assign the selected role
-            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
-            if (!canAssignRole(currentRole, formData.role)) {
-                setError('You do not have permission to assign this role');
-                return;
-            }
-            
-            const userData = {
-                email: formData.email,
-                password: formData.password,
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                role: roleToString(formData.role) // Convert enum to string for backend
-            };
-            
-            console.log('🔍 Creating user with data:', userData);
-            
-            await createUser(userData);
-            setSuccess('สร้างผู้ใช้สำเร็จ!');
-            
-            // Reset form and close
-            setFormData({
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                role: UserRole.LEVEL_2
-            });
-            setShowCreateForm(false);
-            
-            // Reload users
-            await loadData();
-            
-        } catch (err: any) {
-            console.error('❌ ข้อผิดพลาดในการสร้างผู้ใช้:', err);
-            setError(err.message || 'ไม่สามารถสร้างผู้ใช้ได้');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleUpdateUser = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        if (!editingUser) return;
-        
-        try {
-            setLoading(true);
-            setError('');
-            
-            // Check if current user can assign the selected role
-            const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
-            if (formData.role !== editingUser.role && !canAssignRole(currentRole, formData.role)) {
-                setError('คุณไม่มีสิทธิ์มอบหมายบทบาทนี้');
-                return;
-            }
-            
-            // อัพเดตข้อมูลผู้ใช้ทั่วไป
-            await updateUser(editingUser.id, {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-            });
-            
-            // อัพเดต role หากมีการเปลี่ยนแปลง
-            if (formData.role !== editingUser.role) {
-                const newRoleString = roleToString(formData.role);
-                await updateUserRole(editingUser.id, newRoleString);
-            }
-            
-            setSuccess('อัปเดตผู้ใช้สำเร็จ!');
-            setEditingUser(null);
-            
-            // Reset form
-            setFormData({
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                role: UserRole.LEVEL_2
-            });
-            
-            // Reload users
-            await loadData();
-            
-        } catch (err: any) {
-            console.error('❌ ข้อผิดพลาดในการอัปเดตผู้ใช้:', err);
-            setError(err.message || 'ไม่สามารถอัปเดตผู้ใช้ได้');
         } finally {
             setLoading(false);
         }
@@ -282,7 +178,8 @@ const UserManagement: React.FC = () => {
             lastName: user.lastName,
             email: user.email,
             password: '',
-            role: user.role
+            role: user.role,
+            isActive:user.isActive
         });
         setShowCreateForm(false);
     };
@@ -314,12 +211,27 @@ const UserManagement: React.FC = () => {
             roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
         }
         
-        // if (currentRole >= UserRole.LEVEL_5) {
-        //     roles.push({ value: UserRole.LEVEL_5, label: 'ผู้ดูแลระบบสูงสุด' });
-        // }
         
         return roles;
     };
+    const handleStatusChange = async (id: string, newStatus: number) => {
+        try {
+            setLoading(true);
+
+            // ส่งไปอัพเดทสถานะผู้ใช้โดยใช้ฟังก์ชัน updateStatus
+            await updateStatus(id, newStatus === 1);
+
+            setSuccess(newStatus === 1 ? 'เปิดใช้งานผู้ใช้แล้ว' : 'ปิดการใช้งานผู้ใช้แล้ว');
+
+            // โหลดข้อมูลใหม่เพื่อรีเฟรช table
+            await loadData();
+        } catch (err: any) {
+            setError(err.message || 'ไม่สามารถอัปเดตสถานะได้');
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const getCreateRoles = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
@@ -531,10 +443,17 @@ const UserManagement: React.FC = () => {
                                     </td>
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td>
-                                        <span className={`status ${user.isActive ? 'active' : 'inactive'}`}>
-                                            {user.isActive ? 'เปิดใช้งาน' : 'ปดการใช้งาน'}
-                                        </span>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={user.isActive}
+                                                disabled={loading || !canEditThisUser}
+                                                onChange={(e) => handleStatusChange(user.id, e.target.checked ? 1 : 0)}
+                                            />
+                                            <span className="slider"></span>
+                                        </label>
                                     </td>
+
                                     <td>
                                         <div className="action-buttons">
                                             <button
