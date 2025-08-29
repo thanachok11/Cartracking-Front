@@ -85,30 +85,21 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
             saveToken(loginData.token);
         }
 
-        // ยิง loginContainers ต่อ
-        try {
-            const containerRes = await axios.post(
-                `${API_BASE_URL}/loginContainers`,
-                null,
-                { withCredentials: true } // ✅ สำคัญ
-            );
-
-            const base64Cookie = containerRes.data.cookie;
-            localStorage.setItem('container_cookie', base64Cookie);
-            console.log('container_cookie saved');
-        } catch (containerErr: any) {
-            console.warn(
-                'Failed to login to container system:',
-                containerErr?.response?.data || containerErr.message
-            );
-        }
-
         return loginData;
 
     } catch (error: any) {
+        if (
+            error.code === 'ERR_NETWORK' ||
+            error.message.includes('Network Error') ||
+            error.message.includes('ERR_CONNECTION_REFUSED')
+        ) {
+            throw new Error('กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต หรือเซิร์ฟเวอร์ไม่พร้อมใช้งาน');
+        }
+
         throw new Error(error.response?.data?.message || 'User or password is incorrect');
     }
 };
+
 
 // ดึงผู้ใช้ทั้งหมด - ใช้ API endpoint ที่ถูกต้องตาม backend
 export const fetchAllUsers = async (): Promise<{ users: User[] }> => {

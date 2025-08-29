@@ -26,6 +26,30 @@ export interface VehiclePosition {
     driver_notes?: string;
 }
 
+// Shared event type used by map panels and other consumers (jobs etc.)
+export interface VehicleEvent {
+    // timestamp fields — map code accepts either `date` or `event_ts`
+    date?: string;
+    event_ts?: string;
+
+    // location fields — map code accesses several variants
+    lat?: number | string;
+    lng?: number | string;
+    latitude?: number | string;
+    longitude?: number | string;
+    coords?: { lat?: number | string; lng?: number | string };
+
+    // common payload
+    sensors?: Record<string, any>;
+    vehicleStatus?: string;
+    speed?: number;
+    address?: string;
+    location?: string;
+    description?: string;
+    position_description?: any;
+    // allow arbitrary extra fields (actionAlerts, etc.)
+    [key: string]: any;
+}
 export interface Driver {
     out_driver_id: string;
     out_driver_name: string;

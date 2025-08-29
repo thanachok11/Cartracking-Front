@@ -24,6 +24,8 @@ import DriverProfilePage from './pages/driver/components/DriverProfilePage';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
+import EventViewerPage from "./pages/EventViewerPage";
+import ReportPage from "./pages/ReportPage";
 
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
@@ -140,9 +142,8 @@ const App: React.FC = () => {
     <Router>
       <GoogleMapsProvider>
         <div
-          className={`app-container ${
-            isSidebarOpen ? "sidebar-open" : "sidebar-closed"
-          }`}
+          className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+            }`}
         >
           {!token && (
             <Header
@@ -177,15 +178,15 @@ const App: React.FC = () => {
               <Route
                 path="/forgot-password"
                 element={
-                    <ForgotPassword />     
+                  <ForgotPassword />
                 }
               />
               <Route
                 path="/reset-password"
                 element={
-                  
-                    <ResetPassword />
-                  
+
+                  <ResetPassword />
+
                 }
               />
               <Route
@@ -220,7 +221,7 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route 
+              <Route
                 path="/drivers/:id" element={
                   <ProtectedRoute>
                     <DriverProfilePage />
@@ -230,6 +231,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <ContainerPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/events/:registration"
+                element={
+                  <ProtectedRoute>
+                    <EventViewerPage />
                   </ProtectedRoute>
                 }
               />
@@ -254,6 +263,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <Userinfo />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/report"
+                element={
+                  <ProtectedRoute>
+                    <ReportPage />
                   </ProtectedRoute>
                 }
               />
