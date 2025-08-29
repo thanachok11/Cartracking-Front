@@ -15,7 +15,6 @@ import { GoogleMapsProvider } from "./pages/GoogleMapsProvider";
 import Drivers from "./pages/driver/DriverPage";
 import VehiclePage from "./pages/VehiclePage";
 import ContainerPage from "./pages/container/containerpage";
-import TrackContainersPage from "./pages/TrackContainer";
 import Dashboard from "./pages/Dashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import UserManagement from "./pages/usermanagement/usermanagement";
@@ -31,18 +30,18 @@ import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
 
-//Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
+// Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Logout อัตโนมัติเมื่อ token หมดอายุ
       logoutUser();
       window.location.href = "/";
     }
     return Promise.reject(error);
   }
 );
+
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const App: React.FC = () => {
@@ -54,12 +53,11 @@ const App: React.FC = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) return; // ยังไม่ login → ไม่ต้องติดตั้ง renew token
+    if (!token) return;
 
     let timeoutId: NodeJS.Timeout;
-    let lastRenewTime = 0; // ⬅️ เวลาในรูป Unix timestamp (ms)
-
-    const COOLDOWN_MS = 5 * 60 * 1000; //5 นาที
+    let lastRenewTime = 0;
+    const COOLDOWN_MS = 5 * 60 * 1000;
 
     const isTokenExpiringSoon = (token: string | null, bufferSeconds = 60) => {
       if (!token) return true;
@@ -71,7 +69,7 @@ const App: React.FC = () => {
         return true;
       }
     };
-    // เรียก API renewCookie ที่ backend เพื่อ renew session cookie ด้วย
+
     const renewSessionCookie = async () => {
       try {
         await axios.post(
@@ -100,9 +98,8 @@ const App: React.FC = () => {
         const data = await response.json();
         if (data.token) {
           localStorage.setItem("token", data.token);
-          lastRenewTime = Date.now(); // ✅ อัปเดตเวลาที่ renew ล่าสุด
+          lastRenewTime = Date.now();
           console.log("🔄 Token renewed successfully");
-          // เรียก renew session cookie ด้วย
           await renewSessionCookie();
         }
       } catch (err) {
@@ -140,145 +137,126 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <GoogleMapsProvider>
-        <div
-          className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"
-            }`}
-        >
-          {!token && (
-            <Header
-              toggleSidebar={toggleSidebar}
-              isSidebarOpen={isSidebarOpen}
-            />
-          )}
-          {token && (
-            <Sidebar
-              isSidebarOpen={isSidebarOpen}
-              toggleSidebar={toggleSidebar}
-            />
-          )}
-          <div className="main-content">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  token ? <Navigate to="/dashboard" replace /> : <HomePage />
-                }
-              />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/unauthorized" element={<UnauthorizedPage />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/forgot-password"
-                element={
-                  <ForgotPassword />
-                }
-              />
-              <Route
-                path="/reset-password"
-                element={
+      <div
+        className={`app-container ${isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+          }`}
+      >
+        {!token && (
+          <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+        )}
+        {token && (
+          <Sidebar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        )}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-                  <ResetPassword />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/unauthorized" element={<UnauthorizedPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <GoogleMapsProvider>
+                  <Dashboard />
+                  </GoogleMapsProvider>
+                </ProtectedRoute>
+                
+              }
+            />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-                }
-              />
-              <Route
-                path="/map"
-                element={
-                  <ProtectedRoute>
+            {/* ✅ โหลด Google Maps Provider เฉพาะตอนเข้า /map */}
+            <Route
+              path="/map"
+              element={
+                <ProtectedRoute>
+                  <GoogleMapsProvider>
                     <MapView />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/vehicles"
-                element={
-                  <ProtectedRoute>
-                    <VehiclePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/vehicle/:id/view"
-                element={
-                  <ProtectedRoute>
-                    <VehicleTimelinePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/Drivers"
-                element={
-                  <ProtectedRoute>
-                    <Drivers />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/drivers/:id" element={
-                  <ProtectedRoute>
-                    <DriverProfilePage />
-                  </ProtectedRoute>} />
-              <Route
-                path="/containers"
-                element={
-                  <ProtectedRoute>
-                    <ContainerPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/events/:registration"
-                element={
-                  <ProtectedRoute>
-                    <EventViewerPage />
-                  </ProtectedRoute>
-                }
-              />
-              {/* <Route
-                path="/track"
-                element={
-                  <ProtectedRoute>
-                    <TrackContainersPage />
-                  </ProtectedRoute>
-                }
-              /> */}
-              <Route
-                path="/management"
-                element={
-                  <ProtectedRoute>
-                    <UserManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Userinfo />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/report"
-                element={
-                  <ProtectedRoute>
-                    <ReportPage />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
+                  </GoogleMapsProvider>
+                </ProtectedRoute>
+              }
+            />
 
-          </div>
+            <Route
+              path="/vehicles"
+              element={
+                <ProtectedRoute>
+                  <VehiclePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vehicle/:id/view"
+              element={
+                <ProtectedRoute>
+                  <VehicleTimelinePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Drivers"
+              element={
+                <ProtectedRoute>
+                  <Drivers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/drivers/:id"
+              element={
+                <ProtectedRoute>
+                  <DriverProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/containers"
+              element={
+                <ProtectedRoute>
+                  <ContainerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/:registration"
+              element={
+                <ProtectedRoute>
+                  <EventViewerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/management"
+              element={
+                <ProtectedRoute>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Userinfo />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/report"
+              element={
+                <ProtectedRoute>
+                  <ReportPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
         </div>
-      </GoogleMapsProvider>
+      </div>
     </Router>
   );
 };
