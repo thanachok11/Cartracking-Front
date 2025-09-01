@@ -5,7 +5,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import VehicleTimelinePage from "./pages/VehicleTimeline";
 import MapView from "./pages/map/GoogleMapView";
@@ -24,7 +23,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
 import EventViewerPage from "./pages/EventViewerPage";
-import ReportPage from "./pages/ReportPage";
+import DataTodayPage from "./pages/DataTodayPage";
 
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
@@ -247,10 +246,10 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/report"
+              path="/data-today"
               element={
                 <ProtectedRoute>
-                  <ReportPage />
+                  <DataTodayPage />
                 </ProtectedRoute>
               }
             />
