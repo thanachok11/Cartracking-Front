@@ -14,6 +14,7 @@ import {
     faBars,
     faTimes,
     faUserCog,
+    faFileAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getUserPermissions, logoutUser } from "../../api/auth/auth";
@@ -174,6 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         { path: "/vehicles", icon: faCar, label: "ยานพาหนะ", tooltip: "Vehicles", minRole: UserRole.LEVEL_3 },
         { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_3 },
         { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_3 },
+        { path: "/report", icon: faFileAlt, label: "รายงาน", tooltip: "Reports", minRole: UserRole.LEVEL_3 }
     ];
 
     // ก่อน render ให้คำนวณ role ของผู้ใช้และกรองเมนู
