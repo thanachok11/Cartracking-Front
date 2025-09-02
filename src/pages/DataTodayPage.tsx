@@ -283,6 +283,22 @@ export default function DataTodayPage() {
     downloadCSV(`data_today_${new Date().toISOString().slice(0,10)}.csv`, rowsOut);
   };
 
+  const openOnMap = (station?: string) => {
+    if (!station) return;
+    // expect formats like "lat,lng" or "lat lng" with optional spaces
+    const m = String(station).trim().match(/(-?\d+(?:\.\d+)?)[ ,]+(-?\d+(?:\.\d+)?)/);
+    if (!m) {
+      // fallback: try to open search with the raw station string
+      const q = encodeURIComponent(station);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+      return;
+    }
+    const lat = m[1];
+    const lng = m[2];
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
+    window.open(url, '_blank');
+  };
+
   return (
     <div className="data-today-container">
       <h2>เพิ่มงานและออกรายงาน</h2>
@@ -451,8 +467,11 @@ export default function DataTodayPage() {
                 <td>{r.head_registration}</td>
                 <td>{r.tail_registration}</td>
                 <td>{r.container_no}</td>
-                <td>{r.station_in}</td>
-                
+                <td style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span>{r.station_in}</span>
+                  <button className="btn btn-ghost" onClick={() => openOnMap(r.station_in)}>แผนที่</button>
+                </td>
+
                 <td>{r.companyname}</td>
                 <td className="actions-col">
                   <button className="btn btn-ghost" onClick={() => handleEdit(r)}>แก้ไข</button>
