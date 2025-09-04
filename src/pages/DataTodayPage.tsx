@@ -584,7 +584,7 @@ export default function DataTodayPage() {
                 </div>
               </div>
               <div className="row">
-                <label>สถานะ</label>
+                <label>ตำแหน่ง</label>
                 <input value={form.station_in || ''} onChange={(e) => handleChange('station_in', e.target.value)} required />
               </div>
               <div className="row">
@@ -615,7 +615,7 @@ export default function DataTodayPage() {
               <th>ทะเบียนหัว</th>
               <th>ทะเบียนหาง</th>
               <th>หมายเลขตู้</th>
-              <th>สถานะ</th>
+              <th>ตำแหน่ง</th>
               <th>บริษัท</th>
               <th></th>
             </tr>
