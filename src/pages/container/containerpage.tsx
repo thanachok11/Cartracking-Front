@@ -123,10 +123,11 @@ export default function ContainerPage() {
   }, []);
 
   const handleSave = useCallback(() => {
+    if (saving) return; // ป้องกันการส่งซ้ำ
     const val = validateForm(formData);
     if (val) return setError(val);
     editingContainer ? handleUpdate() : handleCreate();
-  }, [editingContainer, handleUpdate, handleCreate, formData]);
+  }, [saving, editingContainer, handleUpdate, handleCreate, formData]);
 
   useEffect(() => {
     loadContainers();

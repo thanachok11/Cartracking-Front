@@ -67,12 +67,15 @@ export default function ContainerModal({
 
           <div className="form-group">
             <label>ชื่อบริษัท:</label>
-            <input
-              type="text"
+            <select
               value={form.companyName || ''}
               onChange={(e) => onChange({ companyName: e.target.value })}
-              placeholder="กรอกชื่อบริษัท"
-            />
+              required
+            >
+              <option value="">-- เลือกบริษัท --</option>
+              <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+              <option value="รถร่วม">รถร่วม</option>
+            </select>
           </div>
 
           <div className="form-group">

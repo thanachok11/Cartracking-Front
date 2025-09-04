@@ -18,6 +18,7 @@ const VehiclePage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     // Modal states
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -53,7 +54,10 @@ const VehiclePage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (submitting) return; // ป้องกันการส่งซ้ำ
+        
         try {
+            setSubmitting(true);
             if (editingTruck) {
                 await updateTruckHead(editingTruck._id!, form);
             } else {
@@ -64,6 +68,8 @@ const VehiclePage: React.FC = () => {
         } catch (error) {
             console.error('Error saving truck head:', error);
             setError('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+        } finally {
+            setSubmitting(false); // คืนค่า disable ปุ่ม
         }
     };
 
@@ -255,22 +261,24 @@ const VehiclePage: React.FC = () => {
 
                                 <div className="form-group">
                                     <label htmlFor="companyName">ชื่อบริษัท *</label>
-                                    <input
-                                        type="text"
+                                    <select
                                         id="companyName"
                                         value={form.companyName}
                                         onChange={(e) => handleInputChange('companyName', e.target.value)}
-                                        placeholder="กรอกชื่อบริษัท"
                                         required
-                                    />
+                                    >
+                                        <option value="">-- เลือกบริษัท --</option>
+                                        <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                                        <option value="รถร่วม">รถร่วม</option>
+                                    </select>
                                 </div>
 
                                 <div className="form-actions">
                                     <button type="button" onClick={handleCloseModal} className="cancel-btn">
                                         ยกเลิก
                                     </button>
-                                    <button type="submit" className="save-btn">
-                                        {editingTruck ? 'บันทึกการแก้ไข' : 'เพิ่มข้อมูล'}
+                                    <button type="submit" className="save-btn" disabled={submitting}>
+                                        {submitting ? 'กำลังบันทึก...' : (editingTruck ? 'บันทึกการแก้ไข' : 'เพิ่มข้อมูล')}
                                     </button>
                                 </div>
                             </form>

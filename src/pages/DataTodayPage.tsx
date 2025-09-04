@@ -60,6 +60,7 @@ export default function DataTodayPage() {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<DataToday | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [drivers, setDrivers] = useState<string[]>([]);
   const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
   const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
@@ -255,7 +256,10 @@ export default function DataTodayPage() {
 
   const handleCreateOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return; // ป้องกันการส่งซ้ำ
+    
     try {
+      setSubmitting(true);
       setLoading(true);
       setError(null);
       // prepare payload with allowed fields only (omit datetime_out and station_out)
@@ -282,6 +286,7 @@ export default function DataTodayPage() {
     } catch (err: any) {
       setError(err?.message ?? 'Save failed');
     } finally {
+      setSubmitting(false); // คืนค่า disable ปุ่ม
       setLoading(false);
     }
   };
@@ -465,7 +470,7 @@ export default function DataTodayPage() {
 
           <button className="btn btn-ghost" onClick={() => { setFilterDriver(''); setFilterHeadReg(''); setFilterContainer(''); setFilterFrom(''); setFilterTo(''); setFilterFromDisplay(''); setFilterToDisplay(''); }}>ล้างตัวกรอง</button>
 
-          <button className="add-data-button" onClick={() => { setForm(empty); setEditing(null); setShowModal(true); }}>เพิ่มรายการ</button>
+          <button className="btn btn-primary" onClick={() => { setForm(empty); setEditing(null); setShowModal(true); }}>เพิ่มรายการ</button>
         </div>
       </div>
 
@@ -584,10 +589,16 @@ export default function DataTodayPage() {
               </div>
               <div className="row">
                 <label>บริษัท</label>
-                <input value={form.companyname || ''} onChange={(e) => handleChange('companyname', e.target.value)} required />
+                <select value={form.companyname || ''} onChange={(e) => handleChange('companyname', e.target.value)} required>
+                  <option value="">-- เลือกบริษัท --</option>
+                  <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                  <option value="รถร่วม">รถร่วม</option>
+                </select>
               </div>
               <div className="form-actions">
-                <button className="btn btn-primary" type="submit">{editing ? 'บันทึกการแก้ไข' : 'เพิ่มรายการ'}</button>
+                <button className="btn btn-primary" type="submit" disabled={submitting}>
+                  {submitting ? 'กำลังบันทึก...' : (editing ? 'บันทึกการแก้ไข' : 'เพิ่มรายการ')}
+                </button>
                 <button type="button" className="btn btn-ghost" onClick={() => { setShowModal(false); setEditing(null); setForm(empty); }}>ยกเลิก</button>
               </div>
             </form>
