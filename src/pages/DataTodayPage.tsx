@@ -465,7 +465,7 @@ export default function DataTodayPage() {
 
           <button className="btn btn-ghost" onClick={() => { setFilterDriver(''); setFilterHeadReg(''); setFilterContainer(''); setFilterFrom(''); setFilterTo(''); setFilterFromDisplay(''); setFilterToDisplay(''); }}>ล้างตัวกรอง</button>
 
-          <button className="btn btn-primary" onClick={() => { setForm(empty); setEditing(null); setShowModal(true); }}>เพิ่มรายการ</button>
+          <button className="add-data-button" onClick={() => { setForm(empty); setEditing(null); setShowModal(true); }}>เพิ่มรายการ</button>
         </div>
       </div>
 

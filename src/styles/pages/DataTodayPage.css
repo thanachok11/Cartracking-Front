@@ -1,4 +1,4 @@
-.data-today-container {
+.data-today-data {
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f7fafc;
@@ -17,8 +17,32 @@
 .table-wrap th, .table-wrap td { padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:left; }
 .actions-col { display:flex; gap:8px; }
 .btn { padding:6px 12px; border-radius:8px; border:none; cursor:pointer; }
-.btn-primary { background:linear-gradient(180deg,#3182f6,#2563eb); color:#fff; }
-.btn-ghost { background:transparent; border:1px solid #e6eef8; color:#334155; }
+.add-data-button {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.add-data-button:hover {
+  background: linear-gradient(135deg, #047857, #065f46);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.add-data-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}.btn-ghost { background:transparent; border:1px solid #e6eef8; color:#334155; }
 
 /* Modal */
 .data-modal-backdrop {
