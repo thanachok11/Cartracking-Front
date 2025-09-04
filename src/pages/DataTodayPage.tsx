@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/pages/DataTodayPage.css';
 import { fetchAllDataToday, createDataToday, updateDataToday, deleteDataToday, IDataTodayPayload } from '../api/components/dataTodayApi';
 import { fetchAllDrivers } from '../api/components/driversApi';
-import { fetchVehicle } from '../api/components/MapApi';
+import { fetchTruckHeads, fetchTruckTails } from '../api/components/truckApi';
 import { fetchAllContainers } from '../api/components/containersApi';
 
 type DataToday = {
@@ -61,7 +61,9 @@ export default function DataTodayPage() {
   const [editing, setEditing] = useState<DataToday | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [drivers, setDrivers] = useState<string[]>([]);
-  const [vehicleRegs, setVehicleRegs] = useState<string[]>([]);
+  const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
+  const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
+  const [vehicleRegs, setVehicleRegs] = useState<string[]>([]); // kept for backward compatibility
   const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
   // filters
   const [filterDriver, setFilterDriver] = useState<string>('');
@@ -173,10 +175,18 @@ export default function DataTodayPage() {
       }
 
       try {
-        const v = await fetchVehicle();
+        const [truckHeads, truckTails] = await Promise.all([
+          fetchTruckHeads(),
+          fetchTruckTails()
+        ]);
         if (!cancelled) {
-          const regs = Array.isArray(v) ? v.map((x: any) => (x.registration || x.vehicle_id || '')).filter(Boolean) : [];
-          setVehicleRegs(Array.from(new Set(regs)));
+          const headRegs = Array.isArray(truckHeads) ? truckHeads.map((x: any) => x.licensePlate || '').filter(Boolean) : [];
+          const tailRegs = Array.isArray(truckTails) ? truckTails.map((x: any) => x.licensePlate || '').filter(Boolean) : [];
+          setTruckHeadRegs(Array.from(new Set(headRegs)));
+          setTruckTailRegs(Array.from(new Set(tailRegs)));
+          // Keep vehicleRegs for filter compatibility
+          const allRegs = [...headRegs, ...tailRegs];
+          setVehicleRegs(Array.from(new Set(allRegs)));
         }
       } catch (err) {
         // ignore
@@ -197,6 +207,51 @@ export default function DataTodayPage() {
   }, []);
 
   const handleChange = (k: keyof DataToday, v: any) => setForm((s) => ({ ...s, [k]: v }));
+
+  // Function สำหรับ format ทะเบียนรถ xxx-xxxx
+  const formatLicensePlate = (value: string): string => {
+    // ลบตัวอักษรที่ไม่ใช่ตัวอักษรและตัวเลข
+    const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    
+    // จำกัดความยาวไม่เกิน 7 ตัวอักษร
+    const limited = cleaned.slice(0, 7);
+    
+    // เพิ่ม dash หลังตัวอักษรที่ 3
+    if (limited.length > 3) {
+      return limited.slice(0, 3) + '-' + limited.slice(3);
+    }
+    return limited;
+  };
+
+  // Function สำหรับ format container number xxxx-xxxxxxx
+  const formatContainerNumber = (value: string): string => {
+    // ลบตัวอักษรที่ไม่ใช่ตัวอักษรและตัวเลข
+    const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    
+    // จำกัดความยาวไม่เกิน 11 ตัวอักษร
+    const limited = cleaned.slice(0, 11);
+    
+    // เพิ่ม dash หลังตัวอักษรที่ 4
+    if (limited.length > 4) {
+      return limited.slice(0, 4) + '-' + limited.slice(4);
+    }
+    return limited;
+  };
+
+  const handleHeadRegistrationChange = (value: string) => {
+    const formatted = formatLicensePlate(value);
+    handleChange('head_registration', formatted);
+  };
+
+  const handleTailRegistrationChange = (value: string) => {
+    const formatted = formatLicensePlate(value);
+    handleChange('tail_registration', formatted);
+  };
+
+  const handleContainerNumberChange = (value: string) => {
+    const formatted = formatContainerNumber(value);
+    handleChange('container_no', formatted);
+  };
 
   const handleCreateOrUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -313,26 +368,65 @@ export default function DataTodayPage() {
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             คนขับ
-            <select value={filterDriver} onChange={(e) => setFilterDriver(e.target.value)}>
-              <option value="">ทุกคนขับ</option>
-              {drivers.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
+            <div>
+              <input 
+                list="filter-driver-list"
+                value={filterDriver} 
+                onChange={(e) => setFilterDriver(e.target.value)}
+                placeholder="ทุกคนขับ"
+                style={{ width: 150 }}
+              />
+              <datalist id="filter-driver-list">
+                {drivers.map((d) => <option key={d} value={d} />)}
+              </datalist>
+              {filterDriver && !drivers.includes(filterDriver) && (
+                <div style={{ color: 'orange', fontSize: '0.8em', position: 'absolute', zIndex: 10, background: 'white', padding: '2px', border: '1px solid orange', borderRadius: '2px' }}>
+                  ไม่พบ "{filterDriver}"
+                </div>
+              )}
+            </div>
           </label>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             หมายเลขตู้
-            <select value={filterContainer} onChange={(e) => setFilterContainer(e.target.value)}>
-              <option value="">ทุกตู้</option>
-              {containerNumbers.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <div>
+              <input 
+                list="filter-container-list"
+                value={filterContainer} 
+                onChange={(e) => setFilterContainer(e.target.value)}
+                placeholder="ทุกตู้"
+                style={{ width: 150 }}
+              />
+              <datalist id="filter-container-list">
+                {containerNumbers.map((c) => <option key={c} value={c} />)}
+              </datalist>
+              {filterContainer && !containerNumbers.includes(filterContainer) && (
+                <div style={{ color: 'orange', fontSize: '0.8em', position: 'absolute', zIndex: 10, background: 'white', padding: '2px', border: '1px solid orange', borderRadius: '2px' }}>
+                  ไม่พบ "{filterContainer}"
+                </div>
+              )}
+            </div>
           </label>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             ทะเบียนหัว
-            <select value={filterHeadReg} onChange={(e) => setFilterHeadReg(e.target.value)}>
-              <option value="">ทุกทะเบียน</option>
-              {vehicleRegs.map((r) => <option key={r} value={r}>{r}</option>)}
-            </select>
+            <div>
+              <input 
+                list="filter-headreg-list"
+                value={filterHeadReg} 
+                onChange={(e) => setFilterHeadReg(e.target.value)}
+                placeholder="ทุกทะเบียน"
+                style={{ width: 150 }}
+              />
+              <datalist id="filter-headreg-list">
+                {truckHeadRegs.map((r) => <option key={r} value={r} />)}
+              </datalist>
+              {filterHeadReg && !truckHeadRegs.includes(filterHeadReg) && (
+                <div style={{ color: 'orange', fontSize: '0.8em', position: 'absolute', zIndex: 10, background: 'white', padding: '2px', border: '1px solid orange', borderRadius: '2px' }}>
+                  ไม่พบทะเบียนหัว "{filterHeadReg}"
+                </div>
+              )}
+            </div>
           </label>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -403,30 +497,86 @@ export default function DataTodayPage() {
               </div>
               <div className="row">
                 <label>คนขับ</label>
-                <select value={form.driver_name || ''} onChange={(e) => handleChange('driver_name', e.target.value)} required>
-                  <option value="">-- เลือกคนขับ --</option>
-                  {drivers.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
+                <div>
+                  <input 
+                    list="driver-list"
+                    value={form.driver_name || ''} 
+                    onChange={(e) => handleChange('driver_name', e.target.value)} 
+                    placeholder="-- เลือกหรือพิมพ์ชื่อคนขับ --"
+                    required 
+                  />
+                  <datalist id="driver-list">
+                    {drivers.map((d) => <option key={d} value={d} />)}
+                  </datalist>
+                  {form.driver_name && !drivers.includes(form.driver_name) && (
+                    <div style={{ color: 'orange', fontSize: '0.9em', marginTop: '4px' }}>
+                      ไม่พบข้อมูล "{form.driver_name}"
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="row">
                 <label>ทะเบียนหัว</label>
-                <select value={form.head_registration || ''} onChange={(e) => handleChange('head_registration', e.target.value)} required>
-                  <option value="">-- เลือกทะเบียน --</option>
-                  {vehicleRegs.map((r) => <option key={r} value={r}>{r}</option>)}
-                </select>
+                <div>
+                  <input 
+                    list="truck-head-list"
+                    value={form.head_registration || ''} 
+                    onChange={(e) => handleHeadRegistrationChange(e.target.value)} 
+                    placeholder="-- เลือกหรือพิมพ์ทะเบียนหัว (xxx-xxxx) --"
+                    maxLength={8}
+                    required 
+                  />
+                  <datalist id="truck-head-list">
+                    {truckHeadRegs.map((r) => <option key={r} value={r} />)}
+                  </datalist>
+                  {form.head_registration && !truckHeadRegs.includes(form.head_registration) && (
+                    <div style={{ color: 'orange', fontSize: '0.9em', marginTop: '4px' }}>
+                      ไม่พบข้อมูลทะเบียนหัว "{form.head_registration}"
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="row">
                 <label>ทะเบียนหาง</label>
-                <input value={form.tail_registration || ''} onChange={(e) => handleChange('tail_registration', e.target.value)} required />
+                <div>
+                  <input 
+                    list="truck-tail-list"
+                    value={form.tail_registration || ''} 
+                    onChange={(e) => handleTailRegistrationChange(e.target.value)} 
+                    placeholder="-- เลือกหรือพิมพ์ทะเบียนหาง (xxx-xxxx) --"
+                    maxLength={8}
+                    required 
+                  />
+                  <datalist id="truck-tail-list">
+                    {truckTailRegs.map((r) => <option key={r} value={r} />)}
+                  </datalist>
+                  {form.tail_registration && !truckTailRegs.includes(form.tail_registration) && (
+                    <div style={{ color: 'orange', fontSize: '0.9em', marginTop: '4px' }}>
+                      ไม่พบข้อมูลทะเบียนหาง "{form.tail_registration}"
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="row">
                 <label>หมายเลขตู้</label>
-                <select value={form.container_no || ''} onChange={(e) => handleChange('container_no', e.target.value)} required>
-                  <option value="">-- เลือกคอนเทนเนอร์ --</option>
-                  {containerNumbers.map((cn) => (
-                    <option key={cn} value={cn}>{cn}</option>
-                  ))}
-                </select>
+                <div>
+                  <input 
+                    list="container-list"
+                    value={form.container_no || ''} 
+                    onChange={(e) => handleContainerNumberChange(e.target.value)} 
+                    placeholder="-- เลือกหรือพิมพ์หมายเลขตู้ (xxxx-xxxxxxx) --"
+                    maxLength={12}
+                    required 
+                  />
+                  <datalist id="container-list">
+                    {containerNumbers.map((cn) => <option key={cn} value={cn} />)}
+                  </datalist>
+                  {form.container_no && !containerNumbers.includes(form.container_no) && (
+                    <div style={{ color: 'orange', fontSize: '0.9em', marginTop: '4px' }}>
+                      ไม่พบข้อมูล "{form.container_no}"
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="row">
                 <label>สถานะ</label>

@@ -12,7 +12,7 @@ import HomePage from "./components/landingPage/LandingPage";
 import Sidebar from "./components/layout/Sidebar";
 import { GoogleMapsProvider } from "./pages/GoogleMapsProvider";
 import Drivers from "./pages/driver/DriverPage";
-import VehiclePage from "./pages/VehiclePage";
+import VehiclePage from "./pages/vehicles/VehiclePage";
 import ContainerPage from "./pages/container/containerpage";
 import Dashboard from "./pages/Dashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
@@ -24,6 +24,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
 import EventViewerPage from "./pages/EventViewerPage";
 import DataTodayPage from "./pages/DataTodayPage";
+import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
@@ -250,6 +251,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <DataTodayPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/vehiclestail"
+              element={
+                <ProtectedRoute>
+                  <VehicleTailPage />
                 </ProtectedRoute>
               }
             />

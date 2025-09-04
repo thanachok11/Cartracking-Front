@@ -17,10 +17,30 @@ interface Props {
   onSave: () => void;
 }
 
+// Function สำหรับ format container number xxxx-xxxxxxx
+const formatContainerNumber = (value: string): string => {
+  // ลบตัวอักษรที่ไม่ใช่ตัวอักษรและตัวเลข
+  const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  
+  // จำกัดความยาวไม่เกิน 11 ตัวอักษร
+  const limited = cleaned.slice(0, 11);
+  
+  // เพิ่ม dash หลังตัวอักษรที่ 4
+  if (limited.length > 4) {
+    return limited.slice(0, 4) + '-' + limited.slice(4);
+  }
+  return limited;
+};
+
 export default function ContainerModal({
   visible, editing, error, saving, form, sizes, onChange, onClose, onSave,
 }: Props) {
   if (!visible) return null;
+
+  const handleContainerNumberChange = (value: string) => {
+    const formatted = formatContainerNumber(value);
+    onChange({ containerNumber: formatted });
+  };
 
   return (
     <div className="modal-overlay">
@@ -38,8 +58,9 @@ export default function ContainerModal({
             <input
               type="text"
               value={form.containerNumber || ''}
-              onChange={(e) => onChange({ containerNumber: e.target.value })}
-              placeholder="กรอกหมายเลขตู้คอนเทนเนอร์"
+              onChange={(e) => handleContainerNumberChange(e.target.value)}
+              placeholder="xxxx-xxxxxxx"
+              maxLength={12}
               required
             />
           </div>

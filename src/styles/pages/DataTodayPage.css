@@ -31,6 +31,15 @@
 .data-modal .row { margin-bottom:8px; }
 .data-modal select, .data-modal input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #e6eef8; }
 
+/* Input Helper Text */
+.input-helper {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
 
 @media (max-width:900px) {
   .data-form { grid-template-columns: 1fr; }

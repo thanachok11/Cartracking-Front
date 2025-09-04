@@ -169,13 +169,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         minRole?: UserRole; // ถ้าจำเป็นต้องมี role ขั้นต่ำ
     }> = [
         { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_1 },
-        { path: "/map", icon: faMapMarkedAlt, label: "แผนที่", tooltip: "Map View", minRole: UserRole.LEVEL_1 },
-        { path: "/track", icon: faBox, label: "ติดตามตู้คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_3 },
-        { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_4 },
-        { path: "/vehicles", icon: faCar, label: "ยานพาหนะ", tooltip: "Vehicles", minRole: UserRole.LEVEL_3 },
+        { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_1 },
+        { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_3 },
+        { path: "/data-today", icon: faFileAlt, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_3 },
         { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_3 },
+        { path: "/vehicles", icon: faCar, label: "ทะเบียนหัว", tooltip: "Vehicles", minRole: UserRole.LEVEL_3 },
+        { path: "/vehiclestail", icon: faCar, label: "ทะเบียนท้าย", tooltip: "Vehicles_tail", minRole: UserRole.LEVEL_3 },
         { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_3 },
-        { path: "/data-today", icon: faFileAlt, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_3 }
+        { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_4 },
     ];
 
     // ก่อน render ให้คำนวณ role ของผู้ใช้และกรองเมนู

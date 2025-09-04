@@ -454,8 +454,13 @@
   .modal-footer {
     flex-direction: column;
   }
-  
-  .error-actions {
-    flex-direction: column;
-  }
+}
+
+/* Input Helper Text */
+.input-helper {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
 }
