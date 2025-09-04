@@ -615,7 +615,7 @@ export default function DataTodayPage() {
               <th>ทะเบียนหัว</th>
               <th>ทะเบียนหาง</th>
               <th>หมายเลขตู้</th>
-              <th>ตำแหน่ง</th>
+              <th>ต</th>
               <th>บริษัท</th>
               <th></th>
             </tr>
