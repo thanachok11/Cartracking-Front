@@ -53,6 +53,7 @@
 .app-container.sidebar-open .track-container-page,
 .app-container.sidebar-open .dashboard-container,
 .app-container.sidebar-open .vehicle-container,
+.app-container.sidebar-open .data-today-toolbar,
 .app-container.sidebar-open .settings-page {
   margin: 0;
   margin-top: 10px;
@@ -66,6 +67,7 @@
 .app-container.sidebar-closed .track-container-page,
 .app-container.sidebar-closed .dashboard-container,
 .app-container.sidebar-closed .vehicle-container,
+.app-container.sidebar-closed .data-today-toolbar,
 .app-container.sidebar-closed .settings-page {
   margin: 0;
   margin-top: 10px;

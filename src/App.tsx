@@ -23,7 +23,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
 import EventViewerPage from "./pages/EventViewerPage";
-import DataTodayPage from "./pages/DataTodayPage";
+import DataTodayPage from "./pages/datatoday/DataTodayPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 
 import "./App.css";

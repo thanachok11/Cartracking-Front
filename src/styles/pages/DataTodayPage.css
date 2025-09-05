@@ -1,23 +1,115 @@
-.data-today-data {
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f7fafc;
-  color: #111827;
+/* =============================
+   DataToday - Typography
+   ============================= */
+.data-today-title {
+  margin: 0;
+  margin-left: 10px;
+  margin-top: 20px;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #1e40af;
 }
-.toolbar { display:flex; gap:10px; align-items:center; margin-bottom:12px; }
-.muted { color:#6b7280; }
-.error { color:#b91c1c; margin-bottom:8px; }
-.data-form { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; background:#fff; padding:12px; border-radius:8px; border:1px solid #e6eef8; }
-.data-form .row { display:flex; flex-direction:column; }
-.data-form label { font-size:0.9rem; color:#374151; margin-bottom:6px; }
-.data-form input { padding:8px 10px; border-radius:6px; border:1px solid #e6eef8; }
-.form-actions { grid-column:1 / -1; display:flex; gap:8px; justify-content:flex-end; }
-.table-wrap { background:#fff; padding:12px; border-radius:8px; border:1px solid #e6eef8; }
-.table-wrap table { width:100%; border-collapse:collapse; }
-.table-wrap th, .table-wrap td { padding:8px 10px; border-bottom:1px solid #f1f5f9; text-align:left; }
-.actions-col { display:flex; gap:8px; }
-.btn { padding:6px 12px; border-radius:8px; border:none; cursor:pointer; }
-.add-data-button {
+
+/* =============================
+   DataToday - Modal
+   ============================= */
+/* overlay */
+.data-today-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* modal container */
+.data-today-modal {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 480px;
+  max-width: 90%;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: data-today-fadeIn 0.3s ease;
+}
+
+/* modal title */
+.data-today-modal-title {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* form layout */
+.data-today-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.data-today-modal-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.data-today-modal-row label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.data-today-modal-row input,
+.data-today-modal-row select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.data-today-modal-row input:focus,
+.data-today-modal-row select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+/* modal actions */
+.data-today-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* =============================
+   DataToday - Buttons
+   ============================= */
+.data-today-btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #fff;
+}
+
+.data-today-btn-primary {
+  background-color: #1d4ed8;
+}
+
+.data-today-btn-primary:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+.data-today-button {
   padding: 12px 20px;
   background: linear-gradient(135deg, #059669, #047857);
   color: #fff;
@@ -33,38 +125,212 @@
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
 
-.add-data-button:hover {
+.data-today-button:hover {
   background: linear-gradient(135deg, #047857, #065f46);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
 }
-
-.add-data-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
-}.btn-ghost { background:transparent; border:1px solid #e6eef8; color:#334155; }
-
-/* Modal */
-.data-modal-backdrop {
-  position: fixed;
-  left: 0; top: 0; right: 0; bottom: 0;
-  background: rgba(2,6,23,0.4);
-  display:flex; align-items:center; justify-content:center; z-index:2000;
-}
-.data-modal { background:#fff; padding:16px; border-radius:8px; width:720px; max-width:96%; box-shadow:0 8px 24px rgba(2,6,23,0.12); }
-.data-modal .row { margin-bottom:8px; }
-.data-modal select, .data-modal input { width:100%; padding:8px 10px; border-radius:6px; border:1px solid #e6eef8; }
-
-/* Input Helper Text */
-.input-helper {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-style: italic;
+.data-today-btn-ghost {
+  margin-top: 20px;
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #3d79f9;
 }
 
+.data-today-btn-ghost:hover {
+  background-color: #f2f2f2;
+}
 
-@media (max-width:900px) {
-  .data-form { grid-template-columns: 1fr; }
+.data-today-btn-danger {
+  background-color: #dc2626;
+}
+
+.data-today-btn-danger:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+.data-today-btn-edit {
+  background-color: #2666dc;
+}
+
+.data-today-btn-edit:hover:not(:disabled) {
+  background-color: #409ef6;
+}
+
+.data-today-btn-small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.data-today-btn-link {
+  background: none;
+  border: none;
+  color: #3498db;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.data-today-btn-link:hover {
+  color: #21618c;
+}
+
+.data-today-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =============================
+   DataToday - Table
+   ============================= */
+.data-today-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-today-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
+}
+
+/* header */
+.data-today-table thead th {
+  background-color: #4a90e2;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+/* body */
+.data-today-row {
+  transition: background-color 0.2s;
+}
+
+.data-today-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.data-today-row:hover {
+  background-color: #e6f0ff;
+}
+
+.data-today-table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* =============================
+   DataToday - Toolbar / Filters
+   ============================= */
+
+.data-today-toolbar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.data-today-filter-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #333;
+}
+
+.data-today-filter-input {
+  padding: 5px 8px;
+  margin-top: 3px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 120px;
+  box-sizing: border-box;
+}
+
+/* =============================
+   DataToday - Map / Export
+   ============================= */
+.data-today-map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+}
+
+.data-today-map-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #111;
+}
+
+.data-today-map-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.data-today-btn-export {
+  background-color: #16a34a;
+}
+
+.data-today-btn-export:hover {
+  background-color: #15803d;
+}
+
+.data-today-btn-map {
+  background-color: #2563eb;
+}
+
+.data-today-btn-map:hover {
+  background-color: #1e40af;
+}
+
+/* =============================
+   Responsive
+   ============================= */
+@media (max-width: 768px) {
+  .data-today-table-wrap {
+    font-size: 14px;
+  }
+
+  .data-today-table thead th {
+    padding: 10px 8px;
+  }
+
+  .data-today-table td {
+    padding: 8px 8px;
+  }
+
+  .data-today-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .data-today-filter-input {
+    min-width: 100px;
+  }
+}
+
+/* =============================
+   Animation
+   ============================= */
+@keyframes data-today-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
