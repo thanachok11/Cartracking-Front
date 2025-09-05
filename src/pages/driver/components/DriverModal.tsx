@@ -115,10 +115,11 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
             </div>
           </div>
           <div className="modal-actions">
+          
+            <button type="button" className="cancel-btn" onClick={onClose} disabled={saving}>ยกเลิก</button>
             <button type="submit" className="save-btn" disabled={saving}>
               {saving ? 'กำลังบันทึก...' : editing ? 'บันทึกการแก้ไข' : 'เพิ่มคนขับ'}
             </button>
-            <button type="button" className="cancel-btn" onClick={onClose} disabled={saving}>ยกเลิก</button>
           </div>
         </form>
       </div>

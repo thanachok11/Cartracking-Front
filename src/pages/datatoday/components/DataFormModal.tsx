@@ -128,19 +128,20 @@ export default function DataFormModal({
                     </div>
 
                     <div className="data-today-modal-actions">
-                        <button
-                            className="data-today-button-submit"
-                            type="submit"
-                            disabled={submitting}
-                        >
-                            {submitting ? "กำลังบันทึก..." : editing ? "บันทึกการแก้ไข" : "เพิ่มรายการ"}
-                        </button>
+                        
                         <button
                             type="button"
                             className="data-today-button-cancel"
                             onClick={onCancel}
                         >
                             ยกเลิก
+                        </button>
+                        <button
+                            className="data-today-button-submit"
+                            type="submit"
+                            disabled={submitting}
+                        >
+                            {submitting ? "กำลังบันทึก..." : editing ? "บันทึกการแก้ไข" : "เพิ่มรายการ"}
                         </button>
                     </div>
                 </form>

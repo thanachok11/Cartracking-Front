@@ -72,10 +72,11 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
                     </div>
 
                     <div className="form-actions">
+                        
+                        <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
                         <button type="submit" className="btn-primary" disabled={loading}>
                             {loading ? 'กำลังอัพเดทข้อมูล...' : 'อัปเดตผู้ใช้'}
                         </button>
-                        <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
                     </div>
                 </form>
             </div>

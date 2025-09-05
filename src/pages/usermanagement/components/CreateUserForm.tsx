@@ -71,10 +71,11 @@ const CreateUserForm: React.FC<Props> = ({ loading, availableRoles, onCreate, on
                     </div>
 
                     <div className="form-actions">
+                   
+                        <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
                         <button type="submit" className="btn-primary" disabled={loading}>
                             {loading ? 'กำลังเพิ่มผู้ใช้...' : 'เพิ่มผู้ใช้'}
                         </button>
-                        <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
                     </div>
                 </form>
             </div>

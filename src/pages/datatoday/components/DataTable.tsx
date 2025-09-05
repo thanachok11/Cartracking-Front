@@ -40,12 +40,20 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                             </td>
                             <td>{r.companyname}</td>
                             <td>
-                                <button className="data-today-btn data-today-btn-small data-today-btn-edit" onClick={() => onEdit(r)}>
-                                    แก้ไข
-                                </button>
-                                <button className="data-today-btn data-today-btn-small data-today-btn-danger" onClick={() => onDelete(r._id)}>
-                                    ลบ
-                                </button>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button
+                                        className="data-today-btn data-today-btn-small data-today-btn-edit"
+                                        onClick={() => onEdit(r)}
+                                    >
+                                        แก้ไข
+                                    </button>
+                                    <button
+                                        className="data-today-btn data-today-btn-small data-today-btn-danger"
+                                        onClick={() => onDelete(r._id)}
+                                    >
+                                        ลบ
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
