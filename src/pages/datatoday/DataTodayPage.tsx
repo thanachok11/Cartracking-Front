@@ -39,6 +39,8 @@ export default function DataTodayPage() {
         const loadData = async () => {
             try {
                 const data = await fetchAllDataToday();
+                console.log("Load table data :" ,data);
+
                 if (!cancelled) setRows(data);
             } catch (err) {
                 console.error("Load table data error:", err);

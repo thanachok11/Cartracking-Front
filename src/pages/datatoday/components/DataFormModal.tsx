@@ -129,7 +129,7 @@ export default function DataFormModal({
 
                     <div className="data-today-modal-actions">
                         <button
-                            className="data-today-btn data-today-btn-primary"
+                            className="data-today-button-submit"
                             type="submit"
                             disabled={submitting}
                         >
@@ -137,7 +137,7 @@ export default function DataFormModal({
                         </button>
                         <button
                             type="button"
-                            className="data-today-btn data-today-btn-ghost"
+                            className="data-today-button-cancel"
                             onClick={onCancel}
                         >
                             ยกเลิก

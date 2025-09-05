@@ -136,7 +136,33 @@
   color: #333;
   border: 1px solid #3d79f9;
 }
-
+.data-today-button-submit {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+}
+.data-today-button-submit:hover {
+  background-color: #059669;
+}
+.data-today-button-cancel {
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+.data-today-button-cancel:hover {
+  background-color: #4b5563;
+}
 .data-today-btn-ghost:hover {
   background-color: #f2f2f2;
 }
