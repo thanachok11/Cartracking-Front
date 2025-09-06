@@ -109,11 +109,11 @@ export default function DataTodayPage() {
         return d.toLocaleDateString("th-TH");
     };
 
-    // export CSV
     const exportCsv = () => {
         if (!rows.length) return;
+
         const header = ["เวลาเข้า", "คนขับ", "ทะเบียนหัว", "ทะเบียนหาง", "หมายเลขตู้", "ตำแหน่ง", "บริษัท"];
-        const csv = [
+        const csvContent = [
             header.join(","),
             ...rows.map(r => [
                 ymdToDmy(r.datetime_in),
@@ -126,13 +126,17 @@ export default function DataTodayPage() {
             ].join(","))
         ].join("\n");
 
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        // เพิ่ม BOM ให้ Excel อ่านภาษาไทยได้
+        const bom = "\uFEFF";
+        const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
         a.download = "data_today.csv";
         a.click();
     };
+
 
     // ฟิลเตอร์ข้อมูลก่อนแสดง
     const filteredRows = rows.filter(r => {
