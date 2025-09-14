@@ -8,7 +8,6 @@ import {
     faTrash,
     faTruck,
     faBuilding,
-    faIdCard,
     faSync
 } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/VehiclePage.css';

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTruckTails, createTruckTail, updateTruckTail, deleteTruckTail, ITruckTail } from '../../api/components/truckApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faTimes, 
+import {
+    faTimes,
     faPlus,
     faEdit,
     faTrash,
@@ -102,10 +102,10 @@ const VehicleTailPage: React.FC = () => {
     const formatLicensePlate = (value: string): string => {
         // ลบตัวอักษรที่ไม่ใช่ตัวอักษรและตัวเลข
         const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        
+
         // จำกัดความยาวไม่เกิน 7 ตัวอักษร
         const limited = cleaned.slice(0, 7);
-        
+
         // เพิ่ม dash หลังตัวอักษรที่ 3
         if (limited.length > 3) {
             return limited.slice(0, 3) + '-' + limited.slice(3);
@@ -130,7 +130,7 @@ const VehicleTailPage: React.FC = () => {
                     <div className="error-message">
                         <h3>⚠️ การเชื่อมต่อมีปัญหา</h3>
                         <p>{error}</p>
-                        <button 
+                        <button
                             className="retry-btn"
                             onClick={loadTruckTails}
                         >
@@ -157,7 +157,7 @@ const VehicleTailPage: React.FC = () => {
                         />
                     </div>
                     <div className="action-buttons">
-                        <button 
+                        <button
                             className="refresh-btn"
                             onClick={loadTruckTails}
                             disabled={loading}
@@ -166,7 +166,7 @@ const VehicleTailPage: React.FC = () => {
                             <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
                             รีเฟรช
                         </button>
-                        <button 
+                        <button
                             className="add-btn"
                             onClick={() => setShowModal(true)}
                         >
@@ -191,14 +191,14 @@ const VehicleTailPage: React.FC = () => {
                                     {truck.licensePlate}
                                 </h3>
                                 <div className="card-actions">
-                                    <button 
+                                    <button
                                         className="edit-btn"
                                         onClick={() => handleEdit(truck)}
                                         title="แก้ไข"
                                     >
                                         <FontAwesomeIcon icon={faEdit} />
                                     </button>
-                                    <button 
+                                    <button
                                         className="delete-btn"
                                         onClick={() => handleDelete(truck._id!)}
                                         title="ลบ"
@@ -207,8 +207,12 @@ const VehicleTailPage: React.FC = () => {
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div className="card-content">
+                                <p>
+                                    <FontAwesomeIcon icon={faBuilding} className="info-icon" />
+                                    <strong>บริษัท:</strong> {truck.companyName}
+                                </p>
                                 {truck.createdAt && (
                                     <p className="created-date">
                                         <strong>สร้างเมื่อ:</strong> {new Date(truck.createdAt).toLocaleDateString('th-TH')}
@@ -247,6 +251,19 @@ const VehicleTailPage: React.FC = () => {
                                         maxLength={8}
                                         required
                                     />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="companyName">ชื่อบริษัท *</label>
+                                    <select
+                                        id="companyName"
+                                        value={form.companyName}
+                                        onChange={(e) => handleInputChange('companyName', e.target.value)}
+                                        required
+                                    >
+                                        <option value="">-- เลือกบริษัท --</option>
+                                        <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                                        <option value="รถร่วม">รถร่วม</option>
+                                    </select>
                                 </div>
                                 <div className="form-actions">
                                     <button type="button" onClick={handleCloseModal} className="cancel-btn">

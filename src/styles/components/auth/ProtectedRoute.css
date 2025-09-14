@@ -1,0 +1,54 @@
+/* สำหรับ Loading */
+.protected-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    font-size: 1.5rem;
+    color: #555;
+    font-weight: 500;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
+}
+
+/* สำหรับ Error */
+.protected-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background: #f8d7da;
+}
+
+.error-card {
+    background: #fff;
+    border: 2px solid #f5c2c7;
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.error-card h1 {
+    font-size: 2rem;
+    color: #b02a37;
+    margin-bottom: 1rem;
+}
+
+.error-card p {
+    font-size: 1.1rem;
+    color: #6c757d;
+}

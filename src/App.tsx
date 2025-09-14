@@ -25,7 +25,7 @@ import Userinfo from "./pages/userinfo/userinfo";
 import EventViewerPage from "./pages/EventViewerPage";
 import DataTodayPage from "./pages/datatoday/DataTodayPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
-
+import AllowedPagesManager from "./pages/usermanagement/components/AllowedPagesManager";
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser } from "./api/auth/auth";
@@ -159,7 +159,7 @@ const App: React.FC = () => {
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="dashboard">
                   <GoogleMapsProvider>
                   <Dashboard />
                   </GoogleMapsProvider>
@@ -174,7 +174,7 @@ const App: React.FC = () => {
             <Route
               path="/map"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="map">
                   <GoogleMapsProvider>
                     <MapView />
                   </GoogleMapsProvider>
@@ -185,15 +185,23 @@ const App: React.FC = () => {
             <Route
               path="/vehicles"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="vehicles">
                   <VehiclePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/allowed-pages-manager"
+              element={
+                <ProtectedRoute page="allowed-pages-manager">
+                  <AllowedPagesManager />
                 </ProtectedRoute>
               }
             />
             <Route
               path="/vehicle/:id/view"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="vehicle">
                   <VehicleTimelinePage />
                 </ProtectedRoute>
               }
@@ -201,7 +209,7 @@ const App: React.FC = () => {
             <Route
               path="/Drivers"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="drivers">
                   <Drivers />
                 </ProtectedRoute>
               }
@@ -209,7 +217,7 @@ const App: React.FC = () => {
             <Route
               path="/drivers/:id"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="drivers">
                   <DriverProfilePage />
                 </ProtectedRoute>
               }
@@ -217,7 +225,7 @@ const App: React.FC = () => {
             <Route
               path="/containers"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="containers">
                   <ContainerPage />
                 </ProtectedRoute>
               }
@@ -225,7 +233,7 @@ const App: React.FC = () => {
             <Route
               path="/events/:registration"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="events">
                   <EventViewerPage />
                 </ProtectedRoute>
               }
@@ -233,7 +241,7 @@ const App: React.FC = () => {
             <Route
               path="/management"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="management">
                   <UserManagement />
                 </ProtectedRoute>
               }
@@ -241,7 +249,7 @@ const App: React.FC = () => {
             <Route
               path="/settings"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="settings">
                   <Userinfo />
                 </ProtectedRoute>
               }
@@ -249,7 +257,7 @@ const App: React.FC = () => {
             <Route
               path="/data-today"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="data-today">
                   <DataTodayPage />
                 </ProtectedRoute>
               }
@@ -257,7 +265,7 @@ const App: React.FC = () => {
             <Route
               path="/vehiclestail"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute page="vehiclestail">
                   <VehicleTailPage />
                 </ProtectedRoute>
               }

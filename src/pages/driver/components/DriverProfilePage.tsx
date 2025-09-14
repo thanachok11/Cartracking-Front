@@ -113,13 +113,14 @@ export default function DriverProfilePage() {
     <div className="driver-page">
       <div className="header-row">
         <h2 className="page-title">โปรไฟล์คนขับ</h2>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
-          <button className="add-driver-button" onClick={() => setShowEdit(true)}>แก้ไข</button>
-          <button className="delete-btn" onClick={handleDelete} disabled={saving} style={{ backgroundColor: '#ef4444' }}>
+        <div className="driver-action-buttons">
+          <button className="driver-back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
+          <button className="driver-edit-btn" onClick={() => setShowEdit(true)}>แก้ไข</button>
+          <button className="driver-delete-btn" onClick={handleDelete} disabled={saving}>
             {saving ? 'กำลังลบ...' : 'ลบ'}
           </button>
         </div>
+
       </div>
 
       <div className="driver-card" style={{ cursor: 'default' }}>

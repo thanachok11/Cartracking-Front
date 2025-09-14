@@ -74,10 +74,19 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
               <label>ตำแหน่ง:</label>
               <input type="text" value={form.position} onChange={(e) => onChange({ position: e.target.value })} required />
             </div>
-          </div>
+          </div>       
           <div className="form-group">
-            <label>บริษัท:</label>
-            <input type="text" value={form.company} onChange={(e) => onChange({ company: e.target.value })} required />
+            <label htmlFor="companyName">ชื่อบริษัท *</label>
+            <select
+              id="companyName"
+              value={form.company}
+              onChange={(e) => onChange({ company: e.target.value })} required 
+              >
+            
+              <option value="">-- เลือกบริษัท --</option>
+              <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+              <option value="รถร่วม">รถร่วม</option>
+            </select>
           </div>
           <div className="form-group">
             <label>รายละเอียด:</label>

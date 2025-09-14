@@ -368,17 +368,17 @@ export const updateUserRole = async (userId: string, newRole: string) => {
 };
 
 // ตรวจสอบสิทธิ์ของผู้ใช้
-export const getUserPermissions = async (): Promise<{ user: any; permissions: any }> => {
+export const getUserPermissions = async (): Promise<{ user: any; permissions: any; allowedPages: string[] }> => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
         }
 
-        // Decode JWT token to get user info
+        // ✅ decode token
         const { jwtDecode } = require('jwt-decode');
         const decoded: any = jwtDecode(token);
-        
+
         console.log('🔍 JWT decoded data:', decoded);
 
         const userPermissions = {
@@ -388,7 +388,8 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
             roleConverted: getRoleFromString(decoded.role),
             displayName: `${decoded.firstname || decoded.firstName || ''} ${decoded.lastname || decoded.lastName || ''}`.trim(),
             permissions: getRolePermissions(getRoleFromString(decoded.role)),
-            profileImage: decoded.profile_img || ''
+            profileImage: decoded.profile_img || '',
+            allowedPages: decoded.allowedPages || []
         };
 
         console.log('🔍 User permissions from JWT:', userPermissions);
@@ -403,13 +404,15 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
                 displayName: userPermissions.displayName,
                 profileImage: userPermissions.profileImage
             },
-            permissions: userPermissions.permissions
+            permissions: userPermissions.permissions,
+            allowedPages: userPermissions.allowedPages
         };
     } catch (error: any) {
         console.error('❌ Error getting user permissions:', error);
         throw new Error(error.message || 'ไม่สามารถตรวจสอบสิทธิ์ผู้ใช้ได้');
     }
 };
+
 
 // แปลง role string เป็น UserRole enum
 export const getRoleFromString = (roleString: string): UserRole => {

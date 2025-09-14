@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole } from '../../types/User';
+import { useNavigate } from "react-router-dom";
+
 import {
     getAllUsers,
     createUser,
@@ -13,7 +15,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus,
-    faSync
+    faSync,
+    faUserShield
 } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/SettingsPage.css';
 import CreateUserForm from './components/CreateUserForm';
@@ -58,12 +61,12 @@ const canAssignRole = (currentUserRole: UserRole, targetRole: UserRole): boolean
 };
 
 const UserManagement: React.FC = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
     const [currentUser, setCurrentUser] = useState<any>(null);
-
     // Form states
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -283,6 +286,7 @@ const UserManagement: React.FC = () => {
     const availableRoles = getAvailableRoles();
     const forCreateRoles = getCreateRoles();
 
+
     return (
         <div className="settings-page">
             <div className="settings-header">
@@ -304,9 +308,9 @@ const UserManagement: React.FC = () => {
                     }}
                 >
                     <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
-
                     รีเฟรช
                 </button>
+
                 <button
                     className="add-btn"
                     onClick={() => {
@@ -322,11 +326,20 @@ const UserManagement: React.FC = () => {
                     }}
                 >
                     <FontAwesomeIcon icon={faPlus} />
-
                     สร้างผู้ใช้ใหม่
                 </button>
 
+                {/* ปุ่มใหม่ จัดการสิทธิ์เข้าใช้งานหน้า */}
+                <button
+                    className="permission-btn"
+                    onClick={() => navigate("/allowed-pages-manager")}
+                >
+                    <FontAwesomeIcon icon={faUserShield} />
+                    จัดการสิทธิ์เข้าใช้งานหน้า
+                </button>
+
             </div>
+
 
             {/* Alert messages */}
             {error && (

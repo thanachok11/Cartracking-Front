@@ -18,203 +18,158 @@ export default function DataTodayPage() {
     const [showModal, setShowModal] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    // filter states
+    // filters
     const [filterDriver, setFilterDriver] = useState("");
     const [filterContainer, setFilterContainer] = useState("");
     const [filterHeadReg, setFilterHeadReg] = useState("");
+    const [filterBooking, setFilterBooking] = useState("");
     const [filterFrom, setFilterFrom] = useState("");
     const [filterTo, setFilterTo] = useState("");
 
-    // dropdown values
+    // dropdowns
     const [drivers, setDrivers] = useState<string[]>([]);
     const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
     const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
     const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
 
-    // โหลดข้อมูล table และ dropdowns จาก API
     useEffect(() => {
         let cancelled = false;
 
-        // โหลดข้อมูล table
-        const loadData = async () => {
+        const load = async () => {
             try {
                 const data = await fetchAllDataToday();
-                console.log("Load table data :" ,data);
-
-                if (!cancelled) setRows(data);
+                if (!cancelled) setRows(Array.isArray(data) ? data : []);
             } catch (err) {
-                console.error("Load table data error:", err);
+                console.error('load data error', err);
             }
         };
 
-        // โหลด dropdown values จาก API
-        const loadDropdowns = async () => {
-            // คนขับ
+        const loadLists = async () => {
             try {
                 const d = await fetchAllDrivers();
-                if (!cancelled) {
-                    const names = Array.isArray(d)
-                        ? d.map((x: any) => {
-                            const first = x.firstName || x.first_name || '';
-                            const last = x.lastName || x.last_name || '';
-                            const full = `${first} ${last}`.trim();
-                            return full || x.driver_name || x.name || '';
-                        }).filter(Boolean)
-                        : [];
+                if (!cancelled && Array.isArray(d)) {
+                    const names = d.map((x: any) => {
+                        const first = x.firstName || x.first_name || '';
+                        const last = x.lastName || x.last_name || '';
+                        return `${first} ${last}`.trim() || x.driver_name || x.name || '';
+                    }).filter(Boolean);
                     setDrivers(Array.from(new Set(names)));
                 }
-            } catch (err) {
-                console.error("Load drivers error:", err);
-            }
+            } catch (e) { /* ignore */ }
 
-            // รถหัว/หาง
             try {
-                const [truckHeads, truckTails] = await Promise.all([
-                    fetchTruckHeads(),
-                    fetchTruckTails()
-                ]);
+                const [heads, tails] = await Promise.all([fetchTruckHeads(), fetchTruckTails()]);
                 if (!cancelled) {
-                    const headRegs = Array.isArray(truckHeads) ? truckHeads.map((x: any) => x.licensePlate || '').filter(Boolean) : [];
-                    const tailRegs = Array.isArray(truckTails) ? truckTails.map((x: any) => x.licensePlate || '').filter(Boolean) : [];
-                    setTruckHeadRegs(Array.from(new Set(headRegs)));
-                    setTruckTailRegs(Array.from(new Set(tailRegs)));
+                    setTruckHeadRegs(Array.isArray(heads) ? Array.from(new Set(heads.map((h:any)=>h.licensePlate||'').filter(Boolean))) : []);
+                    setTruckTailRegs(Array.isArray(tails) ? Array.from(new Set(tails.map((t:any)=>t.licensePlate||'').filter(Boolean))) : []);
                 }
-            } catch (err) {
-                console.error("Load trucks error:", err);
-            }
+            } catch (e) { /* ignore */ }
 
-            // ตู้
             try {
                 const c = await fetchAllContainers();
-                if (!cancelled) {
-                    const nums = Array.isArray(c) ? c.map((x: any) => x.containerNumber || x.container_no || x.number || '').filter(Boolean) : [];
-                    setContainerNumbers(Array.from(new Set(nums)));
-                }
-            } catch (err) {
-                console.error("Load containers error:", err);
-            }
+                if (!cancelled && Array.isArray(c)) setContainerNumbers(Array.from(new Set(c.map((x:any)=>x.containerNumber||x.container_no||x.number||'').filter(Boolean))));
+            } catch (e) { /* ignore */ }
         };
 
-        loadData();
-        loadDropdowns();
-
+        load();
+        loadLists();
         return () => { cancelled = true; };
     }, []);
 
-    // แปลงวันที่
-    const ymdToDmy = (ymd?: string): string => {
-        if (!ymd) return "";
-        const d = new Date(ymd);
-        if (isNaN(d.getTime())) return "";
-        return d.toLocaleDateString("th-TH");
-    };
+    const isoToDateOnly = (v?: string) => (v ? String(v).slice(0,10) : '');
+    const ymdToDmy = (v?: string) => { if(!v) return ''; const d=new Date(v); return isNaN(d.getTime())? '' : d.toLocaleDateString('th-TH'); };
 
-    const exportCsv = () => {
-        if (!rows.length) return;
-
-        const header = ["เวลาเข้า", "คนขับ", "ทะเบียนหัว", "ทะเบียนหาง", "หมายเลขตู้", "ตำแหน่ง", "บริษัท"];
-        const csvContent = [
-            header.join(","),
-            ...rows.map(r => [
-                ymdToDmy(r.datetime_in),
-                r.driver_name,
-                r.head_registration,
-                r.tail_registration,
-                r.container_no,
-                r.station_in,
-                r.companyname,
-            ].join(","))
-        ].join("\n");
-
-        // เพิ่ม BOM ให้ Excel อ่านภาษาไทยได้
-        const bom = "\uFEFF";
-        const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "data_today.csv";
-        a.click();
-    };
-
-
-    // ฟิลเตอร์ข้อมูลก่อนแสดง
+    // filtered rows -- exact-day when only from set
     const filteredRows = rows.filter(r => {
         if (filterDriver && r.driver_name !== filterDriver) return false;
         if (filterContainer && r.container_no !== filterContainer) return false;
         if (filterHeadReg && r.head_registration !== filterHeadReg) return false;
-        if (filterFrom && r.datetime_in && r.datetime_in < filterFrom) return false;
-        if (filterTo && r.datetime_in && r.datetime_in > filterTo) return false;
+    if (filterBooking && !(String((r as any).booking_id || '').toLowerCase().includes(filterBooking.toLowerCase()))) return false;
+        const rowDate = isoToDateOnly(r.datetime_in);
+        if (filterFrom && !filterTo) {
+            if (!rowDate || rowDate !== filterFrom) return false;
+        } else {
+            if (filterFrom && (!rowDate || rowDate < filterFrom)) return false;
+            if (filterTo && (!rowDate || rowDate > filterTo)) return false;
+        }
         return true;
     });
 
-    // ฟอร์มเปลี่ยนค่า
-    const handleFormChange = (k: keyof DataToday, v: any) => {
-        setForm(prev => ({ ...prev, [k]: v }));
+    const exportCsv = () => {
+        if (!filteredRows.length) return;
+        const header = ["เวลาเข้า","คนขับ","ทะเบียนหัว","ทะเบียนหาง","หมายเลขตู้","ตำแหน่ง","บริษัท","Booking ID","Booking Image"];
+        const out = [header.join(',')];
+        for (const r of filteredRows) {
+            out.push([
+                `"${ymdToDmy(r.datetime_in)}"`,
+                `"${String(r.driver_name||'').replace(/"/g,'""')}"`,
+                `"${String(r.head_registration||'').replace(/"/g,'""')}"`,
+                `"${String(r.tail_registration||'').replace(/"/g,'""')}"`,
+                `"${String(r.container_no||'').replace(/"/g,'""')}"`,
+                `"${String(r.station_in||'').replace(/"/g,'""')}"`,
+                `"${String(r.companyname||'').replace(/"/g,'""')}"`,
+                `"${String((r as any).booking_id||'').replace(/"/g,'""')}"`,
+                `"${String((r as any).booking_image||'').replace(/"/g,'""')}"`,
+            ].join(','));
+        }
+        const csv = '\uFEFF' + out.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `data_today_${new Date().toISOString().slice(0,10)}.csv`; a.click(); a.remove(); URL.revokeObjectURL(url);
     };
 
-    // submit form
+    const handleFormChange = (k: keyof DataToday, v: any) => setForm(prev=>({ ...prev, [k]: v }));
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const payload = {
-                datetime_in: form.datetime_in || "",
-                driver_name: form.driver_name || "",
-                head_registration: form.head_registration || "",
-                tail_registration: form.tail_registration || "",
-                container_no: form.container_no || "",
-                station_in: form.station_in || "",
-                companyname: form.companyname || "",
-            };
-
-            if (editing?._id) {
-                await updateDataToday(editing._id, payload);
+            const bookingImage = (form as any).booking_image;
+            const bookingId = (form as any).booking_id;
+            const useFormData = bookingImage instanceof File;
+            if (useFormData) {
+                const fd = new FormData();
+                fd.append('datetime_in', form.datetime_in || '');
+                fd.append('driver_name', form.driver_name || '');
+                fd.append('head_registration', form.head_registration || '');
+                fd.append('tail_registration', form.tail_registration || '');
+                fd.append('container_no', form.container_no || '');
+                fd.append('station_in', form.station_in || '');
+                fd.append('companyname', form.companyname || '');
+                if (bookingId) fd.append('booking_id', bookingId);
+                fd.append('booking_image', bookingImage as File);
+                if (editing?._id) await updateDataToday(editing._id as string, fd as any);
+                else await createDataToday(fd as any);
             } else {
-                await createDataToday(payload);
+                const payload: any = {
+                    datetime_in: form.datetime_in || '',
+                    driver_name: form.driver_name || '',
+                    head_registration: form.head_registration || '',
+                    tail_registration: form.tail_registration || '',
+                    container_no: form.container_no || '',
+                    station_in: form.station_in || '',
+                    companyname: form.companyname || '',
+                };
+                if (bookingId) payload.booking_id = bookingId;
+                if (typeof bookingImage === 'string') payload.booking_image = bookingImage;
+                if (editing?._id) await updateDataToday(editing._id as string, payload as any);
+                else await createDataToday(payload as any);
             }
-
-            // reload data after submit
-            const data = await fetchAllDataToday();
-            setRows(data);
-            setShowModal(false);
-            setForm({});
-            setEditing(null);
-        } finally {
-            setSubmitting(false);
-        }
+            const data = await fetchAllDataToday(); setRows(Array.isArray(data)?data:[]);
+            setShowModal(false); setForm({}); setEditing(null);
+        } catch (err) {
+            console.error('save error', err);
+        } finally { setSubmitting(false); }
     };
 
-    const handleEdit = (row: DataToday) => {
-        setEditing(row);
-        setForm(row);
-        setShowModal(true);
-    };
-
-    const handleDelete = async (id?: string) => {
-        if (!id) return;
-        if (window.confirm("คุณต้องการลบรายการนี้ใช่ไหม?")) {
-            await deleteDataToday(id);
-            const data = await fetchAllDataToday();
-            setRows(data);
-        }
-    };
-
-    const handleAddNew = () => {
-        setForm({});
-        setEditing(null);
-        setShowModal(true);
-    };
-
-    const openOnMap = (station?: string) => {
-        if (!station) return;
-        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(station)}`, "_blank");
-    };
+    const handleEdit = (r: DataToday) => { setEditing(r); setForm(r); setShowModal(true); };
+    const handleDelete = async (id?: string) => { if (!id) return; if (!window.confirm('คุณต้องการลบรายการนี้ใช่ไหม?')) return; try { await deleteDataToday(id); const d = await fetchAllDataToday(); setRows(Array.isArray(d)?d:[]); } catch(e){ console.error(e); } };
+    const handleAddNew = () => { setForm({}); setEditing(null); setShowModal(true); };
+    const openOnMap = (s?: string) => { if (!s) return; window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s)}`,'_blank'); };
 
     return (
         <div className="page-container">
-            {/* export + filter */}
-            <ExportToolbar onExport={exportCsv} disabled={!rows.length} />
+            <ExportToolbar onExport={exportCsv} disabled={!filteredRows.length} />
             <FilterToolbar
                 drivers={drivers}
                 truckHeadRegs={truckHeadRegs}
@@ -222,35 +177,23 @@ export default function DataTodayPage() {
                 filterDriver={filterDriver}
                 filterContainer={filterContainer}
                 filterHeadReg={filterHeadReg}
+                filterBooking={filterBooking}
                 filterFrom={filterFrom}
                 filterTo={filterTo}
                 onChange={{
                     driver: setFilterDriver,
                     container: setFilterContainer,
                     headReg: setFilterHeadReg,
+                    booking: setFilterBooking,
                     from: setFilterFrom,
                     to: setFilterTo,
-                    reset: () => {
-                        setFilterDriver("");
-                        setFilterContainer("");
-                        setFilterHeadReg("");
-                        setFilterFrom("");
-                        setFilterTo("");
-                    },
+                    reset: () => { setFilterDriver(''); setFilterContainer(''); setFilterHeadReg(''); setFilterFrom(''); setFilterTo(''); },
                     addNew: handleAddNew,
                 }}
             />
 
-            {/* ตารางข้อมูล */}
-            <DataTable
-                rows={filteredRows}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                openOnMap={openOnMap}
-                ymdToDmy={ymdToDmy}
-            />
+            <DataTable rows={filteredRows} onEdit={handleEdit} onDelete={handleDelete} openOnMap={openOnMap} ymdToDmy={ymdToDmy} />
 
-            {/* modal ฟอร์ม */}
             <DataFormModal
                 show={showModal}
                 editing={editing}
@@ -262,11 +205,7 @@ export default function DataTodayPage() {
                 submitting={submitting}
                 onChange={handleFormChange}
                 onSubmit={handleSubmit}
-                onCancel={() => {
-                    setShowModal(false);
-                    setForm({});
-                    setEditing(null);
-                }}
+                onCancel={() => { setShowModal(false); setForm({}); setEditing(null); }}
             />
         </div>
     );

@@ -287,6 +287,42 @@
     box-shadow: 0 8px 25px rgba(148, 163, 184, 0.2);
 }
 
+.permission-btn {
+    display: inline-flex;
+    /* ทำให้ icon กับข้อความเรียงกัน */
+    align-items: center;
+    gap: 0.5rem;
+    /* ระยะห่างระหว่าง icon กับข้อความ */
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #b112f0;
+    /* สีฟ้า */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(178, 5, 194, 0.3);
+}
+
+.permission-btn:hover {
+    background-color: #8405aa;
+    /* ฟ้าเข้มเมื่อ hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(207, 18, 245, 0.4);
+}
+
+.permission-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(179, 23, 241, 0.3);
+}
+
+.permission-btn svg {
+    font-size: 1.2rem;
+    /* ขนาดไอคอน */
+}
+
 /* ===== Container ===== */
 .users-table-container {
     padding: 20px;
