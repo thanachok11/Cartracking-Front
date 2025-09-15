@@ -19,8 +19,8 @@ import {
     faUserShield
 } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/SettingsPage.css';
-import CreateUserForm from './components/CreateUserForm';
 import EditUserForm from './components/EditUserForm';
+import CreateUserModal from './components/CreateUserForm';
 interface UserFormData {
     firstName: string;
     lastName: string;
@@ -37,7 +37,6 @@ const getRoleDisplayName = (role: UserRole): string => {
         case UserRole.LEVEL_4: return 'Admin';
         case UserRole.LEVEL_3: return 'Manager';
         case UserRole.LEVEL_2: return 'User';
-        case UserRole.LEVEL_1: return 'Viewer';
         default: return 'User';
     }
 };
@@ -208,7 +207,6 @@ const UserManagement: React.FC = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
         const roles = [];
 
-        roles.push({ value: UserRole.LEVEL_1, label: 'ผู้ชม' });
         roles.push({ value: UserRole.LEVEL_2, label: 'ผู้ใช้' });
 
         if (currentRole >= UserRole.LEVEL_3) {
@@ -245,7 +243,6 @@ const UserManagement: React.FC = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
         const roles = [];
 
-        roles.push({ value: UserRole.LEVEL_1, label: 'ผู้ชม' });
         roles.push({ value: UserRole.LEVEL_2, label: 'ผู้ใช้' });
 
         if (currentRole >= UserRole.LEVEL_3) {
@@ -358,11 +355,11 @@ const UserManagement: React.FC = () => {
 
             {/* User Form */}
             {showCreateForm && (
-                <CreateUserForm
+                <CreateUserModal
+                    isOpen={showCreateForm}
                     loading={loading}
                     availableRoles={forCreateRoles}
                     onCreate={async (data) => {
-                        // parent handles API call and reload
                         try {
                             setLoading(true);
                             await createUser({
@@ -381,10 +378,9 @@ const UserManagement: React.FC = () => {
                             setLoading(false);
                         }
                     }}
-                    onCancel={() => {
-                        setShowCreateForm(false);
-                    }}
+                    onCancel={() => setShowCreateForm(false)}
                 />
+
             )}
 
             {editingUser && (

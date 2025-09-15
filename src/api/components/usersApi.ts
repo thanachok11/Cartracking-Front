@@ -50,8 +50,6 @@ export const roleToString = (role: UserRole): string => {
             return 'manager';
         case UserRole.LEVEL_2:
             return 'user';
-        case UserRole.LEVEL_1:
-            return 'viewer';
         default:
             return 'user';
     }
@@ -68,8 +66,6 @@ export const stringToRole = (roleString: string): UserRole => {
             return UserRole.LEVEL_3;
         case 'user':
             return UserRole.LEVEL_2;
-        case 'viewer':
-            return UserRole.LEVEL_1;
         default:
             return UserRole.LEVEL_2;
     }

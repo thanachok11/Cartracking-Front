@@ -1,7 +1,6 @@
 // User types and enums for the application
 
 export enum UserRole {
-    LEVEL_1 = 1, // viewer
     LEVEL_2 = 2, // user
     LEVEL_3 = 3, // manager
     LEVEL_4 = 4,  // admin
@@ -37,8 +36,6 @@ export const getRoleName = (role: UserRole): string => {
             return 'Manager';
         case UserRole.LEVEL_2:
             return 'User';
-        case UserRole.LEVEL_1:
-            return 'Viewer';
         default:
             return 'User';
     }
@@ -75,13 +72,6 @@ export const getRolePermissions = (role: UserRole): UserPermissions => {
                 canManageUsers: false,
                 canAccessSettings: true // ผู้ใช้สามารถแก้ไขข้อมูลส่วนตัวได้
             };
-        case UserRole.LEVEL_1: // Viewer
-            return {
-                canViewAll: true,
-                canEdit: false,
-                canManageUsers: false,
-                canAccessSettings: true // ผู้ใช้สามารถแก้ไขข้อมูลส่วนตัวได้
-            };
         default:
             return {
                 canViewAll: false,
@@ -103,8 +93,6 @@ export const stringToRole = (roleString: string): UserRole => {
             return UserRole.LEVEL_3;
         case 'user':
             return UserRole.LEVEL_2;
-        case 'viewer':
-            return UserRole.LEVEL_1;
         default:
             return UserRole.LEVEL_2;
     }
@@ -121,8 +109,6 @@ export const roleToString = (role: UserRole): string => {
             return 'manager';
         case UserRole.LEVEL_2:
             return 'user';
-        case UserRole.LEVEL_1:
-            return 'viewer';
         default:
             return 'user';
     }

@@ -135,9 +135,6 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 case 'user':
                     userRole = UserRole.LEVEL_2;
                     break;
-                case 'viewer':
-                    userRole = UserRole.LEVEL_1;
-                    break;
                 default:
                     userRole = UserRole.LEVEL_2;
             }
@@ -425,8 +422,6 @@ export const getRoleFromString = (roleString: string): UserRole => {
             return UserRole.LEVEL_3;
         case 'user':
             return UserRole.LEVEL_2;
-        case 'viewer':
-            return UserRole.LEVEL_1;
         default:
             return UserRole.LEVEL_2; // default to user
     }
@@ -443,8 +438,6 @@ export const roleToString = (role: UserRole): string => {
             return 'manager';
         case UserRole.LEVEL_2:
             return 'user';
-        case UserRole.LEVEL_1:
-            return 'viewer';
         default:
             return 'user';
     }

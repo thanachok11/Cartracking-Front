@@ -145,11 +145,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
             case "level2":
             case "2":
                 return UserRole.LEVEL_2;
-            case "viewer":
-            case "level_1":
-            case "level1":
-            case "1":
-                return UserRole.LEVEL_1;
             default:
                 return UserRole.LEVEL_2; // default fallback
         }
@@ -168,15 +163,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         tooltip?: string;
         minRole?: UserRole;
     }> = [
-            { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_1 },
-            { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_1 },
-            { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_3 },
-            { path: "/data-today", icon: faFileAlt, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_3 },
-            { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_3 },
-            { path: "/vehicles", icon: faCar, label: "ทะเบียนหัว", tooltip: "Vehicles", minRole: UserRole.LEVEL_3 },
-            { path: "/vehiclestail", icon: faCar, label: "ทะเบียนท้าย", tooltip: "Vehicles_tail", minRole: UserRole.LEVEL_3 },
-            { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_3 },
-            { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_4 },
+            { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_2 },
+            { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_2 },
+            { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_2 },
+            { path: "/data-today", icon: faFileAlt, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_2 },
+            { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_2 },
+            { path: "/vehicles", icon: faCar, label: "ทะเบียนหัว", tooltip: "Vehicles", minRole: UserRole.LEVEL_2 },
+            { path: "/vehiclestail", icon: faCar, label: "ทะเบียนท้าย", tooltip: "Vehicles_tail", minRole: UserRole.LEVEL_2 },
+            { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_2 },
+            { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_3 },
         ];
 
     // Role ของ user ตอนนี้
@@ -214,17 +209,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
                 {/* Menu */}
                 <nav className="sidebar-menu">
-                    {menuItems
-                        // กรองตาม role
-                        .filter((item) =>
-                            item.minRole ? currentRoleLevel >= item.minRole : true
-                        )
-                        // กรองตาม allowedPages ที่ backend ส่งมา
-                        .filter((item) =>
+                    {(() => {
+                        console.log('🔍 Sidebar Debug:');
+                        console.log('- userPermissions:', userPermissions);
+                        console.log('- allowedPages:', userPermissions?.allowedPages);
+                        console.log('- currentRoleLevel:', currentRoleLevel);
+                        
+                        // เอา allowedPages filter ก่อน แล้วค่อย role filter
+                        const allowedFiltered = menuItems.filter((item) =>
                             userPermissions?.allowedPages?.includes(
                                 item.path.replace("/", "")
                             )
-                        )
+                        );
+                        console.log('- After allowedPages filter:', allowedFiltered.map(i => i.path));
+                        
+                        const roleFiltered = allowedFiltered.filter((item) =>
+                            item.minRole ? currentRoleLevel >= item.minRole : true
+                        );
+                        console.log('- After role filter:', roleFiltered.map(i => i.path));
+                        
+                        return roleFiltered;
+                    })()
                         .map((item) => (
                             <button
                                 key={item.path}
@@ -287,21 +292,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                                 </>
                             )}
                         </div>
-
                         {userDropdown && (isSidebarOpen || isMobile) && (
                             <div className="user-dropdown-menu">
-                                {userPermissions?.allowedPages?.includes(
-                                    "settings"
-                                ) && (
-                                        <button onClick={() => navigate("/settings")}>
-                                            <FontAwesomeIcon icon={faCog} /> Settings
-                                        </button>
-                                    )}
+                                {/* Settings แสดงตลอด */}
+                                <button onClick={() => navigate("/settings")}>
+                                    <FontAwesomeIcon icon={faCog} /> Settings
+                                </button>
+
+                                {/* Logout */}
                                 <button onClick={handleLogout}>
                                     <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                                 </button>
                             </div>
                         )}
+
                     </div>
                 )}
             </aside>

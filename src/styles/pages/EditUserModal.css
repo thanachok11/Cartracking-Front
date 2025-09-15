@@ -1,0 +1,179 @@
+/* Overlay */
+.EditUser-Modal-overlay {
+    position: fixed;
+    inset: 0;
+    /* top:0; right:0; bottom:0; left:0; */
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal container */
+.EditUser-Modal-container {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Title */
+.EditUser-Modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #111827;
+    text-align: center;
+}
+
+/* Form */
+.EditUser-Modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Row layout */
+.EditUser-Modal-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Input group */
+.EditUser-Modal-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.EditUser-Modal-group label {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.EditUser-Modal-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+.EditUser-Modal-email {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+.EditUser-Modal-select {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+/* ปกติ input focus */
+.EditUser-Modal-email:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* email disabled */
+.EditUser-Modal-email:disabled {
+    cursor: not-allowed;
+    /* แสดงเครื่องหมายห้าม */
+    background-color: #f3f4f6;
+    /* พื้นหลังเทาอ่อน */
+    color: #9ca3af;
+    /* ตัวอักษรสีเทา */
+    border-color: #d1d5db;
+    /* ขอบสีเทา */
+}
+
+/* hover disabled ให้ cursor เป็นเครื่องหมายห้าม */
+.EditUser-Modal-email:disabled:hover {
+    cursor: not-allowed;
+}
+
+/* ป้องกัน focus เปลี่ยนสี สำหรับ disabled */
+.EditUser-Modal-email:disabled:focus {
+    border-color: #d1d5db;
+    box-shadow: none;
+}
+.EditUser-Modal-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.EditUser-Modal-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Actions */
+.EditUser-Modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

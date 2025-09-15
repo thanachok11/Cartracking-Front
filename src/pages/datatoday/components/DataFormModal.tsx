@@ -103,7 +103,7 @@ export default function DataFormModal({
         validateHeadValue(form.head_registration as string | undefined);
         validateTailValue(form.tail_registration as string | undefined);
         validateContainerValue(form.container_no as string | undefined);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line
     }, [show]);
 
     // hide modal UI when not shown (hooks run unconditionally above)

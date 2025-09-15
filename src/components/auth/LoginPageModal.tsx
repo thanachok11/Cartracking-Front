@@ -35,13 +35,27 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             saveToken(data.token);
             localStorage.setItem("userEmail", email);
 
-            const from = location.state?.from?.pathname || "/dashboard";
+            // ใช้ JWT decode เพื่อหา allowedPages
+            const { jwtDecode } = require('jwt-decode');
+            const decoded: any = jwtDecode(data.token);
+            const allowedPages = decoded.allowedPages || [];
+            
+            console.log('🔍 Login redirect - allowedPages:', allowedPages);
 
+            let redirectPath = "/dashboard"; // default
+            
             if (data.role === "employee") {
-                navigate("/employee-dashboard");
+                redirectPath = "/employee-dashboard";
+            } else if (allowedPages.length > 0) {
+                // ไปหน้าแรกใน allowedPages
+                redirectPath = `/${allowedPages[0]}`;
             } else {
-                navigate(from, { replace: true });
+                // fallback จาก location state
+                redirectPath = location.state?.from?.pathname || "/dashboard";
             }
+
+            console.log('🔍 Login redirect path:', redirectPath);
+            navigate(redirectPath, { replace: true });
 
             setSuccessMessage("Login Success!");
             setTimeout(() => {

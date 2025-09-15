@@ -226,7 +226,6 @@ export default function UserInfo() {
           case UserRole.LEVEL_4: return 'Admin';
           case UserRole.LEVEL_3: return 'Manager';
           case UserRole.LEVEL_2: return 'User';
-          case UserRole.LEVEL_1: return 'Viewer';
           default: return 'User';
       }
 };
@@ -306,7 +305,7 @@ export default function UserInfo() {
             <div className="profile-info">
               <h3>{user.firstName} {user.lastName}</h3>
               <p className="user-email">{user.email}</p>
-              <p className="user-role">{getRoleDisplayName(user.role ?? UserRole.LEVEL_1)}</p>
+              <p className="user-role">{getRoleDisplayName(user.role ?? UserRole.LEVEL_2)}</p>
             </div>
         </div>
 

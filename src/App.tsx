@@ -207,7 +207,7 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/Drivers"
+              path="/drivers"
               element={
                 <ProtectedRoute page="drivers">
                   <Drivers />
@@ -249,7 +249,7 @@ const App: React.FC = () => {
             <Route
               path="/settings"
               element={
-                <ProtectedRoute page="settings">
+                <ProtectedRoute >
                   <Userinfo />
                 </ProtectedRoute>
               }

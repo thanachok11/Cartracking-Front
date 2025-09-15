@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole } from '../../../types/User';
-import '../../../styles/pages/UserForm.css';
+import '../../../styles/pages/EditUserModal.css';
+
 interface Props {
     loading: boolean;
     editingUser: User;
@@ -44,37 +45,66 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
     };
 
     return (
-        <div className="user-form-container">
-            <div className="user-form">
-                <h3>แก้ไขผู้ใช้</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <div className="form-group">
+        <div className="EditUser-Modal-overlay">
+            <div className="EditUser-Modal-container">
+                <h3 className="EditUser-Modal-title">แก้ไขผู้ใช้</h3>
+                <form className="EditUser-Modal-form" onSubmit={handleSubmit}>
+                    <div className="EditUser-Modal-row">
+                        <div className="EditUser-Modal-group">
                             <label>ชื่อจริง:</label>
-                            <input name="firstName" value={formData.firstName} onChange={handleChange} required />
+                            <input
+                                className="EditUser-Modal-input"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
-                        <div className="form-group">
+                        <div className="EditUser-Modal-group">
                             <label>นามสกุล:</label>
-                            <input name="lastName" value={formData.lastName} onChange={handleChange} required />
+                            <input
+                                className="EditUser-Modal-input"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className="EditUser-Modal-group">
                         <label>อีเมล:</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} required disabled />
+                        <input
+                            className="EditUser-Modal-email"
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            disabled
+                        />
                     </div>
 
-                    <div className="form-group">
+                    <div className="EditUser-Modal-group">
                         <label>บทบาท:</label>
-                        <select name="role" value={formData.role} onChange={handleChange} required>
-                            {availableRoles.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                        <select
+                            className="EditUser-Modal-select"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            required
+                        >
+                            {availableRoles.map(r => (
+                                <option key={r.value} value={r.value}>
+                                    {r.label}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
-                    <div className="form-actions">
-                        
-                        <button type="button" className="btn-secondary" onClick={onCancel}>ยกเลิก</button>
-                        <button type="submit" className="btn-primary" disabled={loading}>
+                    <div className="EditUser-Modal-actions">
+                        <button type="button" className="create-user-modal__btn create-user-modal__btn--secondary" onClick={onCancel}>
+                            ยกเลิก
+                        </button>
+                        <button type="submit" className="create-user-modal__btn create-user-modal__btn--primary" disabled={loading}>
                             {loading ? 'กำลังอัพเดทข้อมูล...' : 'อัปเดตผู้ใช้'}
                         </button>
                     </div>
