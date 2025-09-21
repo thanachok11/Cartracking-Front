@@ -8,7 +8,6 @@ import {
     faTrash,
     faTrailer,
     faBuilding,
-    faIdCard,
     faSync
 } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/VehiclePage.css';
@@ -17,6 +16,7 @@ const VehicleTailPage: React.FC = () => {
     const [truckTails, setTruckTails] = useState<ITruckTail[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [selectedCompany, setSelectedCompany] = useState<string>('all');
     const [error, setError] = useState<string | null>(null);
 
     // Modal states
@@ -35,7 +35,9 @@ const VehicleTailPage: React.FC = () => {
         try {
             setLoading(true);
             const data = await fetchTruckTails();
-            setTruckTails(data);
+            // Normalize companyName (trim) to avoid invisible whitespace mismatches
+            const normalized = data.map(d => ({ ...d, companyName: (d.companyName || '').toString().trim() }));
+            setTruckTails(normalized);
             setError(null);
         } catch (error) {
             console.error('Error fetching truck tails:', error);
@@ -46,18 +48,25 @@ const VehicleTailPage: React.FC = () => {
         }
     };
 
-    const filteredTruckTails = truckTails.filter(truck =>
-        truck.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        truck.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredTruckTails = truckTails.filter(truck => {
+        const term = searchTerm.trim().toLowerCase();
+        const license = (truck.licensePlate || '').toString().toLowerCase();
+        const companyRaw = (truck.companyName || '').toString();
+        const company = companyRaw.trim().toLowerCase();
+        const matchesTerm = !term || license.includes(term) || company.includes(term);
+        const matchesCompany = selectedCompany === 'all' || companyRaw.trim() === selectedCompany;
+        return matchesTerm && matchesCompany;
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             if (editingTruck) {
-                await updateTruckTail(editingTruck._id!, form);
+                const payload = { ...form, companyName: (form.companyName || '').toString().trim() };
+                await updateTruckTail(editingTruck._id!, payload);
             } else {
-                await createTruckTail(form);
+                const payload = { ...form, companyName: (form.companyName || '').toString().trim() };
+                await createTruckTail(payload);
             }
             await loadTruckTails();
             handleCloseModal();
@@ -71,7 +80,7 @@ const VehicleTailPage: React.FC = () => {
         setEditingTruck(truck);
         setForm({
             licensePlate: truck.licensePlate,
-            companyName: truck.companyName
+            companyName: (truck.companyName || '').toString().trim()
         });
         setShowModal(true);
     };
@@ -146,6 +155,7 @@ const VehicleTailPage: React.FC = () => {
         <div className="vehicle-page">
             <div className="header-row">
                 <h1 className="page-title">ทะเบียนหาง</h1>
+                <div className="result-count">แสดง {filteredTruckTails.length} รายการ</div>
                 <div className="header-controls">
                     <div className="search-container">
                         <input
@@ -156,6 +166,18 @@ const VehicleTailPage: React.FC = () => {
                             className="search-input"
                         />
                     </div>
+                    <div className="company-filter">
+                        <select
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                            className="company-select"
+                        >
+                            <option value="all">ทั้งหมด</option>
+                            <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                            <option value="รถร่วม">รถร่วม</option>
+                        </select>
+                    </div>
+
                     <div className="action-buttons">
                         <button
                             className="refresh-btn"
@@ -191,33 +213,13 @@ const VehicleTailPage: React.FC = () => {
                                     {truck.licensePlate}
                                 </h3>
                                 <div className="card-actions">
-                                    <button
-                                        className="edit-btn"
-                                        onClick={() => handleEdit(truck)}
-                                        title="แก้ไข"
-                                    >
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </button>
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() => handleDelete(truck._id!)}
-                                        title="ลบ"
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </button>
+                                    <button className="edit-btn" onClick={() => handleEdit(truck)} title="แก้ไข"><FontAwesomeIcon icon={faEdit} /></button>
+                                    <button className="delete-btn" onClick={() => handleDelete(truck._id!)} title="ลบ"><FontAwesomeIcon icon={faTrash} /></button>
                                 </div>
                             </div>
-
                             <div className="card-content">
-                                <p>
-                                    <FontAwesomeIcon icon={faBuilding} className="info-icon" />
-                                    <strong>บริษัท:</strong> {truck.companyName}
-                                </p>
-                                {truck.createdAt && (
-                                    <p className="created-date">
-                                        <strong>สร้างเมื่อ:</strong> {new Date(truck.createdAt).toLocaleDateString('th-TH')}
-                                    </p>
-                                )}
+                                <p><FontAwesomeIcon icon={faBuilding} className="info-icon" /> <strong>บริษัท:</strong> {truck.companyName}</p>
+                                {truck.createdAt && <p className="created-date"><strong>สร้างเมื่อ:</strong> {new Date(truck.createdAt).toLocaleDateString('th-TH')}</p>}
                             </div>
                         </div>
                     ))

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchTruckHeads, createTruckHead, updateTruckHead, deleteTruckHead, ITruckHead } from '../../api/components/truckApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faTimes, 
+import {
+    faTimes,
     faPlus,
     faEdit,
     faTrash,
@@ -16,6 +16,7 @@ const VehiclePage: React.FC = () => {
     const [truckHeads, setTruckHeads] = useState<ITruckHead[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [selectedCompany, setSelectedCompany] = useState<string>('all');
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -35,7 +36,9 @@ const VehiclePage: React.FC = () => {
         try {
             setLoading(true);
             const data = await fetchTruckHeads();
-            setTruckHeads(data);
+            // Normalize companyName (trim) to avoid whitespace mismatch
+            const normalized = data.map(d => ({ ...d, companyName: (d.companyName || '').toString().trim() }));
+            setTruckHeads(normalized);
             setError(null);
         } catch (error) {
             console.error('Error fetching truck heads:', error);
@@ -46,21 +49,27 @@ const VehiclePage: React.FC = () => {
         }
     };
 
-    const filteredTruckHeads = truckHeads.filter(truck =>
-        truck.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        truck.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredTruckHeads = truckHeads.filter(truck => {
+        const term = searchTerm.trim().toLowerCase();
+        const license = (truck.licensePlate || '').toString().toLowerCase();
+        const companyRaw = (truck.companyName || '').toString();
+        const company = companyRaw.trim().toLowerCase();
+        const matchesTerm = !term || license.includes(term) || company.includes(term);
+        const matchesCompany = selectedCompany === 'all' || companyRaw.trim() === selectedCompany;
+        return matchesTerm && matchesCompany;
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (submitting) return; // ป้องกันการส่งซ้ำ
-        
+
         try {
             setSubmitting(true);
+            const payload = { ...form, companyName: (form.companyName || '').toString().trim() };
             if (editingTruck) {
-                await updateTruckHead(editingTruck._id!, form);
+                await updateTruckHead(editingTruck._id!, payload);
             } else {
-                await createTruckHead(form);
+                await createTruckHead(payload);
             }
             await loadTruckHeads();
             handleCloseModal();
@@ -107,10 +116,10 @@ const VehiclePage: React.FC = () => {
     const formatLicensePlate = (value: string): string => {
         // ลบตัวอักษรที่ไม่ใช่ตัวอักษรและตัวเลข
         const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        
+
         // จำกัดความยาวไม่เกิน 7 ตัวอักษร
         const limited = cleaned.slice(0, 7);
-        
+
         // เพิ่ม dash หลังตัวอักษรที่ 3
         if (limited.length > 3) {
             return limited.slice(0, 3) + '-' + limited.slice(3);
@@ -135,7 +144,7 @@ const VehiclePage: React.FC = () => {
                     <div className="error-message">
                         <h3>⚠️ การเชื่อมต่อมีปัญหา</h3>
                         <p>{error}</p>
-                        <button 
+                        <button
                             className="retry-btn"
                             onClick={loadTruckHeads}
                         >
@@ -151,6 +160,7 @@ const VehiclePage: React.FC = () => {
         <div className="vehicle-page">
             <div className="header-row">
                 <h1 className="page-title">ทะเบียนหัว</h1>
+                <div className="result-count">แสดง {filteredTruckHeads.length} รายการ</div>
                 <div className="header-controls">
                     <div className="search-container">
                         <input
@@ -161,8 +171,19 @@ const VehiclePage: React.FC = () => {
                             className="search-input"
                         />
                     </div>
+                    <div className="company-filter">
+                        <select
+                            value={selectedCompany}
+                            onChange={(e) => setSelectedCompany(e.target.value)}
+                            className="company-select"
+                        >
+                            <option value="all">ทั้งหมด</option>
+                            <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                            <option value="รถร่วม">รถร่วม</option>
+                        </select>
+                    </div>
                     <div className="action-buttons">
-                        <button 
+                        <button
                             className="refresh-btn"
                             onClick={loadTruckHeads}
                             disabled={loading}
@@ -171,7 +192,7 @@ const VehiclePage: React.FC = () => {
                             <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
                             รีเฟรช
                         </button>
-                        <button 
+                        <button
                             className="add-btn"
                             onClick={() => setShowModal(true)}
                         >
@@ -196,14 +217,14 @@ const VehiclePage: React.FC = () => {
                                     {truck.licensePlate}
                                 </h3>
                                 <div className="card-actions">
-                                    <button 
+                                    <button
                                         className="edit-btn"
                                         onClick={() => handleEdit(truck)}
                                         title="แก้ไข"
                                     >
                                         <FontAwesomeIcon icon={faEdit} />
                                     </button>
-                                    <button 
+                                    <button
                                         className="delete-btn"
                                         onClick={() => handleDelete(truck._id!)}
                                         title="ลบ"
@@ -212,7 +233,7 @@ const VehiclePage: React.FC = () => {
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div className="card-content">
                                 <p>
                                     <FontAwesomeIcon icon={faBuilding} className="info-icon" />
