@@ -15,6 +15,8 @@ import {
     faTimes,
     faUserCog,
     faFileAlt,
+    faFileInvoice,
+    faClipboardList,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getUserPermissions, logoutUser } from "../../api/auth/auth";
@@ -162,11 +164,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         label: string;
         tooltip?: string;
         minRole?: UserRole;
+        externalUrl?: string; // ✅ เพิ่ม field สำหรับ external link
     }> = [
             { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_2 },
-            { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_2 },
-            { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_2 },
-            { path: "/data-today", icon: faFileAlt, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_2 },
+            { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_2, externalUrl: "https://fleetweb-th.cartrack.com/" }, // ✅ external link
+            { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_2, externalUrl: "https://ucontainers.com.cn/login.php" }, // ✅ external link
+            { path: "/workorder", icon: faFileInvoice, label: "ใบสั่งงาน", tooltip: "Work Order", minRole: UserRole.LEVEL_2 }, 
+            { path: "/data-today", icon: faClipboardList, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_2 },
             { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_2 },
             { path: "/vehicles", icon: faCar, label: "ทะเบียนหัว", tooltip: "Vehicles", minRole: UserRole.LEVEL_2 },
             { path: "/vehiclestail", icon: faCar, label: "ทะเบียนท้าย", tooltip: "Vehicles_tail", minRole: UserRole.LEVEL_2 },
@@ -210,57 +214,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                 {/* Menu */}
                 <nav className="sidebar-menu">
                     {(() => {
-                        console.log('🔍 Sidebar Debug:');
-                        console.log('- userPermissions:', userPermissions);
-                        console.log('- allowedPages:', userPermissions?.allowedPages);
-                        console.log('- currentRoleLevel:', currentRoleLevel);
-                        
-                        // เอา allowedPages filter ก่อน แล้วค่อย role filter
                         const allowedFiltered = menuItems.filter((item) =>
                             userPermissions?.allowedPages?.includes(
                                 item.path.replace("/", "")
                             )
                         );
-                        console.log('- After allowedPages filter:', allowedFiltered.map(i => i.path));
-                        
+
                         const roleFiltered = allowedFiltered.filter((item) =>
                             item.minRole ? currentRoleLevel >= item.minRole : true
                         );
-                        console.log('- After role filter:', roleFiltered.map(i => i.path));
-                        
+
                         return roleFiltered;
-                    })()
-                        .map((item) => (
-                            <button
-                                key={item.path}
-                                onClick={() => {
-                                    if (item.path === "/track") {
-                                        window.open(
-                                            "https://ucontainers.com.cn/login.php",
-                                            "_blank"
-                                        );
-                                    } else {
-                                        navigate(item.path);
-                                    }
-                                }}
-                                className={
-                                    isActivePage(item.path)
-                                        ? "active sidebar-link"
-                                        : "sidebar-link"
+                    })().map((item) => (
+                        <button
+                            key={item.path}
+                            onClick={() => {
+                                if (item.externalUrl) {
+                                    window.open(item.externalUrl, "_blank");
+                                } else {
+                                    navigate(item.path);
                                 }
-                                data-tooltip={item.tooltip}
-                                style={{
-                                    textAlign: "left",
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <FontAwesomeIcon icon={item.icon} />
-                                {(isSidebarOpen || isMobile) && (
-                                    <span>{item.label}</span>
-                                )}
-                            </button>
-                        ))}
+                            }}
+                            className={
+                                isActivePage(item.path)
+                                    ? "active sidebar-link"
+                                    : "sidebar-link"
+                            }
+                            data-tooltip={item.tooltip}
+                            style={{
+                                textAlign: "left",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <FontAwesomeIcon icon={item.icon} />
+                            {(isSidebarOpen || isMobile) && (
+                                <span>{item.label}</span>
+                            )}
+                        </button>
+                    ))}
                 </nav>
 
                 {/* User Info */}
@@ -294,18 +286,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                         </div>
                         {userDropdown && (isSidebarOpen || isMobile) && (
                             <div className="user-dropdown-menu">
-                                {/* Settings แสดงตลอด */}
                                 <button onClick={() => navigate("/settings")}>
                                     <FontAwesomeIcon icon={faCog} /> Settings
                                 </button>
-
-                                {/* Logout */}
                                 <button onClick={handleLogout}>
                                     <FontAwesomeIcon icon={faSignOutAlt} /> Logout
                                 </button>
                             </div>
                         )}
-
                     </div>
                 )}
             </aside>

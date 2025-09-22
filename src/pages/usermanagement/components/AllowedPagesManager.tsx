@@ -48,7 +48,8 @@ const AllowedPagesManager: React.FC = () => {
         "/vehiclestail": "ทะเบียนท้าย",
         "/containers": "ตู้คอนเทนเนอร์",
         "/management": "การจัดการผู้ใช้",
-        "/settings": "การตั้งค่า"
+        "/settings": "การตั้งค่า",
+        "/workorder": "ใบสั่งงาน",
     };
 
     return (
@@ -68,7 +69,7 @@ const AllowedPagesManager: React.FC = () => {
                 </thead>
                 <tbody>
                     {users
-                        .filter(user => user.role.toLowerCase() !== "super admin") // ซ่อน super admin
+                         // ซ่อน super admin
                         .map(user => (
                             <tr key={user._id}>
                                 <td>{user.firstName} {user.lastName}</td>

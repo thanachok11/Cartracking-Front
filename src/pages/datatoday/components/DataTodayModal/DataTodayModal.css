@@ -1,0 +1,228 @@
+/* -------------------------
+   Backdrop
+------------------------- */
+.data-today-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+}
+
+/* -------------------------
+   Modal
+------------------------- */
+.data-today-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 700px;
+    max-width: 95%;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.25s ease;
+}
+
+.data-today-modal-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #1e40af;
+}
+
+/* -------------------------
+   Form Layout (Grid)
+------------------------- */
+.data-today-modal-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 24px;
+}
+
+.data-today-modal-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.data-today-modal-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.data-today-modal-row input,
+.data-today-modal-row select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.data-today-modal-row input:focus,
+.data-today-modal-row select:focus {
+    outline: none;
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.15);
+}
+
+/* -------------------------
+   Actions
+------------------------- */
+.data-today-modal-actions {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.data-today-modal-btn-cancel {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.data-today-modal-btn-cancel:hover {
+    background: #e5e7eb;
+    color: #374151;
+    transform: translateY(-2px);
+}
+
+.data-today-modal-btn-submit {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.data-today-modal-btn-submit:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.data-today-modal-btn-submit:disabled {
+    background: #90caf9;
+    cursor: not-allowed;
+}
+
+/* -------------------------
+   File / Link Styles
+------------------------- */
+.data-today-modal-link {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #1e88e5;
+    cursor: pointer;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.data-today-modal-file {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #555;
+    text-decoration: underline;
+}
+
+/* -------------------------
+   Preview
+------------------------- */
+.data-today-preview-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1300;
+}
+
+.data-today-preview {
+    background: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    max-width: 90vw;
+    max-height: 85vh;
+    position: relative;
+}
+
+.data-today-preview-close {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: background 0.2s;
+}
+
+.data-today-preview-close:hover {
+    background: #c62828;
+}
+
+.data-today-preview-img {
+    max-width: 100%;
+    max-height: 75vh;
+    display: block;
+    margin: 0 auto;
+    margin-top: 30px;
+    border-radius: 6px;
+}
+
+/* -------------------------
+   Empty State
+------------------------- */
+.data-today-empty {
+    text-align: center;
+    padding: 28px;
+    font-size: 1.1rem;
+    color: #777;
+}
+
+/* -------------------------
+   Responsive
+------------------------- */
+@media (max-width: 768px) {
+    .data-today-modal-form {
+        grid-template-columns: 1fr;
+    }
+
+    .data-today-modal-actions {
+        grid-column: span 1;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .data-today-modal-btn-cancel,
+    .data-today-modal-btn-submit {
+        width: 100%;
+    }
+}

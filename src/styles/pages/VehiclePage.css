@@ -14,20 +14,91 @@
   padding: 2rem;
 }
 
-.header-row {
+/* Vehicle Header */
+.vehicle-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #f9fafb;
+  padding: 12px 20px;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+/* Controls ให้ลอยด้านบน */
+.vehicle-tail-grid-controls {
+  position: sticky;
+  top: 70px;
+  /* ระยะห่างจาก header */
+  background: #ffffff;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 99;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.vehicle-tail-grid-controls select {
+  padding: 6px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vehicle-tail-grid-controls select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Layout ของการ์ด */
+.vehicle-tail-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+/* Top Row */
+.vehicle-header-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
 }
-
+/* -------------------------
+   Page Title
+------------------------- */
 .page-title {
   margin: 0;
-  font-weight: 700;
-  font-size: 2rem;
-  color: #1e40af;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #1e40af;
 }
 
+/* -------------------------
+   Result Count Badge
+------------------------- */
+.result-count {
+  margin-left: 1px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e88e5;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 20px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(30, 136, 229, 0.1);
+}
 /* Header Controls */
 .header-controls {
   display: flex;
@@ -189,6 +260,7 @@
 /* grid */
 .vehicle-grid {
   display: grid;
+  margin-top: 20px;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.25rem;
 }
@@ -390,12 +462,13 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  color: #1e40af;
 }
 
 .popup-title h2 {
   margin: 0;
   font-size: 1.25rem;
-  color: #1f2937;
+  color: #1e40af;
   font-weight: 600;
 }
 
@@ -432,13 +505,7 @@
   font-size: 0.95rem;
 }
 
-/* result count near title */
-.result-count {
-  margin-left: 16px;
-  color: #475569;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
+
 
 /* header-controls adjustments for spacing on small screens */
 @media (max-width: 768px) {
@@ -563,10 +630,6 @@
     justify-content: center;
   }
 
-  .page-title {
-    font-size: 1.5rem;
-    text-align: center;
-  }
 
   .vehicle-grid {
     grid-template-columns: 1fr;

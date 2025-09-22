@@ -82,7 +82,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
             <div className={`register-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
                 <button onClick={handleClose} className="register-close-button">×</button>
                 <form onSubmit={handleRegister} className="register-form">
-                    <h2 className="register-title">Register</h2>
+                    <h2 className="register-title">สมัครสมาชิก</h2>
                     <input
                         type="email"
                         name="email"

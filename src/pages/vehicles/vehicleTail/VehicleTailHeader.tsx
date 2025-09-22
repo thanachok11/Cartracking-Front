@@ -2,39 +2,37 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-interface ContainerHeaderProps {
+interface VehicleTailHeaderProps {
     onRefresh: () => void;
     onAdd: () => void;
     totalCount: number;
     searchTerm: string;
-    filterBy: string;
+    selectedCompany: string;
     onSearch: (v: string) => void;
     onFilter: (v: string) => void;
 }
 
-export default function ContainerHeader({
+export default function VehicleTailHeader({
     onRefresh,
     onAdd,
     totalCount,
     searchTerm,
-    filterBy,
+    selectedCompany,
     onSearch,
     onFilter,
-}: ContainerHeaderProps) {
+}: VehicleTailHeaderProps) {
     const [loading, setLoading] = useState(false);
 
     return (
-        <div className="container-header-page">
-            <div className="container-header-page-top">
-                <h2 className="container-header-page-title">
-                    ตู้คอนเทนเนอร์
-                    <div className="container-header-page-count">
-                        จำนวนตู้ {totalCount} ตู้
-                    </div>
+        <div className="vehicle-header">
+            <div className="vehicle-header-top">
+                <h2 className="page-title">
+                    ทะเบียนหาง
+                    <div className="result-count">จำนวนทะเบียนหาง {totalCount} รายการ</div>
                 </h2>
-                <div className="container-header-page-actions">
+                <div className="header-actions">
                     <button
-                        className="container-header-page-refresh-btn"
+                        className="refresh-btn"
                         onClick={() => {
                             setLoading(true);
                             onRefresh();
@@ -44,12 +42,9 @@ export default function ContainerHeader({
                         <FontAwesomeIcon icon={faSync} className={loading ? "fa-spin" : ""} />
                         รีเฟรช
                     </button>
-                    <button
-                        className="container-header-page-add-btn"
-                        onClick={onAdd}
-                    >
+                    <button className="add-btn" onClick={onAdd}>
                         <FontAwesomeIcon icon={faPlus} />
-                        เพิ่มตู้คอนเทนเนอร์
+                        เพิ่มทะเบียนหาง
                     </button>
                 </div>
             </div>
@@ -57,15 +52,15 @@ export default function ContainerHeader({
             <div className="container-header-page-bottom">
                 <input
                     type="text"
-                    placeholder="ค้นหาหมายเลขตู้หรือบริษัท..."
+                    placeholder="ค้นหาหมายเลขหรือบริษัท..."
                     value={searchTerm}
                     onChange={(e) => onSearch(e.target.value)}
                     className="container-header-page-search-input"
                 />
                 <select
-                    value={filterBy}
+                    value={selectedCompany}
                     onChange={(e) => onFilter(e.target.value)}
-                    className="container-header-page-filter-select"
+                    className="filter-select"
                 >
                     <option value="all">ทั้งหมด</option>
                     <option value="ป๋อเฉิน">ป๋อเฉิน</option>

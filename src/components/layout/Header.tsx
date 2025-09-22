@@ -42,13 +42,13 @@ const Header: React.FC<NavbarProps> = ({ isSidebarOpen = false }) => {
                                 onClick={() => setIsLoginModalVisible(true)}
                                 className="login-button-header"
                             >
-                                <FontAwesomeIcon icon={faSignInAlt} /> Login
+                                <FontAwesomeIcon icon={faSignInAlt} /> เข้าสู่ระบบ
                             </button>
                             <button
                                 onClick={() => setIsRegisterModalVisible(true)}
                                 className="register-button-header"
                             >
-                                <FontAwesomeIcon icon={faUserPlus} /> Register
+                                <FontAwesomeIcon icon={faUserPlus} /> สมัครสมาชิก
                             </button>
                         </div>
                     )}

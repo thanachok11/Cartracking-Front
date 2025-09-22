@@ -1,0 +1,193 @@
+/* Backdrop */
+.workorder-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* Modal box */
+.workorder-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 900px;
+    max-width: 95%;
+    padding: 24px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.3s ease;
+}
+
+.workorder-modal h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+/* Layout: 2 columns */
+.workorder-form-grid {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.workorder-form-left,
+.workorder-form-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Row style */
+.workorder-form-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.workorder-form-row label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.workorder-form-row input,
+.workorder-form-row select,
+.workorder-form-row textarea {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    transition: 0.2s;
+}
+
+.workorder-form-row input:focus,
+.workorder-form-row select:focus,
+.workorder-form-row textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+    outline: none;
+}
+
+/* Full width row */
+.workorder-form-full {
+    margin-top: 10px;
+}
+
+/* Actions */
+.workorder-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.workorder-modal-actions button {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.workorder-modal-actions button:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.workorder-modal-actions button[type="button"] {
+    background: #f3f4f6;
+    color: #333;
+}
+
+.workorder-modal-actions button[type="button"]:hover {
+    background: #e5e7eb;
+}
+
+
+/* -------------------------
+   Actions (Buttons)
+------------------------- */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.actions button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.actions button[type="button"] {
+    background: #f3f4f6;
+    color: #333;
+}
+
+.actions button[type="button"]:hover {
+    background: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.actions button[type="submit"] {
+    background: #2563eb;
+    color: #fff;
+}
+
+.actions button[type="submit"]:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* -------------------------
+   Animations
+------------------------- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animation */
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

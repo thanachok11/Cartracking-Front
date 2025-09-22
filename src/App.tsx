@@ -7,7 +7,6 @@ import {
   Route,
 } from "react-router-dom";
 import VehicleTimelinePage from "./pages/VehicleTimeline";
-import MapView from "./pages/map/GoogleMapView";
 import HomePage from "./components/landingPage/LandingPage";
 import Sidebar from "./components/layout/Sidebar";
 import { GoogleMapsProvider } from "./pages/GoogleMapsProvider";
@@ -22,8 +21,9 @@ import DriverProfilePage from './pages/driver/components/DriverProfilePage';
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
-import EventViewerPage from "./pages/EventViewerPage";
 import DataTodayPage from "./pages/datatoday/DataTodayPage";
+import NotFoundPage from "./components/layout/NotFoundPage"; // ✅ import หน้า 404
+import WorkOrderPage from "./pages/woekorder/WorkOrderPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 import AllowedPagesManager from "./pages/usermanagement/components/AllowedPagesManager";
 import "./App.css";
@@ -68,21 +68,7 @@ const App: React.FC = () => {
       } catch {
         return true;
       }
-    };
-
-    const renewSessionCookie = async () => {
-      try {
-        await axios.post(
-          `${API_BASE_URL}/renewCookie`,
-          {},
-          { withCredentials: true }
-        );
-        console.log("🔄 Session cookie renewed successfully");
-      } catch (err) {
-        console.error("❌ Failed to renew session cookie:", err);
-      }
-    };
-
+    };  
     const renewToken = async (oldToken: string) => {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/renewToken`, {
@@ -100,7 +86,6 @@ const App: React.FC = () => {
           localStorage.setItem("token", data.token);
           lastRenewTime = Date.now();
           console.log("🔄 Token renewed successfully");
-          await renewSessionCookie();
         }
       } catch (err) {
         console.error("❌ Failed to renew token:", err);
@@ -169,19 +154,6 @@ const App: React.FC = () => {
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-
-            {/* ✅ โหลด Google Maps Provider เฉพาะตอนเข้า /map */}
-            <Route
-              path="/map"
-              element={
-                <ProtectedRoute page="map">
-                  <GoogleMapsProvider>
-                    <MapView />
-                  </GoogleMapsProvider>
-                </ProtectedRoute>
-              }
-            />
-
             <Route
               path="/vehicles"
               element={
@@ -231,13 +203,14 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/events/:registration"
+              path="/workorder"
               element={
-                <ProtectedRoute page="events">
-                  <EventViewerPage />
+                <ProtectedRoute page="">
+                  <WorkOrderPage />
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/management"
               element={
@@ -270,6 +243,8 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            {/* ✅ route 404 ต้องอยู่ท้ายสุด */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>
       </div>

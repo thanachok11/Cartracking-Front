@@ -27,9 +27,9 @@ export default function ForgotPassword() {
     return (
         <div className="forgot-container">
             <div className={`forgot-card ${isClosing ? "fade-out" : "fade-in"}`}>
-                <h2 className="forgot-title">Forgot Password</h2>
+                <h2 className="forgot-title">ลืมรหัสผ่าน ?</h2>
                 <p className="forgot-subtitle">
-                    Enter your email to receive a password reset link.
+                    ใส่อีเมลจริงที่สมัครไว้กับระบบเพื่อที่จะรีเซ็ตรหัสผ่าน ระบบจะส่ง link ไปยังอีเมลของท่าน.
                 </p>
                 <form onSubmit={handleSubmit} className="forgot-form">
                     <input

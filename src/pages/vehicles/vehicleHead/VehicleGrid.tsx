@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Containers } from "./types";
+import { ITruckHead } from "../../../api/components/truckApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTruck, faEdit, faTrash, faBuilding } from "@fortawesome/free-solid-svg-icons";
 
-interface Props {
-    items: Containers[];
-    onEdit: (c: Containers) => void;
+interface VehicleGridProps {
+    items: ITruckHead[];
+    onEdit: (truck: ITruckHead) => void;
     onDelete: (id: string) => void;
 }
 
-export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
+export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProps) {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -18,13 +18,8 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
     const currentItems = items.slice(startIndex, startIndex + itemsPerPage);
     const totalPages = Math.ceil(items.length / itemsPerPage);
 
-    if (!items.length) {
-        return (
-            <div className="grid-container-page-no-results">
-                <h3>ไม่พบข้อมูลตู้คอนเทนเนอร์</h3>
-                <p>ลองเปลี่ยนคำค้นหาหรือเลือกบริษัทใหม่</p>
-            </div>
-        );
+    if (items.length === 0) {
+        return <div className="no-results">ไม่พบข้อมูลทะเบียนหัว</div>;
     }
 
     return (
@@ -49,34 +44,35 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
                 </label>
             </div>
 
-            {/* แสดงรายการ */}
-            <div className="grid-container-page">
-                {currentItems.map((c) => (
-                    <div key={c._id} className="grid-container-page-card">
-                        <h3>{c.containerNumber || "N/A"}</h3>
-                        <p>
-                            <strong>บริษัท:</strong> {c.companyName || "N/A"}
-                        </p>
-                        <p>
-                            <strong>ขนาด:</strong> {c.containerSize || "N/A"}
-                        </p>
-                        <div className="grid-container-page-id">ID: {c._id}</div>
-
-                        <div className="card-actions">
-                            <button
-                                className="edit-btn"
-                                onClick={() => onEdit(c)}
-                                title="แก้ไข"
-                            >
-                                <FontAwesomeIcon icon={faEdit} />
-                            </button>
-                            <button
-                                className="delete-btn"
-                                onClick={() => c._id && onDelete(c._id)}
-                                title="ลบ"
-                            >
-                                <FontAwesomeIcon icon={faTrash} />
-                            </button>
+            {/* แสดง card */}
+            <div className="vehicle-grid">
+                {currentItems.map((truck) => (
+                    <div key={truck._id} className="vehicle-card">
+                        <div className="card-header">
+                            <h3 className="vehicle-registration">
+                                <FontAwesomeIcon icon={faTruck} className="card-icon" />
+                                {truck.licensePlate}
+                            </h3>
+                            <div className="card-actions">
+                                <button className="edit-btn" onClick={() => onEdit(truck)}>
+                                    <FontAwesomeIcon icon={faEdit} />
+                                </button>
+                                <button className="delete-btn" onClick={() => onDelete(truck._id!)}>
+                                    <FontAwesomeIcon icon={faTrash} />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="card-content">
+                            <p>
+                                <FontAwesomeIcon icon={faBuilding} className="info-icon" />
+                                <strong>บริษัท:</strong> {truck.companyName}
+                            </p>
+                            {truck.createdAt && (
+                                <p className="created-date">
+                                    <strong>สร้างเมื่อ:</strong>{" "}
+                                    {new Date(truck.createdAt).toLocaleDateString("th-TH")}
+                                </p>
+                            )}
                         </div>
                     </div>
                 ))}

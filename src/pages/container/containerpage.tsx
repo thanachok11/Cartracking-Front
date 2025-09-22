@@ -1,36 +1,47 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import '../../styles/pages/ContainerPage.css';
-import { fetchAllContainers, createContainer, updateContainer, deleteContainer, isContainerNumberUnique, APIError, CONTAINER_SIZES, Containers as ApiContainers } from '../../api/components/containersApi';
-import { Containers } from './components/types';
-import { validateForm, ensureTrim } from './components/utils';
-import ContainerHeader from './components/ContainerHeader';
-import SearchFilterBar from './components/SearchFilterBar';
-import ErrorBanner from './components/ErrorBanner';
-import DiagnosticBanner from './components/DiagnosticBanner';
-import ContainerGrid from './components/ContainerGrid';
-import ContainerModal from './components/ContainerModal';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import "./components/ContainerPage.css";
+import "./components/ContainerModal.css";
+import {
+  fetchAllContainers,
+  createContainer,
+  updateContainer,
+  deleteContainer,
+  isContainerNumberUnique,
+  APIError,
+  CONTAINER_SIZES,
+  Containers as ApiContainers,
+} from "../../api/components/containersApi";
+import { Containers } from "./components/types";
+import { validateForm, ensureTrim } from "./components/utils";
+import ContainerHeader from "./components/ContainerHeader";
+import ContainerGrid from "./components/ContainerGrid";
+import ContainerModal from "./components/ContainerModal";
 
 export default function ContainerPage() {
   const [containers, setContainers] = useState<Containers[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [filterBy, setFilterBy] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterBy, setFilterBy] = useState("all");
   const [showModal, setShowModal] = useState(false);
   const [editingContainer, setEditingContainer] = useState<Containers | null>(null);
   const [saving, setSaving] = useState(false);
-  const [showDiagnostic, setShowDiagnostic] = useState(false);
-  const [formData, setFormData] = useState<Omit<Containers, '_id'>>({ containerNumber: '', companyName: '', containerSize: '' });
+  const [formData, setFormData] = useState<Omit<Containers, "_id">>({
+    containerNumber: "",
+    companyName: "",
+    containerSize: "",
+  });
 
   const filteredContainers = useMemo(
     () =>
       containers.filter((c) => {
-        const containerNumber = c?.containerNumber || '';
-        const companyName = c?.companyName || '';
-        const searchMatch = containerNumber.toLowerCase().includes(searchTerm.toLowerCase()) || companyName.toLowerCase().includes(searchTerm.toLowerCase());
+        const containerNumber = c?.containerNumber || "";
+        const companyName = c?.companyName || "";
+        const searchMatch =
+          containerNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          companyName.toLowerCase().includes(searchTerm.toLowerCase());
         let categoryMatch = true;
-        if (filterBy === 'ป๋อเฉิน') categoryMatch = companyName.includes('ป๋อเฉิน');
-        else if (filterBy === 'รถร่วม') categoryMatch = companyName.includes('รถร่วม');
+        if (filterBy === "ป๋อเฉิน") categoryMatch = companyName.includes("ป๋อเฉิน");
+        else if (filterBy === "รถร่วม") categoryMatch = companyName.includes("รถร่วม");
         return searchMatch && categoryMatch;
       }),
     [containers, searchTerm, filterBy]
@@ -41,9 +52,6 @@ export default function ContainerPage() {
       setLoading(true);
       const data = await fetchAllContainers();
       setContainers(data as ApiContainers[]);
-      setError(null);
-    } catch (err) {
-      console.error('Load containers error:', err);
     } finally {
       setLoading(false);
     }
@@ -52,25 +60,22 @@ export default function ContainerPage() {
   const handleCloseModal = useCallback(() => {
     setShowModal(false);
     setEditingContainer(null);
-    setError(null);
   }, []);
 
   const handleCreate = useCallback(async () => {
     try {
       setSaving(true);
-      setError(null);
-
       const val = validateForm(formData);
-      if (val) return setError(val);
+      if (val) return alert(val);
 
       const isUnique = await isContainerNumberUnique(ensureTrim(formData.containerNumber!));
-      if (!isUnique) return setError('Container Number already exists');
+      if (!isUnique) return alert("Container Number already exists");
 
       await createContainer({ ...formData, containerNumber: ensureTrim(formData.containerNumber) });
       await loadContainers();
       handleCloseModal();
     } catch (err) {
-      setError(err instanceof APIError ? err.message : 'Failed to create container');
+      alert(err instanceof APIError ? err.message : "Failed to create container");
     } finally {
       setSaving(false);
     }
@@ -80,54 +85,49 @@ export default function ContainerPage() {
     if (!editingContainer) return;
     try {
       setSaving(true);
-      setError(null);
-
       const val = validateForm(formData);
-      if (val) return setError(val);
+      if (val) return alert(val);
 
-      if (formData.containerNumber !== editingContainer.containerNumber) {
-        const isUnique = await isContainerNumberUnique(ensureTrim(formData.containerNumber!), editingContainer._id);
-        if (!isUnique) return setError('Container Number already exists');
-      }
-
-      await updateContainer(editingContainer._id!, { ...formData, containerNumber: ensureTrim(formData.containerNumber) });
+      await updateContainer(editingContainer._id!, {
+        ...formData,
+        containerNumber: ensureTrim(formData.containerNumber),
+      });
       await loadContainers();
       handleCloseModal();
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to update container';
-      setError(`Update failed: ${errorMessage}`);
+      alert(err?.response?.data?.message || err.message || "Failed to update container");
     } finally {
       setSaving(false);
     }
   }, [editingContainer, formData, loadContainers, handleCloseModal]);
 
-  const handleDelete = useCallback(async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this container?')) return;
-    try {
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบตู้คอนเทนเนอร์นี้?")) return;
       await deleteContainer(id);
       await loadContainers();
-    } catch (err) {
-      setError(err instanceof APIError ? err.message : 'Failed to delete container');
-    }
-  }, [loadContainers]);
+    },
+    [loadContainers]
+  );
 
   const handleOpenModal = useCallback((container?: Containers) => {
     if (container) {
       setEditingContainer(container);
-      setFormData({ containerNumber: container.containerNumber || '', companyName: container.companyName || '', containerSize: container.containerSize || '' });
+      setFormData({
+        containerNumber: container.containerNumber || "",
+        companyName: container.companyName || "",
+        containerSize: container.containerSize || "",
+      });
     } else {
       setEditingContainer(null);
-      setFormData({ containerNumber: '', companyName: '', containerSize: '' });
+      setFormData({ containerNumber: "", companyName: "", containerSize: "" });
     }
     setShowModal(true);
   }, []);
 
   const handleSave = useCallback(() => {
-    if (saving) return; // ป้องกันการส่งซ้ำ
-    const val = validateForm(formData);
-    if (val) return setError(val);
     editingContainer ? handleUpdate() : handleCreate();
-  }, [saving, editingContainer, handleUpdate, handleCreate, formData]);
+  }, [editingContainer, handleUpdate, handleCreate]);
 
   useEffect(() => {
     loadContainers();
@@ -137,28 +137,22 @@ export default function ContainerPage() {
 
   return (
     <div className="container-page">
-      <ContainerHeader onAdd={() => handleOpenModal()} />
-
-      <SearchFilterBar
+      <ContainerHeader
+        onRefresh={loadContainers}
+        onAdd={() => handleOpenModal()}
+        totalCount={containers.length}
         searchTerm={searchTerm}
         filterBy={filterBy}
         onSearch={setSearchTerm}
         onFilter={setFilterBy}
-        resultsCount={filteredContainers.length}
       />
-
-      {error && (
-        <ErrorBanner message={error} onRetry={() => { setError(null); loadContainers(); }} onDismiss={() => setError(null)} />
-      )}
-
-      {showDiagnostic && <DiagnosticBanner onClose={() => setShowDiagnostic(false)} />}
 
       <ContainerGrid items={filteredContainers} onEdit={handleOpenModal} onDelete={handleDelete} />
 
       <ContainerModal
         visible={showModal}
         editing={editingContainer}
-        error={error}
+        error={null}
         saving={saving}
         form={formData}
         sizes={CONTAINER_SIZES}

@@ -46,11 +46,11 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             
             if (data.role === "employee") {
                 redirectPath = "/employee-dashboard";
+            } else if (allowedPages.includes("dashboard")) {
+                redirectPath = "/dashboard"; // ✅ ถ้ามี dashboard → ไป dashboard
             } else if (allowedPages.length > 0) {
-                // ไปหน้าแรกใน allowedPages
                 redirectPath = `/${allowedPages[0]}`;
             } else {
-                // fallback จาก location state
                 redirectPath = location.state?.from?.pathname || "/dashboard";
             }
 
@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
                 <div className={`login-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
                     <button onClick={handleClose} className="login-close-button">×</button>
                     <form onSubmit={handleLogin} className="login-form">
-                        <h2 className="login-title">Login</h2>
+                        <h2 className="login-title">เข้าสู่ระบบ</h2>
                         <input
                             type="email"
                             name="email"

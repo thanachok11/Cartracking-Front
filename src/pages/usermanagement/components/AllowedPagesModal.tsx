@@ -14,7 +14,7 @@ interface User {
 const allPages = [
     "dashboard", "vehicles", "vehiclestail", "drivers",
     "containers", "management", "settings", "data-today", "map",
-    "track","allowed-pages-manager"
+    "track", "allowed-pages-manager", "workorder",
 ];
 
 interface AllowedPagesModalProps {
@@ -118,7 +118,8 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
         "vehiclestail": "ทะเบียนท้าย",
         "containers": "ตู้คอนเทนเนอร์",
         "management": "การจัดการผู้ใช้",
-        "allowed-pages-manager":"จัดการสิทธ์เข้าใช้งานหน้า"
+        "allowed-pages-manager":"จัดการสิทธ์เข้าใช้งานหน้า",
+        "workorder": "ใบสั่งงาน",
     };
 
     if (!isOpen || !selectedUser) return null;
