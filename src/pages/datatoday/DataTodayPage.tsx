@@ -15,14 +15,26 @@ import ExportToolbar from "./components/ExportToolbar";
 import FilterToolbar from "./components/FilterToolbar";
 import DataTodayModal from "./components/DataTodayModal/DataTodayModal"; // ✅ ใช้ตัวใหม่
 import DataTable from "./components/DataTable";
+import NotificationToast from "../../components/common/NotificationToast";
+import { useNotification } from "../../hooks/useNotification";
 import "../../styles/pages/DataTodayPage.css";
 import "./components/DataTodayModal/DataTodayModal.css"
+import "../../styles/components/NotificationToast.css";
 export default function DataTodayPage() {
     const [rows, setRows] = useState<DataToday[]>([]);
     const [form, setForm] = useState<Partial<DataToday>>({});
     const [editing, setEditing] = useState<Partial<DataToday> | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+
+    // notification hook
+    const { 
+        notification, 
+        progress, 
+        showNotification, 
+        handleMouseEnter, 
+        handleMouseLeave 
+    } = useNotification();
 
     // preview state 👇
     const [previewSrc, setPreviewSrc] = useState<string | null>(null);
@@ -273,6 +285,10 @@ export default function DataTodayPage() {
             setShowModal(false);
             setForm({});
             setEditing(null);
+            
+            // Show success notification
+            const action = editing?._id ? "แก้ไข" : "เพิ่ม";
+            showNotification(`${action}รายการสำเร็จ! ✅`, "success");
         } catch (err: any) {
             console.error("❌ Save error:", err);
             console.error("❌ Error response:", err.response?.data);
@@ -280,7 +296,7 @@ export default function DataTodayPage() {
             
             // แสดงข้อความข้อผิดพลาดให้ผู้ใช้
             const errorMessage = err.response?.data?.message || err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
-            alert(`ไม่สามารถบันทึกข้อมูลได้: ${errorMessage}`);
+            showNotification(`ไม่สามารถบันทึกข้อมูลได้: ${errorMessage} ❌`, "error");
         } finally {
             setSubmitting(false);
         }
@@ -322,8 +338,10 @@ export default function DataTodayPage() {
             await deleteDataToday(id);
             const d = await fetchAllDataToday();
             setRows(Array.isArray(d) ? d : []);
+            showNotification("ลบรายการสำเร็จ! ✅", "success");
         } catch (e) {
             console.error(e);
+            showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
         }
     };
     const handleAddNew = () => {
@@ -403,6 +421,15 @@ export default function DataTodayPage() {
                     setForm({});
                     setEditing(null);
                 }}
+            />
+
+            {/* Notification Toast */}
+            <NotificationToast
+                message={notification?.message}
+                type={notification?.type}
+                progress={progress}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             />
         </div>
     );

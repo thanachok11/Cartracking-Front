@@ -10,6 +10,8 @@ import "../../styles/pages/VehiclePage.css";
 import VehicleHeader from "./vehicleHead/VehicleHeader";
 import VehicleGrid from "./vehicleHead/VehicleGrid";
 import VehicleModal from "./vehicleHead/VehicleModal";
+import { useNotification } from "../../hooks/useNotification";
+import NotificationToast from "../../components/common/NotificationToast";
 
 const VehiclePage: React.FC = () => {
     const [truckHeads, setTruckHeads] = useState<ITruckHead[]>([]);
@@ -22,6 +24,8 @@ const VehiclePage: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingTruck, setEditingTruck] = useState<ITruckHead | null>(null);
     const [form, setForm] = useState({ licensePlate: "", companyName: "" });
+
+    const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
     const loadTruckHeads = async () => {
         try {
@@ -59,13 +63,17 @@ const VehiclePage: React.FC = () => {
         try {
             if (editingTruck) {
                 await updateTruckHead(editingTruck._id!, form);
+                showNotification("แก้ไขทะเบียนหัวสำเร็จ! ✅", "success");
             } else {
                 await createTruckHead(form);
+                showNotification("เพิ่มทะเบียนหัวสำเร็จ! ✅", "success");
             }
             await loadTruckHeads();
             setShowModal(false);
             setForm({ licensePlate: "", companyName: "" });
             setEditingTruck(null);
+        } catch (error) {
+            showNotification("เกิดข้อผิดพลาดในการบันทึกข้อมูล ❌", "error");
         } finally {
             setSubmitting(false);
         }
@@ -79,8 +87,13 @@ const VehiclePage: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         if (window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
-            await deleteTruckHead(id);
-            await loadTruckHeads();
+            try {
+                await deleteTruckHead(id);
+                await loadTruckHeads();
+                showNotification("ลบทะเบียนหัวสำเร็จ! ✅", "success");
+            } catch (error) {
+                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
+            }
         }
     };
 
@@ -110,6 +123,15 @@ const VehiclePage: React.FC = () => {
                 onChange={(field, value) => setForm((prev) => ({ ...prev, [field]: value }))}
                 onSubmit={handleSubmit}
                 onClose={() => setShowModal(false)}
+            />
+
+            <NotificationToast
+                message={notification?.message}
+                type={notification?.type}
+                progress={progress}
+                isHovering={false}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             />
         </div>
     );

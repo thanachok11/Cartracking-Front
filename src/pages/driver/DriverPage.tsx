@@ -13,6 +13,9 @@ import ErrorBanner from './components/ErrorBanner';
 import DriverHeader from './components/DriverHeader';
 import DriverGrid from './components/DriverGrid';
 import DriverModal from './components/DriverModal';
+import NotificationToast from '../../components/common/NotificationToast';
+import { useNotification } from '../../hooks/useNotification';
+import '../../styles/components/NotificationToast.css';
 
 export default function DriverPage() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -34,6 +37,15 @@ export default function DriverPage() {
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
+
+  // notification hook
+  const { 
+    notification, 
+    progress, 
+    showNotification, 
+    handleMouseEnter, 
+    handleMouseLeave 
+  } = useNotification();
 
   const handleApiError = (error: any, defaultMessage: string) => {
     if (error?.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -105,8 +117,10 @@ export default function DriverPage() {
 
       await loadDrivers();
       handleCloseModal();
+      showNotification("เพิ่มคนขับสำเร็จ! ✅", "success");
     } catch (error) {
       handleApiError(error, 'เกิดข้อผิดพลาดในการสร้างข้อมูลคนขับ');
+      showNotification("เกิดข้อผิดพลาดในการเพิ่มคนขับ ❌", "error");
     } finally {
       setSaving(false);
     }
@@ -126,8 +140,10 @@ export default function DriverPage() {
 
       await loadDrivers();
       handleCloseModal();
+      showNotification("แก้ไขข้อมูลคนขับสำเร็จ! ✅", "success");  
     } catch (error) {
       handleApiError(error, 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนขับ');
+      showNotification("เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนขับ ❌", "error");
     } finally {
       setSaving(false);
     }
@@ -139,8 +155,10 @@ export default function DriverPage() {
       try {
         await deleteDriver(id);
         await loadDrivers();
+        showNotification("ลบคนขับสำเร็จ! ✅", "success");
       } catch (error) {
         handleApiError(error, 'เกิดข้อผิดพลาดในการลบข้อมูลคนขับ');
+        showNotification("เกิดข้อผิดพลาดในการลบข้อมูลคนขับ ❌", "error");
       }
     },
     [loadDrivers]
@@ -228,6 +246,15 @@ export default function DriverPage() {
         onSave={handleSave}
         imageFile={imageFile}
         onImageFileChange={setImageFile}
+      />
+
+      <NotificationToast
+        message={notification?.message}
+        type={notification?.type}
+        progress={progress}
+        isHovering={false}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       />
     </div>
   );

@@ -10,6 +10,8 @@ import VehicleTailHeader from "./vehicleTail/VehicleTailHeader";
 import VehicleTailGrid from "./vehicleTail/VehicleGrid";
 import VehicleTailModal from "./vehicleTail/VehicleTailModal";
 import "../../styles/pages/VehiclePage.css";
+import { useNotification } from "../../hooks/useNotification";
+import NotificationToast from "../../components/common/NotificationToast";
 
 const VehicleTailPage: React.FC = () => {
     const [truckTails, setTruckTails] = useState<ITruckTail[]>([]);
@@ -19,6 +21,8 @@ const VehicleTailPage: React.FC = () => {
     const [editingTruck, setEditingTruck] = useState<ITruckTail | null>(null);
     const [form, setForm] = useState({ licensePlate: "", companyName: "" });
     const [submitting, setSubmitting] = useState(false);
+
+    const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
     const loadTruckTails = async () => {
         const data = await fetchTruckTails();
@@ -44,11 +48,15 @@ const VehicleTailPage: React.FC = () => {
         try {
             if (editingTruck) {
                 await updateTruckTail(editingTruck._id!, form);
+                showNotification("แก้ไขทะเบียนท้ายสำเร็จ! ✅", "success");
             } else {
                 await createTruckTail(form);
+                showNotification("เพิ่มทะเบียนท้ายสำเร็จ! ✅", "success");
             }
             await loadTruckTails();
             handleCloseModal();
+        } catch (error) {
+            showNotification("เกิดข้อผิดพลาดในการบันทึกข้อมูล ❌", "error");
         } finally {
             setSubmitting(false);
         }
@@ -62,8 +70,13 @@ const VehicleTailPage: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         if (window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
-            await deleteTruckTail(id);
-            await loadTruckTails();
+            try {
+                await deleteTruckTail(id);
+                await loadTruckTails();
+                showNotification("ลบทะเบียนท้ายสำเร็จ! ✅", "success");
+            } catch (error) {
+                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
+            }
         }
     };
 
@@ -95,6 +108,15 @@ const VehicleTailPage: React.FC = () => {
                 onChange={(field, value) => setForm((prev) => ({ ...prev, [field]: value }))}
                 onSubmit={handleSubmit}
                 onClose={handleCloseModal}
+            />
+
+            <NotificationToast
+                message={notification?.message}
+                type={notification?.type}
+                progress={progress}
+                isHovering={false}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             />
         </div>
     );

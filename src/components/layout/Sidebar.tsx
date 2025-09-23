@@ -60,8 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         if (isMobile && isSidebarOpen) {
             toggleSidebar();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname, isMobile]);
+    }, [location.pathname, isMobile, isSidebarOpen, toggleSidebar]);
 
     // Load user & permissions
     useEffect(() => {

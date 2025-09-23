@@ -16,6 +16,8 @@ import { validateForm, ensureTrim } from "./components/utils";
 import ContainerHeader from "./components/ContainerHeader";
 import ContainerGrid from "./components/ContainerGrid";
 import ContainerModal from "./components/ContainerModal";
+import { useNotification } from "../../hooks/useNotification";
+import NotificationToast from "../../components/common/NotificationToast";
 
 export default function ContainerPage() {
   const [containers, setContainers] = useState<Containers[]>([]);
@@ -30,6 +32,8 @@ export default function ContainerPage() {
     companyName: "",
     containerSize: "",
   });
+
+  const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
   const filteredContainers = useMemo(
     () =>
@@ -74,8 +78,10 @@ export default function ContainerPage() {
       await createContainer({ ...formData, containerNumber: ensureTrim(formData.containerNumber) });
       await loadContainers();
       handleCloseModal();
+      showNotification("เพิ่มคอนเทนเนอร์สำเร็จ! ✅", "success");
     } catch (err) {
       alert(err instanceof APIError ? err.message : "Failed to create container");
+      showNotification("เกิดข้อผิดพลาดในการเพิ่มคอนเทนเนอร์ ❌", "error");
     } finally {
       setSaving(false);
     }
@@ -94,8 +100,10 @@ export default function ContainerPage() {
       });
       await loadContainers();
       handleCloseModal();
+      showNotification("แก้ไขคอนเทนเนอร์สำเร็จ! ✅", "success");
     } catch (err: any) {
       alert(err?.response?.data?.message || err.message || "Failed to update container");
+      showNotification("เกิดข้อผิดพลาดในการแก้ไขคอนเทนเนอร์ ❌", "error");
     } finally {
       setSaving(false);
     }
@@ -104,8 +112,13 @@ export default function ContainerPage() {
   const handleDelete = useCallback(
     async (id: string) => {
       if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบตู้คอนเทนเนอร์นี้?")) return;
-      await deleteContainer(id);
-      await loadContainers();
+      try {
+        await deleteContainer(id);
+        await loadContainers();
+        showNotification("ลบคอนเทนเนอร์สำเร็จ! ✅", "success");
+      } catch (err) {
+        showNotification("เกิดข้อผิดพลาดในการลบคอนเทนเนอร์ ❌", "error");
+      }
     },
     [loadContainers]
   );
@@ -159,6 +172,15 @@ export default function ContainerPage() {
         onChange={(patch) => setFormData((prev) => ({ ...prev, ...patch }))}
         onClose={handleCloseModal}
         onSave={handleSave}
+      />
+
+      <NotificationToast
+        message={notification?.message}
+        type={notification?.type}
+        progress={progress}
+        isHovering={false}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       />
     </div>
   );

@@ -1,7 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faSave } from "@fortawesome/free-solid-svg-icons";
 import { fetchUsers, updateAllowedPages } from "../../../api/components/allowedPageApi";
+import NotificationToast from "../../../components/common/NotificationToast";
+import { useNotification } from "../../../hooks/useNotification";
+import "../../../styles/components/NotificationToast.css";
 
 interface User {
     _id: string;
@@ -23,18 +26,19 @@ interface AllowedPagesModalProps {
     targetUserId: string | null;
 }
 
-const NOTIFICATION_DURATION = 2500; // ms
-
 const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, targetUserId }) => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedPages, setSelectedPages] = useState<string[]>([]);
-    const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
-    const [progress, setProgress] = useState(0);
-    const hoveringRef = useRef(false);
-    const timerRef = useRef<NodeJS.Timer | null>(null);
-    const startTimeRef = useRef<number>(0);
-    const remainingTimeRef = useRef<number>(NOTIFICATION_DURATION);
     const token = localStorage.getItem("token");
+
+    // notification hook
+    const { 
+        notification, 
+        progress, 
+        showNotification, 
+        handleMouseEnter, 
+        handleMouseLeave 
+    } = useNotification();
 
     // โหลดข้อมูล user
     useEffect(() => {
@@ -60,48 +64,15 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
         );
     };
 
-    const showNotification = (message: string, type: 'success' | 'error', autoCloseModal = false) => {
-        setNotification({ message, type });
-        setProgress(0);
-        remainingTimeRef.current = NOTIFICATION_DURATION;
-        startTimeRef.current = Date.now();
-
-        if (timerRef.current) clearInterval(timerRef.current);
-
-        timerRef.current = setInterval(() => {
-            if (!hoveringRef.current) {
-                const elapsed = Date.now() - startTimeRef.current;
-                const newProgress = (elapsed / remainingTimeRef.current) * 100;
-                setProgress(newProgress);
-
-                if (elapsed >= remainingTimeRef.current) {
-                    clearInterval(timerRef.current!);
-                    timerRef.current = null;
-                    setNotification(null);
-                    if (autoCloseModal) onClose();
-                }
-            } else {
-                // ถ้า hover หยุด timer ชั่วคราว โดยไม่เพิ่ม progress
-                startTimeRef.current = Date.now() - (progress / 100) * remainingTimeRef.current;
-            }
-        }, 20);
-    };
-
-    const handleMouseEnter = () => {
-        hoveringRef.current = true;
-    };
-
-    const handleMouseLeave = () => {
-        hoveringRef.current = false;
-        startTimeRef.current = Date.now() - (progress / 100) * remainingTimeRef.current;
-    };
-
     const savePages = () => {
         if (!selectedUser || !token) return;
 
         updateAllowedPages(token, selectedUser._id, selectedPages)
             .then(() => {
-                showNotification("บันทึกสำเร็จ! ✅", "success", true);
+                showNotification("บันทึกสำเร็จ! ✅", "success", { 
+                    autoCloseModal: true, 
+                    onClose: onClose 
+                });
             })
             .catch(err => {
                 console.error(err.response?.data || err);
@@ -180,22 +151,14 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
                 </div>
             </div>
 
-            {notification && (
-                <div
-                    className={`notification-toast ${notification.type}`}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {notification.message}
-                    <div
-                        className="notification-progress"
-                        style={{
-                            width: `${progress}%`,
-                            transition: hoveringRef.current ? "none" : "width 0.02s linear"
-                        }}
-                    />
-                </div>
-            )}
+            {/* Notification Toast */}
+            <NotificationToast
+                message={notification?.message}
+                type={notification?.type}
+                progress={progress}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            />
         </div>
     );
 };

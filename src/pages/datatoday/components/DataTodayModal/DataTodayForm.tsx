@@ -122,7 +122,7 @@ export default function DataTodayForm({
                     onChange={(e) => onChange("companyname", e.target.value)}
                     required
                 >
-                    <option value="">-- เลือกบริษัท --</option>
+                    <option value="">เลือกบริษัท</option>
                     <option value="ป๋อเฉิน">ป๋อเฉิน</option>
                     <option value="รถร่วม">รถร่วม</option>
                 </select>

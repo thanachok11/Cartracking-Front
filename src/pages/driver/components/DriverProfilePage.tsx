@@ -9,6 +9,8 @@ import {
   type Driver
 } from '../../../api/components/driversApi';
 import DriverModal from './DriverModal';
+import { useNotification } from '../../../hooks/useNotification';
+import NotificationToast from '../../../components/common/NotificationToast';
 
 export default function DriverProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +29,9 @@ export default function DriverProfilePage() {
 
   // 🆕 ถือไฟล์รูป
   const [imageFile, setImageFile] = useState<File | null>(null);
+
+  // notification hook
+  const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
   const load = useCallback(async () => {
     try {
@@ -72,12 +77,14 @@ export default function DriverProfilePage() {
       await load();
       setShowEdit(false);
       setImageFile(null);
+      showNotification("แก้ไขข้อมูลคนขับสำเร็จ! ✅", "success");
     } catch (e: any) {
       setError(e?.response?.data?.message || e?.message || 'บันทึกไม่สำเร็จ');
+      showNotification("เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนขับ ❌", "error");
     } finally {
       setSaving(false);
     }
-  }, [driver?._id, form, imageFile, load]);
+  }, [driver?._id, form, imageFile, load, showNotification]);
 
   const handleDelete = useCallback(async () => {
     if (!driver?._id) return;
@@ -87,14 +94,17 @@ export default function DriverProfilePage() {
     try {
       setSaving(true);
       setError(null);
+      showNotification("ลบคนขับสำเร็จ! ✅", "success");
+      await new Promise(resolve => setTimeout(resolve, 2000));
       await deleteDriver(driver._id);
       navigate('/drivers');
     } catch (e: any) {
       setError(e?.response?.data?.message || e?.message || 'ลบไม่สำเร็จ');
+      showNotification("เกิดข้อผิดพลาดในการลบข้อมูลคนขับ ❌", "error");
     } finally {
       setSaving(false);
     }
-  }, [driver?._id, driver?.firstName, driver?.lastName, navigate]);
+  }, [driver?._id, driver?.firstName, driver?.lastName, navigate, showNotification]);
 
   if (loading) return <div className="loading">Loading...</div>;
   if (error) {
@@ -115,10 +125,6 @@ export default function DriverProfilePage() {
         <h2 className="page-title">โปรไฟล์คนขับ</h2>
         <div className="driver-action-buttons">
           <button className="driver-back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
-          <button className="driver-edit-btn" onClick={() => setShowEdit(true)}>แก้ไข</button>
-          <button className="driver-delete-btn" onClick={handleDelete} disabled={saving}>
-            {saving ? 'กำลังลบ...' : 'ลบ'}
-          </button>
         </div>
 
       </div>
@@ -135,6 +141,12 @@ export default function DriverProfilePage() {
           {driver.detail && <p><strong>รายละเอียด :</strong> {driver.detail}</p>}
         </div>
         <div className="driver-id">ID: {driver._id}</div>
+        <div className="card-action-buttons">
+          <button className="driver-edit-btn" onClick={() => setShowEdit(true)}>แก้ไข</button>
+          <button className="driver-delete-btn" onClick={handleDelete} disabled={saving}>
+            {saving ? 'กำลังลบ...' : 'ลบ'}
+          </button>
+        </div>
       </div>
 
       <DriverModal
@@ -148,6 +160,15 @@ export default function DriverProfilePage() {
         onSave={handleSave}
         imageFile={imageFile}                
         onImageFileChange={setImageFile}     
+      />
+
+      <NotificationToast
+        message={notification?.message}
+        type={notification?.type}
+        progress={progress}
+        isHovering={false}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       />
     </div>
   );

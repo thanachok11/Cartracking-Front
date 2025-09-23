@@ -60,7 +60,7 @@ export default function VehicleTailModal({
                                 onChange={(e) => onChange("companyName", e.target.value)}
                                 required
                             >
-                                <option value="">-- เลือกบริษัท --</option>
+                                <option value="">เลือกบริษัท</option>
                                 <option value="ป๋อเฉิน">ป๋อเฉิน</option>
                                 <option value="รถร่วม">รถร่วม</option>
                             </select>

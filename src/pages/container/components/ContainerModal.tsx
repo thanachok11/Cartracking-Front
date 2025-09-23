@@ -66,7 +66,7 @@ export default function ContainerModal({
                 onChange={(e) => onChange({ companyName: e.target.value })}
                 required
               >
-                <option value="">-- เลือกบริษัท --</option>
+                <option value="">เลือกบริษัท</option>
                 <option value="ป๋อเฉิน">ป๋อเฉิน</option>
                 <option value="รถร่วม">รถร่วม</option>
               </select>
@@ -79,7 +79,7 @@ export default function ContainerModal({
                 onChange={(e) => onChange({ containerSize: e.target.value })}
                 required
               >
-                <option value="">-- เลือกขนาด --</option>
+                <option value="">เลือกขนาด</option>
                 {sizes.map((s) => (
                   <option key={s.value} value={s.value}>
                     {s.label}

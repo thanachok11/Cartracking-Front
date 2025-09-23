@@ -10,7 +10,10 @@ import { fetchTruckHeads, fetchTruckTails } from "../../api/components/truckApi"
 import { fetchAllContainers } from "../../api/components/containersApi";
 import { IWorkOrder } from "../../types/WorkOrder";
 import WorkOrderFormModal from "./WorkOrderFormModal";
+import NotificationToast from "../../components/common/NotificationToast";
+import { useNotification } from "../../hooks/useNotification";
 import "../../styles/pages/WorkOrderPage.css";
+import "../../styles/components/NotificationToast.css";
 
 const WorkOrderPage: React.FC = () => {
     const [orders, setOrders] = useState<IWorkOrder[]>([]);
@@ -45,6 +48,15 @@ const WorkOrderPage: React.FC = () => {
     const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
     const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
     const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
+
+    // notification hook
+    const { 
+        notification, 
+        progress, 
+        showNotification, 
+        handleMouseEnter, 
+        handleMouseLeave 
+    } = useNotification();
 
     // โหลด work orders
     const loadOrders = async () => {
@@ -221,8 +233,10 @@ const WorkOrderPage: React.FC = () => {
         try {
             await deleteWorkOrder(id);
             await loadOrders();
+            showNotification("ลบใบสั่งงานสำเร็จ! ✅", "success");
         } catch (err) {
             console.error("❌ Error deleting work order:", err);
+            showNotification("เกิดข้อผิดพลาดในการลบใบสั่งงาน ❌", "error");
         }
     };
 
@@ -230,13 +244,17 @@ const WorkOrderPage: React.FC = () => {
         try {
             if (editingOrder?._id) {
                 await updateWorkOrder(editingOrder._id, form);
+                showNotification("แก้ไขใบสั่งงานสำเร็จ! ✅", "success");
             } else {
                 await createWorkOrder(form);
+                showNotification("สร้างใบสั่งงานสำเร็จ! ✅", "success");
             }
             setShowModal(false);
             await loadOrders();
         } catch (err) {
             console.error("❌ Error saving work order:", err);
+            const action = editingOrder?._id ? "แก้ไข" : "สร้าง";
+            showNotification(`เกิดข้อผิดพลาดในการ${action}ใบสั่งงาน ❌`, "error");
         }
     };
 
@@ -333,6 +351,15 @@ const WorkOrderPage: React.FC = () => {
                     onCancel={() => setShowModal(false)}
                 />
             )}
+
+            {/* Notification Toast */}
+            <NotificationToast
+                message={notification?.message}
+                type={notification?.type}
+                progress={progress}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            />
         </div>
     );
 };

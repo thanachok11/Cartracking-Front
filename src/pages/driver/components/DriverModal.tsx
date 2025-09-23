@@ -83,8 +83,8 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
               onChange={(e) => onChange({ company: e.target.value })} required 
               >
             
-              <option value="">-- เลือกบริษัท --</option>
-              <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+              <option value="">เลือกบริษัท</option>
+              <option value="ป๋อเฉิน2014">ป๋อเฉิน2014</option>
               <option value="รถร่วม">รถร่วม</option>
             </select>
           </div>
