@@ -11,6 +11,7 @@ interface DataTodayModalProps {
     truckHeadRegs: string[];
     truckTailRegs: string[];
     containerNumbers: string[];
+    workOrderNumbers: string[];
     submitting: boolean;
     previewSrc: string | null;
     previewVisible: boolean;
@@ -30,6 +31,7 @@ export default function DataTodayModal({
     truckHeadRegs,
     truckTailRegs,
     containerNumbers,
+    workOrderNumbers,
     submitting,
     previewSrc,
     previewVisible,
@@ -59,6 +61,7 @@ export default function DataTodayModal({
                     truckHeadRegs={truckHeadRegs}
                     truckTailRegs={truckTailRegs}
                     containerNumbers={containerNumbers}
+                    workOrderNumbers={workOrderNumbers}
                     submitting={submitting}
                     openPreviewFromUrl={openPreviewFromUrl}
                     openPreviewFromFile={openPreviewFromFile}

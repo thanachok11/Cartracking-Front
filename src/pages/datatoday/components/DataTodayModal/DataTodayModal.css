@@ -226,3 +226,106 @@
         width: 100%;
     }
 }
+
+/* -------------------------
+   Work Order Popup
+------------------------- */
+.work-order-popup {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.work-order-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.work-order-popup-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.4rem;
+}
+
+.work-order-content {
+    display: grid;
+    gap: 15px;
+}
+
+.work-order-field {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.work-order-field:last-child {
+    border-bottom: none;
+}
+
+.work-order-field label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.work-order-field span {
+    color: #333;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.work-order-loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.work-order-error {
+    text-align: center;
+    padding: 40px;
+    color: #e74c3c;
+}
+
+.work-order-error p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.work-order-error p:first-child {
+    color: #e74c3c;
+    margin-bottom: 10px;
+}
+
+.work-order-error p:last-child {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+/* Responsive for Work Order Popup */
+@media (max-width: 768px) {
+    .work-order-field {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .work-order-field label {
+        font-size: 0.85rem;
+    }
+    
+    .work-order-field span {
+        font-size: 0.9rem;
+    }
+}

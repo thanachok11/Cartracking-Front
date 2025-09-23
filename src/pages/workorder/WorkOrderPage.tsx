@@ -41,6 +41,7 @@ const WorkOrderPage: React.FC = () => {
 
     //  dropdowns
     const [drivers, setDrivers] = useState<string[]>([]);
+    const [driversPhone, setDriversPhone] = useState<string[]>([]);
     const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
     const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
     const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
@@ -288,7 +289,8 @@ const WorkOrderPage: React.FC = () => {
                         <div className="workorder-card" key={o._id}>
                             <h3>📝 ใบสั่งงาน: {o.workOrderNumber}</h3>
                             <p>📦 สินค้า: {o.product}</p>
-                            <p>👨‍✈️ พนักงานขับ: {o.driverName} ({o.driverPhone})</p>
+                            <p>👨‍✈️ พนักงานขับ: {o.driverName}</p>
+                            <p>📱 เบอร์โทรศัพท์: {o.driverPhone}</p>
                             <p>🚛 หัว: {o.headPlate} | หาง: {o.tailPlate}</p>
                             <p>📦 ตู้: {o.containerNumber}</p>
                             <p>🏢 บริษัท: {o.companyName}</p>
@@ -320,6 +322,7 @@ const WorkOrderPage: React.FC = () => {
                     editing={editingOrder}
                     form={form}
                     drivers={drivers}
+                    driversPhone={driversPhone}
                     truckHeadRegs={truckHeadRegs}
                     truckTailRegs={truckTailRegs}
                     containerNumbers={containerNumbers}

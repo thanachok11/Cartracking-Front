@@ -23,7 +23,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
 import DataTodayPage from "./pages/datatoday/DataTodayPage";
 import NotFoundPage from "./components/layout/NotFoundPage"; // ✅ import หน้า 404
-import WorkOrderPage from "./pages/woekorder/WorkOrderPage";
+import WorkOrderPage from "./pages/workorder/WorkOrderPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 import AllowedPagesManager from "./pages/usermanagement/components/AllowedPagesManager";
 import "./App.css";

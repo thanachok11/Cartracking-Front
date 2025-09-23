@@ -8,6 +8,7 @@ interface DataTodayFormProps {
     truckHeadRegs: string[];
     truckTailRegs: string[];
     containerNumbers: string[];
+    workOrderNumbers: string[];
     submitting: boolean;
     openPreviewFromUrl: (url: string) => void;
     openPreviewFromFile: (file: File) => void;
@@ -23,6 +24,7 @@ export default function DataTodayForm({
     truckHeadRegs,
     truckTailRegs,
     containerNumbers,
+    workOrderNumbers,
     submitting,
     openPreviewFromUrl,
     openPreviewFromFile,
@@ -103,6 +105,17 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
+                <label>ตำแหน่ง</label>
+                <input
+                    type="text"
+                    value={form.station_in}
+                    onChange={(e) => onChange("station_in", e.target.value)}
+                    placeholder="ตำแหน่งคนขับรถ"
+                    required
+                />
+            </div>
+
+            <div className="data-today-modal-row">
                 <label>บริษัท</label>
                 <select
                     value={form.companyname || ""}
@@ -118,10 +131,16 @@ export default function DataTodayForm({
             <div className="data-today-modal-row">
                 <label>เลขใบสั่งงาน</label>
                 <input
+                    list="workorder-list"
                     value={(form as any).booking_id || ""}
                     onChange={(e) => onChange("booking_id" as any, e.target.value)}
                     placeholder="LL99-99-999"
                 />
+                <datalist id="workorder-list">
+                    {workOrderNumbers.map((wo) => (
+                        <option key={wo} value={wo} />
+                    ))}
+                </datalist>
             </div>
 
             <div className="data-today-modal-row">

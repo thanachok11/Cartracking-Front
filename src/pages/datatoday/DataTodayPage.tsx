@@ -5,10 +5,12 @@ import {
     createDataToday,
     updateDataToday,
     deleteDataToday,
+    IDataTodayPayload,
 } from "../../api/components/dataTodayApi";
 import { fetchAllDrivers } from "../../api/components/driversApi";
 import { fetchTruckHeads, fetchTruckTails } from "../../api/components/truckApi";
 import { fetchAllContainers } from "../../api/components/containersApi";
+import { fetchWorkOrders } from "../../api/components/orderApi";
 import ExportToolbar from "./components/ExportToolbar";
 import FilterToolbar from "./components/FilterToolbar";
 import DataTodayModal from "./components/DataTodayModal/DataTodayModal"; // ✅ ใช้ตัวใหม่
@@ -31,6 +33,7 @@ export default function DataTodayPage() {
     const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
     const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
     const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
+    const [workOrderNumbers, setWorkOrderNumbers] = useState<string[]>([]);
 
     // filters
     const [filterDriver, setFilterDriver] = useState("");
@@ -126,6 +129,18 @@ export default function DataTodayPage() {
             } catch (e) {
                 /* ignore */
             }
+
+            try {
+                const workOrders = await fetchWorkOrders();
+                if (!cancelled && Array.isArray(workOrders)) {
+                    const numbers = workOrders
+                        .map((wo: any) => wo.workOrderNumber || "")
+                        .filter(Boolean);
+                    setWorkOrderNumbers(Array.from(new Set(numbers)));
+                }
+            } catch (e) {
+                console.error("Error loading work orders:", e);
+            }
         };
 
         load();
@@ -215,45 +230,57 @@ export default function DataTodayPage() {
         try {
             const bookingImage = (form as any).booking_image;
             const bookingId = (form as any).booking_id;
-            const useFormData = bookingImage instanceof File;
-            if (useFormData) {
-                const fd = new FormData();
-                fd.append("datetime_in", form.datetime_in || "");
-                fd.append("driver_name", form.driver_name || "");
-                fd.append("head_registration", form.head_registration || "");
-                fd.append("tail_registration", form.tail_registration || "");
-                fd.append("container_no", form.container_no || "");
-                fd.append("station_in", form.station_in || "");
-                fd.append("companyname", form.companyname || "");
-                if (bookingId) fd.append("booking_id", bookingId);
-                fd.append("booking_image", bookingImage as File);
-                if (editing?._id)
-                    await updateDataToday(editing._id as string, fd as any);
-                else await createDataToday(fd as any);
-            } else {
-                const payload: any = {
-                    datetime_in: form.datetime_in || "",
-                    driver_name: form.driver_name || "",
-                    head_registration: form.head_registration || "",
-                    tail_registration: form.tail_registration || "",
-                    container_no: form.container_no || "",
-                    station_in: form.station_in || "",
-                    companyname: form.companyname || "",
-                };
-                if (bookingId) payload.booking_id = bookingId;
-                if (typeof bookingImage === "string")
-                    payload.booking_image = bookingImage;
-                if (editing?._id)
-                    await updateDataToday(editing._id as string, payload as any);
-                else await createDataToday(payload as any);
+            
+            console.log('🔍 Form data before submit:', form);
+            console.log('🔍 Booking image:', bookingImage);
+            console.log('🔍 Booking ID:', bookingId);
+            
+            // สร้าง FormData ตามตัวอย่างที่ให้มา
+            const formData = new FormData();
+            formData.append('datetime_in', form.datetime_in || '');
+            formData.append('driver_name', form.driver_name || '');
+            formData.append('head_registration', form.head_registration || '');
+            formData.append('tail_registration', form.tail_registration || '');
+            formData.append('container_no', form.container_no || '');
+            formData.append('station_in', form.station_in || ''); // REQUIRED
+            formData.append('companyname', form.companyname || ''); // REQUIRED
+            
+            // optional booking id
+            if (bookingId) formData.append('booking_id', bookingId);
+            
+            // optional file
+            if (bookingImage instanceof File) {
+                formData.append('booking_image', bookingImage);
+            } else if (typeof bookingImage === "string" && bookingImage) {
+                // ถ้าเป็น string URL ให้ส่งเป็น string
+                formData.append('booking_image', bookingImage);
             }
+            
+            console.log('🔍 FormData entries:');
+            Array.from(formData.entries()).forEach(([key, value]) => {
+                console.log(`  ${key}:`, value);
+            });
+            
+            if (editing?._id) {
+                await updateDataToday(editing._id as string, formData);
+            } else {
+                await createDataToday(formData);
+            }
+            
+            console.log('✅ Data saved successfully, refreshing list...');
             const data = await fetchAllDataToday();
             setRows(Array.isArray(data) ? data : []);
             setShowModal(false);
             setForm({});
             setEditing(null);
-        } catch (err) {
-            console.error("save error", err);
+        } catch (err: any) {
+            console.error("❌ Save error:", err);
+            console.error("❌ Error response:", err.response?.data);
+            console.error("❌ Error status:", err.response?.status);
+            
+            // แสดงข้อความข้อผิดพลาดให้ผู้ใช้
+            const errorMessage = err.response?.data?.message || err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+            alert(`ไม่สามารถบันทึกข้อมูลได้: ${errorMessage}`);
         } finally {
             setSubmitting(false);
         }
@@ -362,6 +389,7 @@ export default function DataTodayPage() {
                 truckHeadRegs={truckHeadRegs}
                 truckTailRegs={truckTailRegs}
                 containerNumbers={containerNumbers}
+                workOrderNumbers={workOrderNumbers}
                 submitting={submitting}
                 previewSrc={previewSrc}
                 previewVisible={previewVisible}

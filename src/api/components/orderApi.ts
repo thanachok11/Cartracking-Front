@@ -33,6 +33,37 @@ export const fetchWorkOrderById = async (id: string): Promise<IWorkOrder> => {
     }
 };
 
+// ✅ ค้นหาใบสั่งงานตาม workOrderNumber
+export const fetchWorkOrderByNumber = async (workOrderNumber: string): Promise<IWorkOrder | null> => {
+    try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${WORK_ORDERS_BASE}?workOrderNumber=${encodeURIComponent(workOrderNumber)}`, {
+            headers: { Authorization: `Bearer ${token || ''}` },
+        });
+        const data = res.data?.data || res.data;
+        
+        // ถ้าเป็น array ให้เอาตัวแรก
+        if (Array.isArray(data) && data.length > 0) {
+            return data[0];
+        }
+        
+        // ถ้าเป็น object เดียว
+        if (data && typeof data === 'object') {
+            return data;
+        }
+        
+        return null;
+    } catch (error: any) {
+        // ถ้าไม่พบข้อมูล (404) ให้ return null
+        if (error.response?.status === 404) {
+            console.log('🔍 Work order not found:', workOrderNumber);
+            return null;
+        }
+        console.error('❌ Error searching work order:', error);
+        throw error;
+    }
+};
+
 // ✅ สร้างใบสั่งงานใหม่
 export const createWorkOrder = async (
     payload: Omit<IWorkOrder, '_id' | 'createdAt' | 'updatedAt'>

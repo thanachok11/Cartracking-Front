@@ -7,6 +7,7 @@ interface WorkOrderFormModalProps {
     editing: IWorkOrder | null;
     form: IWorkOrder;
     drivers: string[];
+    driversPhone: string[];
     truckHeadRegs: string[];
     truckTailRegs: string[];
     containerNumbers: string[];
@@ -22,6 +23,7 @@ export default function WorkOrderFormModal({
     editing,
     form,
     drivers,
+    driversPhone,
     truckHeadRegs,
     truckTailRegs,
     containerNumbers,
@@ -61,6 +63,14 @@ export default function WorkOrderFormModal({
         const letters = raw.slice(0, 4).replace(/[^A-Z]/g, "");
         const digits = raw.replace(/[^0-9]/g, "").slice(0, 7);
         return letters + (digits ? "-" + digits : "");
+    };
+
+    const formatPhoneNumber = (input?: string) => {
+        if (!input) return "";
+        const raw = input.replace(/[^0-9]/g, "");
+        if (raw.length <= 3) return raw;
+        if (raw.length <= 6) return raw.slice(0, 3) + "-" + raw.slice(3);
+        return raw.slice(0, 3) + "-" + raw.slice(3, 6) + "-" + raw.slice(6, 10);
     };
 
     // --- submit ---
@@ -130,6 +140,18 @@ export default function WorkOrderFormModal({
                                         <option key={d} value={d} />
                                     ))}
                                 </datalist>
+                            </div>
+
+                            <div className="workorder-form-row">
+                                <label>หมายเลขโทรศัพท์</label>
+                                <input
+                                    type="tel"
+                                    value={form.driverPhone || ""}
+                                    onChange={(e) => onChange("driverPhone", formatPhoneNumber(e.target.value))}
+                                    required
+                                    placeholder="กรอกหมายเลขโทรศัพท์ เช่น 081-234-5678"
+                                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                                />
                             </div>
                         </div>
 

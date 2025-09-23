@@ -13,6 +13,8 @@ export interface IDataTodayPayload {
   container_no: string;
   station_in: string;
   companyname: string;
+  booking_id?: string;
+  booking_image?: string;
 }
 
 const base = process.env.REACT_APP_API_URL || '';
@@ -37,16 +39,63 @@ export const fetchAllDataToday = async (query?: IDataTodayQuery, signal?: AbortS
   return res.data?.data ?? [];
 };
 
-export const createDataToday = async (payload: IDataTodayPayload): Promise<any> => {
+export const createDataToday = async (payload: IDataTodayPayload | FormData): Promise<any> => {
   const url = `${base}/datatoday/create`;
-  const res = await axios.post(url, payload, { headers: getAuthHeader(), withCredentials: true });
-  return res.data;
+  
+  // ตรวจสอบว่าเป็น FormData หรือไม่
+  const isFormData = payload instanceof FormData;
+  
+  const config = {
+    headers: {
+      ...getAuthHeader(),
+      // ถ้าเป็น FormData อย่าตั้ง Content-Type ให้ axios จัดการเอง
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' })
+    },
+    withCredentials: true
+  };
+  
+  console.log('🔍 Creating DataToday with payload:', payload);
+  console.log('🔍 Is FormData:', isFormData);
+  
+  try {
+    const res = await axios.post(url, payload, config);
+    console.log('✅ DataToday created successfully:', res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error('❌ Error creating DataToday:', error);
+    console.error('❌ Error response:', error.response?.data);
+    console.error('❌ Error status:', error.response?.status);
+    throw error;
+  }
 };
 
-export const updateDataToday = async (id: string, payload: Partial<IDataTodayPayload>): Promise<any> => {
+export const updateDataToday = async (id: string, payload: Partial<IDataTodayPayload> | FormData): Promise<any> => {
   const url = `${base}/datatoday/update/${id}`;
-  const res = await axios.patch(url, payload, { headers: getAuthHeader(), withCredentials: true });
-  return res.data;
+  
+  // ตรวจสอบว่าเป็น FormData หรือไม่
+  const isFormData = payload instanceof FormData;
+  
+  const config = {
+    headers: {
+      ...getAuthHeader(),
+      // ถ้าเป็น FormData อย่าตั้ง Content-Type ให้ axios จัดการเอง
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' })
+    },
+    withCredentials: true
+  };
+  
+  console.log('🔍 Updating DataToday with payload:', payload);
+  console.log('🔍 Is FormData:', isFormData);
+  
+  try {
+    const res = await axios.patch(url, payload, config);
+    console.log('✅ DataToday updated successfully:', res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error('❌ Error updating DataToday:', error);
+    console.error('❌ Error response:', error.response?.data);
+    throw error;
+  }
 };
 
 export const deleteDataToday = async (id: string): Promise<any> => {
