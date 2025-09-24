@@ -81,6 +81,31 @@ export default function WorkOrderFormModal({
             f.reportValidity();
             return;
         }
+
+        // ตรวจสอบเพิ่มเติมสำหรับการสร้างใหม่
+        if (!editing) {
+            // ตรวจสอบว่าข้อมูลที่กรอกตรงกับ dropdown หรือไม่
+            if (form.driverName && !drivers.includes(form.driverName)) {
+                alert("⚠️ กรุณาเลือกชื่อคนขับจากรายการที่มี");
+                return;
+            }
+
+            if (form.headPlate && !truckHeadRegs.includes(form.headPlate)) {
+                alert("⚠️ กรุณาเลือกทะเบียนหัวจากรายการที่มี");
+                return;
+            }
+
+            if (form.tailPlate && !truckTailRegs.includes(form.tailPlate)) {
+                alert("⚠️ กรุณาเลือกทะเบียนหางจากรายการที่มี");
+                return;
+            }
+
+            if (form.containerNumber && !containerNumbers.includes(form.containerNumber)) {
+                alert("⚠️ กรุณาเลือกหมายเลขตู้จากรายการที่มี");
+                return;
+            }
+        }
+
         onSubmit(e);
     };
 
@@ -134,12 +159,18 @@ export default function WorkOrderFormModal({
                                     required
                                     disabled={loadingDropdowns}
                                     placeholder={loadingDropdowns ? "⏳ กำลังโหลด..." : "เลือกคนขับ"}
+                                    style={{
+                                        borderColor: form.driverName && !drivers.includes(form.driverName) ? "#dc2626" : ""
+                                    }}
                                 />
                                 <datalist id="driver-list">
                                     {drivers.map((d) => (
                                         <option key={d} value={d} />
                                     ))}
                                 </datalist>
+                                {form.driverName && !drivers.includes(form.driverName) && (
+                                    <small style={{color: "#dc2626"}}>⚠️ ชื่อคนขับไม่ตรงกับข้อมูลในระบบ</small>
+                                )}
                             </div>
 
                             <div className="workorder-form-row">
@@ -170,12 +201,18 @@ export default function WorkOrderFormModal({
                                     required
                                     disabled={loadingDropdowns}
                                     placeholder={loadingDropdowns ? "⏳ กำลังโหลด..." : "ทะเบียนหัว"}
+                                    style={{
+                                        borderColor: form.headPlate && !truckHeadRegs.includes(form.headPlate) ? "#dc2626" : ""
+                                    }}
                                 />
                                 <datalist id="head-list">
                                     {truckHeadRegs.map((r) => (
                                         <option key={r} value={r} />
                                     ))}
                                 </datalist>
+                                {form.headPlate && !truckHeadRegs.includes(form.headPlate) && (
+                                    <small style={{color: "#dc2626"}}>⚠️ ทะเบียนหัวไม่ตรงกับข้อมูลในระบบ</small>
+                                )}
                             </div>
 
                             <div className="workorder-form-row">
@@ -191,12 +228,18 @@ export default function WorkOrderFormModal({
                                     required
                                     disabled={loadingDropdowns}
                                     placeholder={loadingDropdowns ? "⏳ กำลังโหลด..." : "ทะเบียนหาง"}
+                                    style={{
+                                        borderColor: form.tailPlate && !truckTailRegs.includes(form.tailPlate) ? "#dc2626" : ""
+                                    }}
                                 />
                                 <datalist id="tail-list">
                                     {truckTailRegs.map((r) => (
                                         <option key={r} value={r} />
                                     ))}
                                 </datalist>
+                                {form.tailPlate && !truckTailRegs.includes(form.tailPlate) && (
+                                    <small style={{color: "#dc2626"}}>⚠️ ทะเบียนหางไม่ตรงกับข้อมูลในระบบ</small>
+                                )}
                             </div>
 
                             <div className="workorder-form-row">
@@ -212,12 +255,18 @@ export default function WorkOrderFormModal({
                                     required
                                     disabled={loadingDropdowns}
                                     placeholder={loadingDropdowns ? "⏳ กำลังโหลด..." : "หมายเลขตู้"}
+                                    style={{
+                                        borderColor: form.containerNumber && !containerNumbers.includes(form.containerNumber) ? "#dc2626" : ""
+                                    }}
                                 />
                                 <datalist id="container-list">
                                     {containerNumbers.map((c) => (
                                         <option key={c} value={c} />
                                     ))}
                                 </datalist>
+                                {form.containerNumber && !containerNumbers.includes(form.containerNumber) && (
+                                    <small style={{color: "#dc2626"}}>⚠️ หมายเลขตู้ไม่ตรงกับข้อมูลในระบบ</small>
+                                )}
                             </div>
 
                             <div className="workorder-form-row">
