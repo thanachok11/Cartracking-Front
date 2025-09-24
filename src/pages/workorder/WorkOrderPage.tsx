@@ -27,6 +27,7 @@ const WorkOrderPage: React.FC = () => {
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
     const [filterTitle, setFilterTitle] = useState("");
+    const [companyFilter, setCompanyFilter] = useState("");
 
     //  form state
     const [form, setForm] = useState<IWorkOrder>({
@@ -166,35 +167,43 @@ const WorkOrderPage: React.FC = () => {
             title = `ผลการค้นหา: "${searchNumber}"`;
         }
 
+        if (companyFilter) {
+            results = results.filter((o) => o.companyName === companyFilter);
+            title = title ? `${title} บริษัท: ${companyFilter}` : `บริษัท: ${companyFilter}`;
+        }
+
         if (dateFrom && dateTo) {
             results = results.filter(
                 (o) =>
                     new Date(o.issueDate) >= new Date(dateFrom) &&
                     new Date(o.issueDate) <= new Date(dateTo)
             );
-            title = `ผลการค้นหา: ${new Date(dateFrom).toLocaleDateString("th-TH")} - ${new Date(
+            const dateRange = `${new Date(dateFrom).toLocaleDateString("th-TH")} - ${new Date(
                 dateTo
             ).toLocaleDateString("th-TH")}`;
+            title = title ? `${title} ช่วงเวลา: ${dateRange}` : `ช่วงเวลา: ${dateRange}`;
         } else if (dateFrom) {
             results = results.filter((o) => new Date(o.issueDate) >= new Date(dateFrom));
-            title = `ผลการค้นหา: ตั้งแต่ ${new Date(dateFrom).toLocaleDateString("th-TH")}`;
+            const dateRange = `ตั้งแต่ ${new Date(dateFrom).toLocaleDateString("th-TH")}`;
+            title = title ? `${title} ${dateRange}` : dateRange;
         } else if (dateTo) {
             results = results.filter((o) => new Date(o.issueDate) <= new Date(dateTo));
-            title = `ผลการค้นหา: ถึง ${new Date(dateTo).toLocaleDateString("th-TH")}`;
+            const dateRange = `ถึง ${new Date(dateTo).toLocaleDateString("th-TH")}`;
+            title = title ? `${title} ${dateRange}` : dateRange;
         }
 
-        if (!searchNumber && !dateFrom && !dateTo) {
+        if (!searchNumber && !dateFrom && !dateTo && !companyFilter) {
             setFilteredOrders([]);
             setFilterTitle("");
         } else {
             setFilteredOrders(results);
-            setFilterTitle(title);
+            setFilterTitle(title || "ผลการกรอง");
         }
     };
 
     useEffect(() => {
         applyFilter();
-    }, [searchNumber, dateFrom, dateTo, orders]);
+    }, [searchNumber, dateFrom, dateTo, companyFilter, orders]);
 
     const handleCreate = () => {
         setEditingOrder(null);
@@ -242,6 +251,42 @@ const WorkOrderPage: React.FC = () => {
 
     const handleSave = async () => {
         try {
+            // ตรวจสอบข้อมูลก่อนสร้าง
+            if (!editingOrder?._id) {
+                // ตรวจสอบ work order number ซ้ำ
+                const existingWorkOrder = orders.find(
+                    (order) => order.workOrderNumber === form.workOrderNumber
+                );
+                if (existingWorkOrder) {
+                    showNotification("เลขใบสั่งงานนี้มีอยู่แล้ว กรุณาใช้เลขอื่น ⚠️", "error");
+                    return;
+                }
+
+                // ตรวจสอบว่า driver name ตรงกับที่มีใน dropdown หรือไม่
+                if (!drivers.includes(form.driverName)) {
+                    showNotification("ชื่อคนขับไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    return;
+                }
+
+                // ตรวจสอบ head plate ตรงกับข้อมูลหรือไม่
+                if (!truckHeadRegs.includes(form.headPlate)) {
+                    showNotification("ทะเบียนหัวไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    return;
+                }
+
+                // ตรวจสอบ tail plate ตรงกับข้อมูลหรือไม่
+                if (!truckTailRegs.includes(form.tailPlate)) {
+                    showNotification("ทะเบียนหางไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    return;
+                }
+
+                // ตรวจสอบ container number ตรงกับข้อมูลหรือไม่
+                if (!containerNumbers.includes(form.containerNumber)) {
+                    showNotification("หมายเลขตู้ไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    return;
+                }
+            }
+
             if (editingOrder?._id) {
                 await updateWorkOrder(editingOrder._id, form);
                 showNotification("แก้ไขใบสั่งงานสำเร็จ! ✅", "success");
@@ -260,49 +305,75 @@ const WorkOrderPage: React.FC = () => {
 
     return (
         <div className="workorder-page">
-            <div className="workorder-head">
-                <h2 className="workorder-title">ใบสั่งงาน</h2>
-                <button className="workorder-btn-primary" onClick={handleCreate}>
-                    ➕ สร้างใบสั่งงานใหม่
-                </button>
-            </div>
-            {/* Search Filters */}
-            <div className="workorder-search-bar">
-                <div className="search-field">
-                    <label>🔎 คำค้นหา</label>
+            {/* Header กับ Search Bar รวมกัน */}
+            <div className="workorder-header">
+                <div className="workorder-header-top">
+                    <h2 className="page-title">
+                        ใบสั่งงาน
+                        <div className="result-count">
+                            {filteredOrders.length > 0 || searchNumber || companyFilter || dateFrom || dateTo ? (
+                                `แสดง ${filteredOrders.length} รายการ`
+                            ) : (
+                                `ทั้งหมด ${orders.length} รายการ`
+                            )}
+                        </div>
+                    </h2>
+                    <div className="header-actions">
+                        <button className="refresh-workorder-button" onClick={() => loadOrders()}>
+                            <span className="refresh-icon">🔄</span>
+                            รีเฟรช
+                        </button>
+                        <button className="workorder-btn-primary" onClick={handleCreate}>
+                            ➕ สร้างใบสั่งงานใหม่
+                        </button>
+                    </div>
+                </div>
+
+                <div className="workorder-header-bottom">
                     <input
                         type="text"
                         placeholder="เลขใบสั่งงาน / สินค้า / บริษัท / คนขับ"
                         value={searchNumber}
                         onChange={(e) => setSearchNumber(e.target.value)}
+                        className="search-input"
                     />
-                </div>
+                    
+                    <select 
+                        value={companyFilter} 
+                        onChange={(e) => setCompanyFilter(e.target.value)}
+                        className="filter-select"
+                    >
+                        <option value="">ทั้งหมด</option>
+                        <option value="ป๋อเฉิน">ป๋อเฉิน</option>
+                        <option value="รถร่วม">รถร่วม</option>
+                    </select>
 
-                <div className="search-field">
-                    <label>📅 จากวันที่</label>
-                    <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-                </div>
-
-                <div className="search-field">
-                    <label>📅 ถึงวันที่</label>
-                    <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
-                </div>
-
-                <div className="search-field">
-                    <label>&nbsp;</label>
-                    <button className="work-btn-search" onClick={applyFilter}>
-                        🔍 ค้นหา
-                    </button>
+                    <input 
+                        type="date" 
+                        value={dateFrom} 
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        className="date-input"
+                        title="จากวันที่"
+                    />
+                    
+                    <input 
+                        type="date" 
+                        value={dateTo} 
+                        onChange={(e) => setDateTo(e.target.value)}
+                        className="date-input"
+                        title="ถึงวันที่"
+                    />
                 </div>
             </div>
 
             {loading ? (
                 <p className="workorder-loading">⏳ กำลังโหลด...</p>
+            ) : filteredOrders.length === 0 && (searchNumber || companyFilter || dateFrom || dateTo) ? (
+                <p className="workorder-no-data">⚠️ ไม่พบข้อมูลตามเงื่อนไขที่ค้นหา</p>
             ) : filteredOrders.length === 0 ? (
                 <p className="workorder-no-data">⚠️ กรุณาใส่เลขที่ใบสั่งงาน หรือช่วงเวลาเพื่อค้นหา</p>
             ) : (
                 <div className="workorder-card-container">
-                    {filterTitle && <h3 className="workorder-filter-title">{filterTitle}</h3>}
                     {filteredOrders.map((o) => (
                         <div className="workorder-card" key={o._id}>
                             <h3>📝 ใบสั่งงาน: {o.workOrderNumber}</h3>
