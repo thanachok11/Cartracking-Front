@@ -1,28 +1,151 @@
 /* =============================
    WorkOrder Page Layout
 ============================= */
-.workorder-head{
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    /* title ซ้าย / ปุ่ม ขวา */
-    align-items: center;
-    margin-bottom: 18px;
-}
 .workorder-page {
-    padding: 30px;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
+    padding: 20px;
+    background-color: #f5f7fa;
     min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
 }
 
-/* Title */
-.workorder-title{
+/* Header รวม - เหมือน DriverPage */
+.workorder-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.workorder-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
     margin: 0;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1e40af;
+    display: flex;
+    flex-direction: column;
+    color: #1e40af;
+}
+
+.result-count {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 2px;
+    font-weight: 400;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.refresh-workorder-button,
+.add-workorder-button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.refresh-workorder-button {
+    background: #4285f4;
+    border: 1px solid #4285f4;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.refresh-workorder-button:hover {
+    background: #3367d6;
+    border: 1px solid #3367d6;
+}
+
+.add-workorder-button {
+    background: #1e88e5;
+    color: #fff;
+}
+
+.add-workorder-button:hover {
+    background: #1565c0;
+}
+
+.workorder-header-bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 2;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 0.9rem;
+    min-width: 120px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+.date-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    min-width: 140px;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #1e88e5;
+    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
+}
+
+.refresh-icon {
+    display: inline-block;
+    animation: none;
+}
+
+.refresh-workorder-button:active .refresh-icon {
+    animation: spin 1s linear;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* =============================
@@ -30,81 +153,24 @@
 ============================= */
 .workorder-btn-primary {
     padding: 12px 20px;
-        background: linear-gradient(135deg, #059669, #047857);
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-        box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
 
 .workorder-btn-primary:hover {
-background: linear-gradient(135deg, #047857, #065f46);
+    background: linear-gradient(135deg, #047857, #065f46);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
-}
-
-/* Search Bar Layout */
-.workorder-search-bar {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-/* Field Group */
-.search-field {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 180px;
-}
-
-/* Label */
-.search-field label {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #2c3e50;
-}
-
-/* Inputs */
-.search-field input {
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.search-field input:focus {
-    outline: none;
-    border-color: #4e73df;
-    box-shadow: 0 0 5px rgba(78, 115, 223, 0.3);
-}
-
-/* Button */
-
-.work-btn-search {
-    background-color: #2196F3;
-    color: white;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.work-btn-search:hover {
-    background-color: #1976D2;
-    transform: translateY(-2px);
 }
 
 /* =============================
@@ -217,8 +283,31 @@ background: linear-gradient(135deg, #047857, #065f46);
         padding: 15px;
     }
 
-    .workorder-search-bar {
+    .workorder-header {
+        padding: 10px 15px;
+    }
+
+    .workorder-header-top {
         flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .workorder-header-bottom {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input,
+    .filter-select,
+    .date-input {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: flex-end;
     }
 
     .workorder-card {
