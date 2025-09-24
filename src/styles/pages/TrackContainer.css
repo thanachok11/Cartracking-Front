@@ -217,12 +217,6 @@
     white-space: nowrap;
 }
 
-/* Temperature */
-.temp-value {
-    font-weight: 600;
-    color: #dc2626;
-}
-
 /* Battery Info */
 .battery-info {
     display: flex;

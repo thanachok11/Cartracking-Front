@@ -66,6 +66,8 @@ const UserManagement: React.FC = () => {
     const [error, setError] = useState<string>('');
     const [success, setSuccess] = useState<string>('');
     const [currentUser, setCurrentUser] = useState<any>(null);
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     // Form states
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -97,6 +99,22 @@ const UserManagement: React.FC = () => {
             return () => clearTimeout(timer);
         }
     }, [error]);
+
+    // Filter users based on search term
+    useEffect(() => {
+        if (!searchTerm.trim()) {
+            setFilteredUsers(users);
+        } else {
+            const filtered = users.filter(user => {
+                const fullName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase();
+                const email = (user.email || '').toLowerCase();
+                const search = searchTerm.toLowerCase();
+                
+                return fullName.includes(search) || email.includes(search);
+            });
+            setFilteredUsers(filtered);
+        }
+    }, [users, searchTerm]);
 
     const loadData = async () => {
         try {
@@ -289,6 +307,12 @@ const UserManagement: React.FC = () => {
             <div className="settings-header">
                 <div>
                     <h1>การจัดการผู้ใช้</h1>
+                    <p className="result-count">
+                        {searchTerm ? 
+                            `พบ ${filteredUsers.length} จาก ${users.length} ผู้ใช้` : 
+                            `ทั้งหมด ${users.length} ผู้ใช้`
+                        }
+                    </p>
                     {currentUser && (
                         <p className="current-user-info">
                             ลงชื่อเข้าใช้ในชื่อ: <strong>{currentUser.user?.firstName} {currentUser.user?.lastName}</strong>
@@ -297,43 +321,54 @@ const UserManagement: React.FC = () => {
                     )}
                 </div>
 
-                <button
-                    className="refresh-btn"
-                    onClick={() => {
-                        // Refresh the user list
-                        loadData();
-                    }}
-                >
-                    <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
-                    รีเฟรช
-                </button>
+                <div className="settings-header-actions">
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="ค้นหาด้วยชื่อหรืออีเมล..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="search-input"
+                        />
+                    </div>
 
-                <button
-                    className="add-btn"
-                    onClick={() => {
-                        setShowCreateForm(true);
-                        setEditingUser(null);
-                        setFormData({
-                            firstName: '',
-                            lastName: '',
-                            email: '',
-                            password: '',
-                            role: UserRole.LEVEL_2
-                        });
-                    }}
-                >
-                    <FontAwesomeIcon icon={faPlus} />
-                    สร้างผู้ใช้ใหม่
-                </button>
+                    <button
+                        className="refresh-btn"
+                        onClick={() => {
+                            // Refresh the user list
+                            loadData();
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
+                        รีเฟรช
+                    </button>
 
-                {/* ปุ่มใหม่ จัดการสิทธิ์เข้าใช้งานหน้า */}
-                <button
-                    className="permission-btn"
-                    onClick={() => navigate("/allowed-pages-manager")}
-                >
-                    <FontAwesomeIcon icon={faUserShield} />
-                    จัดการสิทธิ์เข้าใช้งานหน้า
-                </button>
+                    <button
+                        className="add-btn"
+                        onClick={() => {
+                            setShowCreateForm(true);
+                            setEditingUser(null);
+                            setFormData({
+                                firstName: '',
+                                lastName: '',
+                                email: '',
+                                password: '',
+                                role: UserRole.LEVEL_2
+                            });
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                        สร้างผู้ใช้ใหม่
+                    </button>
+
+                    <button
+                        className="permission-btn"
+                        onClick={() => navigate("/allowed-pages-manager")}
+                    >
+                        <FontAwesomeIcon icon={faUserShield} />
+                        จัดการสิทธิ์เข้าใช้งานหน้า
+                    </button>
+                </div>
 
             </div>
 
@@ -427,7 +462,7 @@ const UserManagement: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map(user => {
+                        {filteredUsers.map(user => {
                             const currentRole = currentUser?.user?.role;
                             const canEditThisUser = canAssignRole(currentRole, user.role);
 
@@ -500,9 +535,17 @@ const UserManagement: React.FC = () => {
                     </tbody>
                 </table>
 
-                {users.length === 0 && !loading && (
+                {filteredUsers.length === 0 && !loading && (
                     <div className="no-users">
-                        <p>ไม่พบผู้ใช้</p>
+                        <p>{searchTerm ? 'ไม่พบผู้ใช้ที่ตรงกับการค้นหา' : 'ไม่พบผู้ใช้'}</p>
+                        {searchTerm && (
+                            <button 
+                                onClick={() => setSearchTerm('')}
+                                className="clear-search-btn"
+                            >
+                                ล้างการค้นหา
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

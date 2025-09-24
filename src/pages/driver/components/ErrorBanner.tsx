@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className="error-container">

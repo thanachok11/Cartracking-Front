@@ -1,4 +1,3 @@
-import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faTrailer, faBuilding, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { ITruckHead, ITruckTail } from "../../../api/components/truckApi";

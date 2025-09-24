@@ -1,4 +1,3 @@
-import React from 'react';
 import DriverCard from './DriverCard';
 import type { Driver } from '../../../api/components/driversApi';
 
