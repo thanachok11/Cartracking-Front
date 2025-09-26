@@ -14,7 +14,7 @@ export default function ExportToolbar({ onExport, disabled }: ExportToolbarProps
                 onClick={onExport}
                 disabled={disabled}
             >
-                ดาวน์โหลด CSV
+                ดาวน์โหลด
             </button>
         </div>
     );

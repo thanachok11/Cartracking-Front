@@ -9,6 +9,7 @@ const WorkOrderPrint: React.FC<Props> = ({ order }) => {
     const handleExport = () => {
         // แปลงข้อมูลเป็นแนวตั้ง
         const rows = [
+            ["วันที่ออกใบสั่ง", new Date(order.issueDate).toLocaleDateString("th-TH")],
             ["เลขที่ใบสั่งงาน", order.workOrderNumber],
             ["สินค้า", order.product],
             ["พนักงานขับ", order.driverName],
@@ -17,8 +18,6 @@ const WorkOrderPrint: React.FC<Props> = ({ order }) => {
             ["ทะเบียนหาง", order.tailPlate],
             ["หมายเลขตู้", order.containerNumber],
             ["บริษัท", order.companyName],
-            ["วันที่ออกใบสั่ง", new Date(order.issueDate).toLocaleDateString("th-TH")],
-            ["แก้ไขล่าสุด", order.updatedAt ? new Date(order.updatedAt).toLocaleString("th-TH") : "-"],
             ["รายละเอียด", order.description || "-"],
         ];
 

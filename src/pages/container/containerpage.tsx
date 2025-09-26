@@ -45,7 +45,7 @@ export default function ContainerPage() {
           companyName.toLowerCase().includes(searchTerm.toLowerCase());
         let categoryMatch = true;
         if (filterBy === "ป๋อเฉิน") categoryMatch = companyName.includes("ป๋อเฉิน");
-        else if (filterBy === "รถร่วม") categoryMatch = companyName.includes("รถร่วม");
+        else if (filterBy === "บริษัทร่วม") categoryMatch = companyName.includes("บริษัทร่วม");
         return searchMatch && categoryMatch;
       }),
     [containers, searchTerm, filterBy]

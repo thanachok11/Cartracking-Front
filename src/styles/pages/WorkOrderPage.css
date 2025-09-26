@@ -212,7 +212,7 @@
 
 /* head */
 .workorder-table thead {
-    background: linear-gradient(90deg, #2563eb, #1e40af);
+    background: linear-gradient(90deg, #2563eb);
     color: #fff;
 }
 
@@ -239,9 +239,6 @@
     background-color: #f9f9f9;
 }
 
-.workorder-table tr:hover {
-    background: #f1f5ff;
-}
 
 /* ============================= */
 /* ✏️ Description toggle         */
@@ -385,5 +382,96 @@
 
     .workorder-card {
         padding: 18px;
+    }
+}
+
+/* =============================
+   Description Popup
+============================= */
+.description-popup-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.description-popup {
+    background: white;
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.description-popup-header {
+    background: linear-gradient(135deg, #2563eb);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.description-popup-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.description-popup-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.description-popup-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.description-popup-content {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.description-popup-content p {
+    margin: 0;
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Responsive สำหรับ Description Popup */
+@media (max-width: 768px) {
+    .description-popup {
+        width: 95vw;
+        margin: 20px;
+    }
+    
+    .description-popup-header {
+        padding: 12px 16px;
+    }
+    
+    .description-popup-content {
+        padding: 16px;
+        max-height: 300px;
     }
 }

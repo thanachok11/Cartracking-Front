@@ -28,6 +28,19 @@ export default function ContainerModal({
 }: ContainerModalProps) {
   if (!visible) return null;
 
+  const formatContainerNumber = (input?: string) => {
+    if (!input) return "";
+    const raw = input.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const letters = raw.slice(0, 4).replace(/[^A-Z]/g, "");
+    const digits = raw.replace(/[^0-9]/g, "").slice(0, 7);
+    return letters + (digits ? "-" + digits : "");
+  };
+
+  const handleContainerNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatContainerNumber(e.target.value);
+    onChange({ containerNumber: formatted });
+  };
+
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div
@@ -54,7 +67,9 @@ export default function ContainerModal({
               <input
                 type="text"
                 value={form.containerNumber}
-                onChange={(e) => onChange({ containerNumber: e.target.value })}
+                onChange={handleContainerNumberChange}
+                placeholder="XXXX-0000000"
+                maxLength={12}
                 required
               />
             </div>
@@ -68,7 +83,7 @@ export default function ContainerModal({
               >
                 <option value="">เลือกบริษัท</option>
                 <option value="ป๋อเฉิน">ป๋อเฉิน</option>
-                <option value="รถร่วม">รถร่วม</option>
+                <option value="บริษัทร่วม">บริษัทร่วม</option>
               </select>
             </div>
 

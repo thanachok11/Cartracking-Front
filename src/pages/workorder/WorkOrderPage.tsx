@@ -33,8 +33,10 @@ const WorkOrderPage: React.FC = () => {
     const [dateTo, setDateTo] = useState("");
     const [filterTitle, setFilterTitle] = useState("");
     const [companyFilter, setCompanyFilter] = useState("");
-    // เก็บสถานะ expand ของแต่ละ workOrder โดยใช้ id เป็น key
-    const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
+    
+    // สำหรับ description popup
+    const [showDescriptionPopup, setShowDescriptionPopup] = useState(false);
+    const [selectedDescription, setSelectedDescription] = useState<string>("");
 
     //  form state
     const [form, setForm] = useState<IWorkOrder>({
@@ -92,11 +94,21 @@ const WorkOrderPage: React.FC = () => {
             setLoading(false);
         }
     };
+
     const toggleDescription = (id: string) => {
-        setExpandedRows((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
+        // ไม่ใช้แล้ว - ใช้ popup แทน
+    };
+
+    // ฟังก์ชันสำหรับเปิด description popup
+    const openDescriptionPopup = (description: string) => {
+        setSelectedDescription(description);
+        setShowDescriptionPopup(true);
+    };
+
+    // ฟังก์ชันสำหรับปิด description popup
+    const closeDescriptionPopup = () => {
+        setShowDescriptionPopup(false);
+        setSelectedDescription("");
     };
 
     // โหลด dropdowns
@@ -458,6 +470,7 @@ const WorkOrderPage: React.FC = () => {
                 <table className="workorder-table">
                     <thead>
                         <tr>
+                            <th>วันที่ออกใบสั่ง</th>
                             <th>เลขใบสั่งงาน</th>
                             <th>สินค้า</th>
                             <th>พนักงานขับ</th>
@@ -466,18 +479,15 @@ const WorkOrderPage: React.FC = () => {
                             <th>ทะเบียนหาง</th>
                             <th>หมายเลขตู้</th>
                             <th>บริษัท</th>
-                            <th>วันที่ออกใบสั่ง</th>
-                            <th>แก้ไขล่าสุด</th>
                             <th>รายละเอียด</th>
                             <th>การจัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredOrders.map((o) => {
-                            const isExpanded = expandedRows[o._id || ""] || false;
-
                             return (
                                 <tr key={o._id}>
+                                    <td>{new Date(o.issueDate).toLocaleDateString("th-TH")}</td>
                                     <td>{o.workOrderNumber}</td>
                                     <td>{o.product}</td>
                                     <td>{o.driverName}</td>
@@ -486,28 +496,17 @@ const WorkOrderPage: React.FC = () => {
                                     <td>{o.tailPlate}</td>
                                     <td>{o.containerNumber}</td>
                                     <td>{o.companyName}</td>
-                                    <td>{new Date(o.issueDate).toLocaleDateString("th-TH")}</td>
-                                    <td>
-                                        {o.updatedAt
-                                            ? new Date(o.updatedAt).toLocaleString("th-TH", {
-                                                dateStyle: "short",
-                                                timeStyle: "short",
-                                            })
-                                            : "-"}
-                                    </td>
-                                    <td
-                                        className={`description-cell ${isExpanded ? "expanded" : ""}`}
-                                    >
+                                    <td className="description-cell">
                                         {o.description && o.description.length > 50 ? (
                                             <>
                                                 <div className="desc-text">
-                                                    {isExpanded ? o.description : o.description.slice(0, 50) + "..."}
+                                                    {o.description.slice(0, 50) + "..."}
                                                 </div>
                                                 <button
                                                     className="toggle-desc-btn"
-                                                    onClick={() => toggleDescription(o._id || "")}
+                                                    onClick={() => openDescriptionPopup(o.description || "")}
                                                 >
-                                                    {isExpanded ? "ย่อ" : "เพิ่มเติม"}
+                                                    เพิ่มเติม
                                                 </button>
                                             </>
                                         ) : (
@@ -555,6 +554,23 @@ const WorkOrderPage: React.FC = () => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             />
+
+            {/* Description Popup */}
+            {showDescriptionPopup && (
+                <div className="description-popup-backdrop" onClick={closeDescriptionPopup}>
+                    <div className="description-popup" onClick={(e) => e.stopPropagation()}>
+                        <div className="description-popup-header">
+                            <h3>รายละเอียดงาน</h3>
+                            <button className="description-popup-close" onClick={closeDescriptionPopup}>
+                                ✖ ปิด
+                            </button>
+                        </div>
+                        <div className="description-popup-content">
+                            <p>{selectedDescription}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

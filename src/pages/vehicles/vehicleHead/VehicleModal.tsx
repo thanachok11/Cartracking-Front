@@ -26,6 +26,21 @@ export default function VehicleModal({
 }: VehicleModalProps) {
     if (!visible) return null;
 
+    const formatLicensePlate = (value: string) => {
+        const cleaned = value.replace(/[^0-9]/g, '').toUpperCase();
+        
+        if (cleaned.length <= 3) {
+            return cleaned;
+        } else {
+            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}`;
+        }
+    };
+
+    const handleLicensePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = formatLicensePlate(e.target.value);
+        onChange("licensePlate", formatted);
+    };
+
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
@@ -47,7 +62,7 @@ export default function VehicleModal({
                                 type="text"
                                 id="licensePlate"
                                 value={form.licensePlate}
-                                onChange={(e) => onChange("licensePlate", e.target.value)}
+                                onChange={handleLicensePlateChange}
                                 placeholder="xxx-xxxx"
                                 maxLength={8}
                                 required

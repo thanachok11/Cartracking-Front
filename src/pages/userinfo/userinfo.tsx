@@ -210,7 +210,16 @@ export default function UserInfo() {
     setImagePreview(null);
   };
 
-
+  // const getRoleDisplayName = (role: string) => {
+  //   switch (role) {
+  //     case 'super admin': return 'Super Admin';
+  //     case 'admin': return 'Admin';
+  //     case 'manager': return 'Manager';
+  //     case 'user': return 'User';
+  //     case 'viewer': return 'Viewer';
+  //     default: return role;
+  //   }
+  // };
   const getRoleDisplayName = (role: UserRole): string => {
       switch (role) {
           case UserRole.LEVEL_5: return 'Super Admin';

@@ -75,7 +75,7 @@ export default function ContainerHeader({
                 >
                     <option value="all">ทั้งหมด</option>
                     <option value="ป๋อเฉิน">ป๋อเฉิน</option>
-                    <option value="รถร่วม">รถร่วม</option>
+                    <option value="บริษัทร่วม">บริษัทร่วม</option>
                 </select>
             </div>
         </div>

@@ -43,28 +43,28 @@ export default function DataTodayForm({
     const timeoutRef = React.useRef<number | null>(null);
 
     // Input mask functions
-    const formatLicensePlate = (value: string) => {
-        // Remove all non-alphanumeric characters
-        const cleaned = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-        
-        // Apply format: 000-0000 (3 characters, dash, 4 numbers)
-        if (cleaned.length <= 3) {
-            return cleaned;
-        } else {
-            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}`;
-        }
+    const formatLicensePlate = (input?: string) => {
+        if (!input) return "";
+        const raw = String(input).replace(/[^0-9]/g, "");
+        return raw.length > 3 ? raw.slice(0, 3) + "-" + raw.slice(3, 7) : raw;
     };
 
-    const formatContainerNumber = (value: string) => {
-        // Remove all non-alphanumeric characters
-        const cleaned = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-        
-        // Apply format: XXXX-0000000 (4 letters, dash, 7 numbers)
-        if (cleaned.length <= 4) {
-            return cleaned;
-        } else {
-            return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 11)}`;
-        }
+    const formatContainerNumber = (input?: string) => {
+        if (!input) return "";
+        const raw = input.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        const letters = raw.slice(0, 4).replace(/[^A-Z]/g, "");
+        const digits = raw.replace(/[^0-9]/g, "").slice(0, 7);
+        return letters + (digits ? "-" + digits : "");
+    };
+
+    const formatWorkOrderNumber = (input?: string) => {
+        if (!input) return "";
+        const raw = String(input).toUpperCase().replace(/[^A-Z0-9]/g, "");
+        const letters = raw.slice(0, 2).replace(/[^A-Z]/g, "");
+        const digits = raw.slice(2).replace(/[^0-9]/g, "");
+        return digits
+            ? `${letters}${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4, 7)}`
+            : letters;
     };
 
     // Validation functions
@@ -199,8 +199,11 @@ export default function DataTodayForm({
     }, [onChange]);
 
     const handleWorkOrderChange = useCallback((workOrderNumber: string) => {
+        // Format the work order number first
+        const formatted = formatWorkOrderNumber(workOrderNumber);
+        
         // อัพเดต booking_id ทันที
-        onChange("booking_id" as any, workOrderNumber);
+        onChange("booking_id" as any, formatted);
         
         // Validate work order number
         setValidationStates(prev => ({
@@ -216,15 +219,15 @@ export default function DataTodayForm({
         // Set new timeout for API call and validation (debounce 500ms)
         timeoutRef.current = window.setTimeout(() => {
             // Validate work order exists
-            const isValidWorkOrder = validateWorkOrderNumber(workOrderNumber);
+            const isValidWorkOrder = validateWorkOrderNumber(formatted);
             setValidationStates(prev => ({
                 ...prev,
                 booking_id: { isValid: isValidWorkOrder, checking: false }
             }));
             
             // Fetch work order data only if it's valid
-            if (isValidWorkOrder && workOrderNumber.trim()) {
-                fetchWorkOrderData(workOrderNumber);
+            if (isValidWorkOrder && formatted.trim()) {
+                fetchWorkOrderData(formatted);
             }
         }, 500) as any;
     }, [onChange, fetchWorkOrderData, validateWorkOrderNumber]);
@@ -248,6 +251,7 @@ export default function DataTodayForm({
                         value={(form as any).booking_id || ""}
                         onChange={(e) => handleWorkOrderChange(e.target.value)}
                         placeholder="LL99-99-999"
+                        maxLength={11}
                         style={{
                             borderColor: validationStates.booking_id.checking 
                                 ? '#fbbf24' 

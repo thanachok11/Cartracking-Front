@@ -24,6 +24,24 @@ export default function VehicleTailModal({
 }: VehicleTailModalProps) {
     if (!visible) return null;
 
+    // Format license plate function
+    const formatLicensePlate = (value: string) => {
+        // Remove all non-alphanumeric characters
+        const cleaned = value.replace(/[^0-9]/g, '').toUpperCase();
+        
+        // Apply format: xxx-xxxx (3 characters, dash, 4 characters)
+        if (cleaned.length <= 3) {
+            return cleaned;
+        } else {
+            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}`;
+        }
+    };
+
+    const handleLicensePlateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = formatLicensePlate(e.target.value);
+        onChange("licensePlate", formatted);
+    };
+
     return (
         <div className="popup-overlay" onClick={onClose}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
@@ -45,7 +63,7 @@ export default function VehicleTailModal({
                                 type="text"
                                 id="licensePlate"
                                 value={form.licensePlate}
-                                onChange={(e) => onChange("licensePlate", e.target.value)}
+                                onChange={handleLicensePlateChange}
                                 placeholder="xxx-xxxx"
                                 maxLength={8}
                                 required

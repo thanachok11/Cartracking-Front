@@ -169,7 +169,7 @@ export default function DataTodayPage() {
         return isNaN(d.getTime()) ? "" : d.toLocaleDateString("th-TH");
     };
 
-    // filtered rows -- exact-day when only from set
+    // filtered rows -- using same logic as WorkOrder page
     const filteredRows = rows.filter((r) => {
         if (filterDriver && r.driver_name !== filterDriver) return false;
         if (filterContainer && r.container_no !== filterContainer) return false;
@@ -181,13 +181,23 @@ export default function DataTodayPage() {
                 .includes(filterBooking.toLowerCase())
         )
             return false;
-        const rowDate = isoToDateOnly(r.datetime_in);
-        if (filterFrom && !filterTo) {
-            if (!rowDate || rowDate !== filterFrom) return false;
-        } else {
-            if (filterFrom && (!rowDate || rowDate < filterFrom)) return false;
-            if (filterTo && (!rowDate || rowDate > filterTo)) return false;
+        
+        // Date filtering logic (same as WorkOrder)
+        if (filterFrom && filterTo) {
+            const rowDate = new Date(r.datetime_in);
+            const fromDate = new Date(filterFrom);
+            const toDate = new Date(filterTo);
+            if (rowDate < fromDate || rowDate > toDate) return false;
+        } else if (filterFrom) {
+            const rowDate = new Date(r.datetime_in);
+            const fromDate = new Date(filterFrom);
+            if (rowDate < fromDate) return false;
+        } else if (filterTo) {
+            const rowDate = new Date(r.datetime_in);
+            const toDate = new Date(filterTo);
+            if (rowDate > toDate) return false;
         }
+        
         return true;
     });
 
