@@ -93,12 +93,12 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                 <table className="data-today-table">
                     <thead>
                         <tr>
+                            <th>เลขใบสั่งงาน</th>
                             <th>วันที่</th>
                             <th>คนขับ</th>
                             <th>ทะเบียนหัว</th>
                             <th>ทะเบียนหาง</th>
                             <th>หมายเลขตู้</th>
-                            <th>เลขใบสั่งงาน</th>
                             <th>ตำแหน่งคนขับรถ</th>
                             <th>บริษัท</th>
                             <th>รูปใบสั่งงาน</th>
@@ -115,11 +115,6 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                         ) : (
                             displayedRows.map((r) => (
                                 <tr key={r._id} className="data-today-row">
-                                    <td>{ymdToDmy(r.datetime_in)}</td>
-                                    <td>{r.driver_name}</td>
-                                    <td>{r.head_registration}</td>
-                                    <td>{r.tail_registration}</td>
-                                    <td>{r.container_no}</td>
                                     <td>
                                         {(r as any).booking_id ? (
                                             <button 
@@ -130,6 +125,11 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                                             </button>
                                         ) : '-'}
                                     </td>
+                                    <td>{ymdToDmy(r.datetime_in)}</td>
+                                    <td>{r.driver_name}</td>
+                                    <td>{r.head_registration}</td>
+                                    <td>{r.tail_registration}</td>
+                                    <td>{r.container_no}</td>
                                     <td>
                                         <button onClick={() => openOnMap(r.station_in)} className="data-today-btn-link">
                                             {r.station_in}

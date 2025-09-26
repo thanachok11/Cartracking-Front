@@ -154,6 +154,7 @@ export default function ContainerPage() {
         onRefresh={loadContainers}
         onAdd={() => handleOpenModal()}
         totalCount={containers.length}
+        resultsCount={filteredContainers.length}
         searchTerm={searchTerm}
         filterBy={filterBy}
         onSearch={setSearchTerm}

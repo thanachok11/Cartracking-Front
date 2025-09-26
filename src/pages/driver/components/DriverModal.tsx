@@ -49,6 +49,23 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
     onImageFileChange(file);
   };
 
+  const formatPhoneNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    
+    if (digits.length <= 3) {
+      return digits;
+    } else if (digits.length <= 6) {
+      return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    } else {
+      return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    onChange({ phoneNumber: formatted });
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -68,7 +85,13 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
           <div className="form-row">
             <div className="form-group">
               <label>เบอร์โทรศัพท์:</label>
-              <input type="tel" value={form.phoneNumber} onChange={(e) => onChange({ phoneNumber: e.target.value })} required />
+              <input 
+                type="tel" 
+                value={form.phoneNumber} 
+                onChange={handlePhoneChange}
+                maxLength={12}
+                required 
+              />
             </div>
             <div className="form-group">
               <label>ตำแหน่ง:</label>

@@ -1,11 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Header from "./components/layout/Header";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VehicleTimelinePage from "./pages/VehicleTimeline";
 import HomePage from "./components/landingPage/LandingPage";
 import Sidebar from "./components/layout/Sidebar";
@@ -17,18 +13,18 @@ import Dashboard from "./pages/Dashboard";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import UserManagement from "./pages/usermanagement/usermanagement";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import DriverProfilePage from './pages/driver/components/DriverProfilePage';
+import DriverProfilePage from "./pages/driver/components/DriverProfilePage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Userinfo from "./pages/userinfo/userinfo";
 import DataTodayPage from "./pages/datatoday/DataTodayPage";
-import NotFoundPage from "./components/layout/NotFoundPage"; // ✅ import หน้า 404
+import NotFoundPage from "./components/layout/NotFoundPage";
 import WorkOrderPage from "./pages/workorder/WorkOrderPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 import AllowedPagesManager from "./pages/usermanagement/components/AllowedPagesManager";
 import "./App.css";
 import { jwtDecode } from "jwt-decode";
-import { logoutUser } from "./api/auth/auth";
+import { logoutUser, renewToken } from "./api/auth/auth";
 
 // Interceptor สำหรับ logout อัตโนมัติเมื่อ 401
 axios.interceptors.response.use(
@@ -42,8 +38,6 @@ axios.interceptors.response.use(
   }
 );
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
-
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => {
@@ -56,8 +50,10 @@ const App: React.FC = () => {
     if (!token) return;
 
     let timeoutId: NodeJS.Timeout;
+    let heartbeatId: NodeJS.Timeout;
     let lastRenewTime = 0;
-    const COOLDOWN_MS = 5 * 60 * 1000;
+    const COOLDOWN_MS = 5 * 60 * 1000; // 5 นาที
+    const HEARTBEAT_MS = 10 * 60 * 1000; // 10 นาที
 
     const isTokenExpiringSoon = (token: string | null, bufferSeconds = 60) => {
       if (!token) return true;
@@ -68,30 +64,9 @@ const App: React.FC = () => {
       } catch {
         return true;
       }
-    };  
-    const renewToken = async (oldToken: string) => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/renewToken`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${oldToken}`,
-          },
-        });
-
-        if (!response.ok) throw new Error("Failed to renew token");
-
-        const data = await response.json();
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          lastRenewTime = Date.now();
-          console.log("🔄 Token renewed successfully");
-        }
-      } catch (err) {
-        console.error("❌ Failed to renew token:", err);
-      }
     };
 
+    // ✅ activity-based renew
     const activityDetected = () => {
       clearTimeout(timeoutId);
 
@@ -101,8 +76,10 @@ const App: React.FC = () => {
       const enoughTimePassed = now - lastRenewTime > COOLDOWN_MS;
       const tokenIsExpiring = isTokenExpiringSoon(currentToken, 60);
 
-      if (tokenIsExpiring && enoughTimePassed) {
-        renewToken(currentToken!);
+      if (tokenIsExpiring && enoughTimePassed && currentToken) {
+        renewToken(currentToken).then((ok) => {
+          if (ok) lastRenewTime = Date.now();
+        });
       }
 
       timeoutId = setTimeout(() => {
@@ -110,13 +87,47 @@ const App: React.FC = () => {
       }, COOLDOWN_MS);
     };
 
+    // ✅ heartbeat-based renew
+    const startHeartbeat = () => {
+      heartbeatId = setInterval(() => {
+        const currentToken = localStorage.getItem("token");
+        if (currentToken) {
+          console.log("💓 Heartbeat: renewing token...");
+          renewToken(currentToken).then((ok) => {
+            if (ok) lastRenewTime = Date.now();
+          });
+        }
+      }, HEARTBEAT_MS);
+    };
+
+    const stopHeartbeat = () => {
+      if (heartbeatId) clearInterval(heartbeatId);
+    };
+
+    // เริ่ม heartbeat ตอน mount
+    startHeartbeat();
+
+    // หยุด/เริ่ม heartbeat เวลา tab เปลี่ยนสถานะ
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        console.log("⏸️ Tab hidden → stop heartbeat");
+        stopHeartbeat();
+      } else {
+        console.log("▶️ Tab active → start heartbeat");
+        startHeartbeat();
+      }
+    });
+
+    // ฟัง activity
     window.addEventListener("mousemove", activityDetected);
     window.addEventListener("keydown", activityDetected);
 
     return () => {
       clearTimeout(timeoutId);
+      stopHeartbeat();
       window.removeEventListener("mousemove", activityDetected);
       window.removeEventListener("keydown", activityDetected);
+      document.removeEventListener("visibilitychange", () => { });
     };
   }, [token]);
 
@@ -130,15 +141,11 @@ const App: React.FC = () => {
           <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
         )}
         {token && (
-          <Sidebar
-            isSidebarOpen={isSidebarOpen}
-            toggleSidebar={toggleSidebar}
-          />
+          <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         )}
         <div className="main-content">
           <Routes>
             <Route path="/" element={<HomePage />} />
-
             <Route path="/home" element={<HomePage />} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
             <Route
@@ -146,10 +153,9 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute page="dashboard">
                   <GoogleMapsProvider>
-                  <Dashboard />
+                    <Dashboard />
                   </GoogleMapsProvider>
                 </ProtectedRoute>
-                
               }
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -205,12 +211,11 @@ const App: React.FC = () => {
             <Route
               path="/workorder"
               element={
-                <ProtectedRoute page="">
+                <ProtectedRoute page="workorder">
                   <WorkOrderPage />
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/management"
               element={
@@ -222,7 +227,7 @@ const App: React.FC = () => {
             <Route
               path="/settings"
               element={
-                <ProtectedRoute >
+                <ProtectedRoute>
                   <Userinfo />
                 </ProtectedRoute>
               }
@@ -243,7 +248,6 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
-            {/* ✅ route 404 ต้องอยู่ท้ายสุด */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

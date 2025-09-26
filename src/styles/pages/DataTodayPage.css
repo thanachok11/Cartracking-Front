@@ -115,23 +115,6 @@
 .data-today-btn-ghost:hover {
   background-color: #f2f2f2;
 }
-
-.data-today-btn-danger {
-  background-color: #dc2626;
-}
-
-.data-today-btn-danger:hover:not(:disabled) {
-  background-color: #b91c1c;
-}
-
-.data-today-btn-edit {
-  background-color: #2666dc;
-}
-
-.data-today-btn-edit:hover:not(:disabled) {
-  background-color: #409ef6;
-}
-
 .data-today-btn-small {
   padding: 4px 10px;
   font-size: 12px;
@@ -228,21 +211,25 @@
 }
 
 .data-today-btn-edit {
-  background: #2563eb;
-  color: #fff;
+  background: #ffc107;
+  color: #222;
 }
 
 .data-today-btn-edit:hover {
-  background: #1e40af;
+  background: #e0a800;
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 .data-today-btn-danger {
-  background: #dc2626;
+  background: #dc3545;
   color: #fff;
 }
 
 .data-today-btn-danger:hover {
-  background: #991b1b;
+  background: #c82333;
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 /* link button (ดู, ตำแหน่ง) */

@@ -100,14 +100,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
         loadUserData();
     }, []);
 
-    const handleLogout = () => {
-        logoutUser();
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+        } catch (err) {
+            console.error("Logout error:", err);
+        }
         setUser(null);
         navigate("/", { replace: true });
         setTimeout(() => {
             window.location.reload();
         }, 500);
     };
+
 
     // Close dropdown when click outside
     useEffect(() => {

@@ -14,9 +14,12 @@ export interface User {
     role: UserRole;
     createdAt: string;
     lastLogin: string;
+    lastActive?: string;
+    isOnline: boolean;
     isActive: boolean;
     image?: string;
 }
+
 
 export interface UserPermissions {
     canViewAll: boolean;
@@ -115,6 +118,7 @@ export const roleToString = (role: UserRole): string => {
 };
 
 // Helper function to create User object from backend database response
+// Helper function to create User object from backend database response
 export const userFromDatabase = (dbUser: any): User => {
     return {
         id: dbUser._id || dbUser.id,
@@ -124,7 +128,12 @@ export const userFromDatabase = (dbUser: any): User => {
         role: stringToRole(dbUser.role),
         createdAt: dbUser.createdAt || new Date().toISOString(),
         lastLogin: dbUser.lastLogin || dbUser.updatedAt || new Date().toISOString(),
-        isActive: dbUser.isActive !== false,
-        image: dbUser.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
+        lastActive: dbUser.lastActive ? new Date(dbUser.lastActive).toISOString() : undefined, 
+        isActive: dbUser.isActive !== false, 
+        isOnline: dbUser.isOnline === true,
+        image: dbUser.profile_img ||
+            'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
     };
 };
+
+

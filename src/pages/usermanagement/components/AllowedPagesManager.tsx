@@ -70,6 +70,7 @@ const AllowedPagesManager: React.FC = () => {
                 <tbody>
                     {users
                          // ซ่อน super admin
+                        .filter(user => user.role?.toLowerCase() !== "super admin")
                         .map(user => (
                             <tr key={user._id}>
                                 <td>{user.firstName} {user.lastName}</td>

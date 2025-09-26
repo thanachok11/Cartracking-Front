@@ -194,6 +194,7 @@ export default function DataTodayPage() {
     const exportCsv = () => {
         if (!filteredRows.length) return;
         const header = [
+            "รูปใบสั่งงาน",
             "เวลาเข้า",
             "คนขับ",
             "ทะเบียนหัว",
@@ -201,13 +202,13 @@ export default function DataTodayPage() {
             "หมายเลขตู้",
             "ตำแหน่ง",
             "บริษัท",
-            "Booking ID",
-            "Booking Image",
+            "เลขใบสั่งงาน",
         ];
         const out = [header.join(",")];
         for (const r of filteredRows) {
             out.push(
                 [
+                    `"${String((r as any).booking_id || "").replace(/"/g, '""')}"`,
                     `"${ymdToDmy(r.datetime_in)}"`,
                     `"${String(r.driver_name || "").replace(/"/g, '""')}"`,
                     `"${String(r.head_registration || "").replace(/"/g, '""')}"`,
@@ -215,7 +216,6 @@ export default function DataTodayPage() {
                     `"${String(r.container_no || "").replace(/"/g, '""')}"`,
                     `"${String(r.station_in || "").replace(/"/g, '""')}"`,
                     `"${String(r.companyname || "").replace(/"/g, '""')}"`,
-                    `"${String((r as any).booking_id || "").replace(/"/g, '""')}"`,
                     `"${String((r as any).booking_image || "").replace(/"/g, '""')}"`,
                 ].join(",")
             );

@@ -293,15 +293,9 @@ export default function WorkOrderFormModal({
                     </div>
 
                     <div className="workorder-modal-actions">
-                        <button type="button" onClick={onCancel}>
-                            ยกเลิก
-                        </button>
+                        <button type="button" onClick={onCancel}>ยกเลิก</button>
                         <button type="submit" disabled={submitting}>
-                            {submitting
-                                ? "กำลังบันทึก..."
-                                : editing
-                                    ? "บันทึกการแก้ไข"
-                                    : "เพิ่มรายการ"}
+                            {submitting ? "กำลังบันทึก..." : editing ? "บันทึกการแก้ไข" : "เพิ่มรายการ"}
                         </button>
                     </div>
                 </form>

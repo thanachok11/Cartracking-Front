@@ -60,7 +60,7 @@ export const createUserByAdmin = async (userData: RegisterWithRoleData) => {
             withCredentials: true
         });
         
-        console.log('✅ User created successfully:', response.data);
+        console.log('User created successfully:', response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error creating user:', error);
@@ -75,7 +75,7 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
         const response = await axios.post(
             `${API_BASE_URL}/auth/login`,
             { email, password },
-            { withCredentials: true } // ✅ สำคัญ
+            { withCredentials: true } // สำคัญ
         );
 
         const loginData: LoginResponse = response.data;
@@ -101,8 +101,8 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
 };
 
 
-// ดึงผู้ใช้ทั้งหมด - ใช้ API endpoint ที่ถูกต้องตาม backend
-export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
+// ดึงผู้ใช้ทั้งหมด
+export const fetchAllUsers = async (): Promise<{ users: User[]; onlineUsers: User[] }> => {
     try {
         const token = localStorage.getItem('token');
         const response = await axios.get(`${API_BASE_URL}/auth/users`, {
@@ -115,13 +115,10 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
 
         console.log('📋 Raw users from backend:', response.data);
 
-        // ดึง role ของ user ปัจจุบันจาก token หรือ backend
         const currentUserRole = localStorage.getItem('role')?.toLowerCase();
-        // หรือดึงจาก JWT decode ก็ได้
 
-        // กำหนด type ให้ users เป็น array ของ User
         let users: User[] = response.data.users.map((user: any) => {
-            let userRole = UserRole.LEVEL_2; // default
+            let userRole = UserRole.LEVEL_2;
             switch (user.role?.toLowerCase()) {
                 case 'super admin':
                     userRole = UserRole.LEVEL_5;
@@ -138,6 +135,8 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 default:
                     userRole = UserRole.LEVEL_2;
             }
+
+            // เพิ่ม isOnline มาด้วย
             return {
                 id: user._id || user.id,
                 firstName: user.firstName || '',
@@ -146,8 +145,10 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
                 role: userRole,
                 createdAt: user.createdAt || new Date().toISOString(),
                 lastLogin: user.lastLogin || user.updatedAt || new Date().toISOString(),
+                lastActive: user.lastActive ? new Date(user.lastActive).toISOString() : undefined,
                 isActive: user.isActive !== false,
-                profile_img: user.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg'
+                profile_img: user.profile_img || 'https://res.cloudinary.com/dboau6axv/image/upload/v1735641179/qa9dfyxn8spwm0nwtako.jpg',
+                isOnline: user.isOnline === true // 👈 จาก backend
             };
         });
 
@@ -156,11 +157,66 @@ export const fetchAllUsers = async (): Promise<{ users: User[] }> => {
             users = users.filter((u: User) => u.role !== UserRole.LEVEL_5);
         }
 
-        console.log('✅ Converted users for frontend:', users);
-        return { users };
+        // แยกเฉพาะ user ออนไลน์
+        const onlineUsers = users.filter(u => u.isOnline);
+
+        console.log('Converted users for frontend:', users);
+        console.log('🟢 Online users:', onlineUsers);
+
+        return { users, onlineUsers };
     } catch (error: any) {
         console.error('❌ Error fetching users:', error);
         throw new Error(error.response?.data?.message || 'Failed to fetch users');
+    }
+};
+
+
+// Renew Token (update isOnline + lastActive ด้วย)
+export const renewToken = async (oldToken: string) => {
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}/auth/renewToken`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${oldToken}`,
+                },
+            }
+        );
+
+        const data = response.data;
+
+        if (data.token) {
+            localStorage.setItem("token", data.token);
+            if (data.lastActive) {
+                localStorage.setItem("lastActive", data.lastActive);
+            }
+            console.log(
+                `🔄 Token renewed | 🟢 isOnline: ${data.isOnline} | ⏰ lastActive: ${data.lastActive}`
+            );
+            return true;
+        }
+    } catch (err) {
+        console.error("❌ Failed to renew token:", err);
+    }
+    return false;
+};
+
+export const logoutUser = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        if (token) {
+            await axios.post(
+                `${API_BASE_URL}/auth/logout`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+        }
+    } catch (error) {
+        console.error("Logout error:", error);
+    } finally {
+        localStorage.removeItem("token");
+        localStorage.removeItem("lastActive");
     }
 };
 
@@ -197,7 +253,7 @@ export const createUser = async (userData: RegisterWithRoleData) => {
             withCredentials: true
         });
 
-        console.log('✅ User created successfully:', response.data);
+        console.log('User created successfully:', response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error creating user:', error);
@@ -236,7 +292,7 @@ export const updateUser = async (userId: string, userData: { firstName: string; 
             withCredentials: true
         });
 
-        console.log('✅ User updated successfully:', response.data);
+        console.log('User updated successfully:', response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error updating user:', error);
@@ -277,7 +333,7 @@ export const updateStatus = async (userId: string, isActive: boolean) => {
         );
 
 
-        console.log(`✅ User status updated to ${isActive ? 'Active' : 'Inactive'}:`, response.data);
+        console.log(`User status updated to ${isActive ? 'Active' : 'Inactive'}:`, response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error updating user status:', error);
@@ -355,7 +411,7 @@ export const updateUserRole = async (userId: string, newRole: string) => {
             withCredentials: true
         });
 
-        console.log('✅ Role updated successfully:', response.data);
+        console.log('Role updated successfully:', response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error updating role:', error);
@@ -372,7 +428,7 @@ export const getUserPermissions = async (): Promise<{ user: any; permissions: an
             throw new Error('ไม่พบ token สำหรับการยืนยันตัวตน');
         }
 
-        // ✅ decode token
+        // decode token
         const { jwtDecode } = require('jwt-decode');
         const decoded: any = jwtDecode(token);
 
@@ -459,12 +515,6 @@ export const removeToken = () => {
     localStorage.removeItem('container_cookie');
 };
 
-// ออกจากระบบ
-export const logoutUser = () => {
-    removeToken();
-    window.location.href = '/';
-};
-
 // ตรวจสอบว่า login หรือยัง
 export const isAuthenticated = (): boolean => {
     const token = getToken();
@@ -502,7 +552,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
             withCredentials: true
         });
 
-        console.log('✅ Password changed successfully:', response.data);
+        console.log('Password changed successfully:', response.data);
         return response.data;
     } catch (error: any) {
         console.error('❌ Error changing password:', error);

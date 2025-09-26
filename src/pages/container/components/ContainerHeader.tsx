@@ -10,6 +10,7 @@ interface ContainerHeaderProps {
     filterBy: string;
     onSearch: (v: string) => void;
     onFilter: (v: string) => void;
+    resultsCount: number; // เพิ่มจำนวนผลลัพธ์ที่กรองแล้ว
 }
 
 export default function ContainerHeader({
@@ -20,6 +21,7 @@ export default function ContainerHeader({
     filterBy,
     onSearch,
     onFilter,
+    resultsCount,
 }: ContainerHeaderProps) {
     const [loading, setLoading] = useState(false);
 
@@ -29,7 +31,11 @@ export default function ContainerHeader({
                 <h2 className="container-header-page-title">
                     ตู้คอนเทนเนอร์
                     <div className="container-header-page-count">
-                        จำนวนตู้ {totalCount} ตู้
+                        {searchTerm || filterBy !== "all" ? (
+                            `แสดง ${resultsCount} ตู้`
+                        ) : (
+                            `ทั้งหมด ${totalCount} ตู้`
+                        )}
                     </div>
                 </h2>
                 <div className="container-header-page-actions">

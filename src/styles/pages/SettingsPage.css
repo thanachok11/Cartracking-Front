@@ -46,9 +46,9 @@
 
 .settings-header h1 {
     margin: 0;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #1e40af;
+    font-weight: 700;
+    font-size: 2rem;
+    color: #1e40af;
 }
 
 .current-user-info {
@@ -732,6 +732,23 @@
     color: #64748b;
     font-size: 1.1rem;
     text-shadow: none;
+}
+
+.status-online {
+    color: green;
+    font-weight: bold;
+}
+
+.status-offline {
+    color: red;
+    font-weight: bold;
+}
+
+.user-stats {
+    margin: 10px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 20px;
 }
 
 /* Animations */

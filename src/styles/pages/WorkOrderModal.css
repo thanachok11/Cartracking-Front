@@ -78,8 +78,24 @@
 }
 
 /* Full width row */
+/* Full width row */
 .workorder-form-full {
     margin-top: 10px;
+    width: 100%;
+}
+
+.workorder-form-full textarea {
+    width: 100%;
+    min-height: 200px;
+    line-height: 1.5;
+
+}
+
+/* เอฟเฟกต์เวลาโฟกัส */
+.workorder-form-full textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 /* Actions */
