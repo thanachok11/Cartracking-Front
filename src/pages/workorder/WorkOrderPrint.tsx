@@ -42,7 +42,7 @@ const WorkOrderPrint: React.FC<Props> = ({ order }) => {
 
     return (
         <button onClick={handleExport} className="work-btn-export">
-            พิมพ์ CSV
+            ดาวน์โหลด
         </button>
     );
 };
