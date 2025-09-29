@@ -16,8 +16,10 @@ import DriverModal from './components/DriverModal';
 import NotificationToast from '../../components/common/NotificationToast';
 import { useNotification } from '../../hooks/useNotification';
 import '../../styles/components/NotificationToast.css';
+import { useI18n } from '../../i18n';
 
 export default function DriverPage() {
+  const { t } = useI18n();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,15 +51,11 @@ export default function DriverPage() {
 
   const handleApiError = (error: any, defaultMessage: string) => {
     if (error?.response && (error.response.status === 401 || error.response.status === 403)) {
-      setError(
-        `ไม่มีสิทธิ์เข้าถึงข้อมูล (${error.response.status}) - กรุณาตรวจสอบการเข้าสู่ระบบ`
-      );
+      setError(`${t('protected.denied')} (${error.response.status})`);
       return;
     }
     if (!error?.response || error.response.status >= 500) {
-      setError(
-        `เซิร์ฟเวอร์ไม่พร้อมใช้งาน (${error.response?.status || 'Network Error'}) - กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ`
-      );
+      setError(`Server unavailable (${error.response?.status || 'Network Error'})`);
       return;
     }
     const errorMsg = error?.response?.data?.message || error?.message || defaultMessage;
@@ -117,10 +115,10 @@ export default function DriverPage() {
 
       await loadDrivers();
       handleCloseModal();
-      showNotification("เพิ่มคนขับสำเร็จ! ✅", "success");
+      showNotification(`${t('drivers.add')} ✅`, "success");
     } catch (error) {
-      handleApiError(error, 'เกิดข้อผิดพลาดในการสร้างข้อมูลคนขับ');
-      showNotification("เกิดข้อผิดพลาดในการเพิ่มคนขับ ❌", "error");
+      handleApiError(error, 'Create driver failed');
+      showNotification(`${t('common.noData')} ❌`, "error");
     } finally {
       setSaving(false);
     }
@@ -140,10 +138,10 @@ export default function DriverPage() {
 
       await loadDrivers();
       handleCloseModal();
-      showNotification("แก้ไขข้อมูลคนขับสำเร็จ! ✅", "success");  
+      showNotification(`${t('common.save')} ✅`, "success");  
     } catch (error) {
-      handleApiError(error, 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนขับ');
-      showNotification("เกิดข้อผิดพลาดในการแก้ไขข้อมูลคนขับ ❌", "error");
+      handleApiError(error, 'Update driver failed');
+      showNotification(`${t('common.noData')} ❌`, "error");
     } finally {
       setSaving(false);
     }
@@ -151,14 +149,14 @@ export default function DriverPage() {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบคนขับคนนี้?')) return;
+      if (!window.confirm(`${t('common.delete')}?`)) return;
       try {
         await deleteDriver(id);
         await loadDrivers();
-        showNotification("ลบคนขับสำเร็จ! ✅", "success");
+        showNotification(`${t('common.delete')} ✅`, "success");
       } catch (error) {
-        handleApiError(error, 'เกิดข้อผิดพลาดในการลบข้อมูลคนขับ');
-        showNotification("เกิดข้อผิดพลาดในการลบข้อมูลคนขับ ❌", "error");
+        handleApiError(error, 'Delete driver failed');
+        showNotification(`${t('common.noData')} ❌`, "error");
       }
     },
     [loadDrivers]
@@ -200,7 +198,7 @@ export default function DriverPage() {
     loadDrivers();
   }, [loadDrivers]);
 
-  if (loading) return <div className="loading">กำลังโหลดข้อมูล...</div>;
+  if (loading) return <div className="loading">{t('common.loading')}</div>;
 
   if (error) {
     return (

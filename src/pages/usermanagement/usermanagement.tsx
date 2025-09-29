@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, UserRole } from '../../types/User';
 import { useNavigate } from "react-router-dom";
+import { useI18n } from '../../i18n';
 
 import {
     getAllUsers,
@@ -32,13 +33,13 @@ interface UserFormData {
 }
 
 // Helper function to get role display name
-const getRoleDisplayName = (role: UserRole): string => {
+const getRoleDisplayName = (role: UserRole, t: any): string => {
     switch (role) {
-        case UserRole.LEVEL_5: return 'Super Admin';
-        case UserRole.LEVEL_4: return 'Admin';
-        case UserRole.LEVEL_3: return 'Manager';
-        case UserRole.LEVEL_2: return 'User';
-        default: return 'User';
+        case UserRole.LEVEL_5: return t('roles.superAdmin');
+        case UserRole.LEVEL_4: return t('roles.admin');
+        case UserRole.LEVEL_3: return t('roles.manager');
+        case UserRole.LEVEL_2: return t('roles.user');
+        default: return t('roles.user');
     }
 };
 
@@ -55,20 +56,22 @@ const canAssignRole = (currentUserRole: UserRole, targetRole: UserRole): boolean
 };
 
 // ฟังก์ชันช่วย format เวลา lastActive → "5 นาทีที่แล้ว"
-const timeAgo = (dateString?: string): string => {
+const timeAgo = (dateString?: string, t?: any): string => {
     if (!dateString) return "-";
+    if (!t) return "-";
     const diffMs = Date.now() - new Date(dateString).getTime();
     const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return "เมื่อสักครู่";
-    if (diffMin < 60) return `${diffMin} นาทีที่แล้ว`;
+    if (diffMin < 1) return t('userManagement.time.justNow');
+    if (diffMin < 60) return t('userManagement.time.minutesAgo', { minutes: diffMin });
     const diffHr = Math.floor(diffMin / 60);
-    if (diffHr < 24) return `${diffHr} ชั่วโมงที่แล้ว`;
+    if (diffHr < 24) return t('userManagement.time.hoursAgo', { hours: diffHr });
     const diffDay = Math.floor(diffHr / 24);
-    return `${diffDay} วันที่แล้ว`;
+    return t('userManagement.time.daysAgo', { days: diffDay });
 };
 
 const UserManagement: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useI18n();
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
@@ -140,15 +143,15 @@ const UserManagement: React.FC = () => {
     };
 
     const handleDeleteUser = async (userId: string) => {
-        if (!window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?')) return;
+        if (!window.confirm(t('userManagement.messages.deleteConfirm'))) return;
         try {
             setLoading(true);
             setError('');
             await deleteUser(userId);
-            setSuccess('ลบผู้ใช้สำเร็จ!');
+            setSuccess(t('userManagement.messages.deleteSuccess'));
             await loadData();
         } catch (err: any) {
-            setError(err.message || 'ไม่สามารถลบผู้ใช้ได้');
+            setError(err.message || t('userManagement.messages.deleteFailed'));
         } finally {
             setLoading(false);
         }
@@ -160,15 +163,15 @@ const UserManagement: React.FC = () => {
             setError('');
             const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
             if (!canAssignRole(currentRole, newRole)) {
-                setError('คุณไม่มีสิทธิ์ในการมอบหมายบทบาทนี้');
+                setError(t('userManagement.messages.noPermission'));
                 return;
             }
             const newRoleString = roleToString(newRole);
             await updateUserRole(userId, newRoleString);
-            setSuccess('อัปเดตบทบาทผู้ใช้สำเร็จ!');
+            setSuccess(t('userManagement.messages.roleUpdateSuccess'));
             await loadData();
         } catch (err: any) {
-            setError(err.message || 'ไม่สามารถอัปเดตบทบาทผู้ใช้ได้');
+            setError(err.message || t('userManagement.messages.roleUpdateFailed'));
         } finally {
             setLoading(false);
         }
@@ -200,9 +203,9 @@ const UserManagement: React.FC = () => {
 
     const getAvailableRoles = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
-        const roles = [{ value: UserRole.LEVEL_2, label: 'ผู้ใช้' }];
-        if (currentRole >= UserRole.LEVEL_3) roles.push({ value: UserRole.LEVEL_3, label: 'ผู้จัดการ' });
-        if (currentRole >= UserRole.LEVEL_4) roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
+        const roles = [{ value: UserRole.LEVEL_2, label: t('roles.user') }];
+        if (currentRole >= UserRole.LEVEL_3) roles.push({ value: UserRole.LEVEL_3, label: t('roles.manager') });
+        if (currentRole >= UserRole.LEVEL_4) roles.push({ value: UserRole.LEVEL_4, label: t('roles.admin') });
         return roles;
     };
 
@@ -210,10 +213,10 @@ const UserManagement: React.FC = () => {
         try {
             setLoading(true);
             await updateStatus(id, newStatus === 1);
-            setSuccess(newStatus === 1 ? 'เปิดใช้งานผู้ใช้แล้ว' : 'ปิดการใช้งานผู้ใช้แล้ว');
+            setSuccess(newStatus === 1 ? t('userManagement.messages.statusUpdateSuccess') : t('userManagement.messages.statusDeactivateSuccess'));
             await loadData();
         } catch (err: any) {
-            setError(err.message || 'ไม่สามารถอัปเดตสถานะได้');
+            setError(err.message || t('userManagement.messages.statusUpdateFailed'));
         } finally {
             setLoading(false);
         }
@@ -221,9 +224,9 @@ const UserManagement: React.FC = () => {
 
     const getCreateRoles = () => {
         const currentRole = currentUser?.user?.role || UserRole.LEVEL_2;
-        const roles = [{ value: UserRole.LEVEL_2, label: 'ผู้ใช้' }];
-        if (currentRole >= UserRole.LEVEL_3) roles.push({ value: UserRole.LEVEL_3, label: 'ผู้จัดการ' });
-        if (currentRole >= UserRole.LEVEL_4) roles.push({ value: UserRole.LEVEL_4, label: 'ผู้ดูแลระบบ' });
+        const roles = [{ value: UserRole.LEVEL_2, label: t('roles.user') }];
+        if (currentRole >= UserRole.LEVEL_3) roles.push({ value: UserRole.LEVEL_3, label: t('roles.manager') });
+        if (currentRole >= UserRole.LEVEL_4) roles.push({ value: UserRole.LEVEL_4, label: t('roles.admin') });
         return roles;
     };
 
@@ -231,10 +234,10 @@ const UserManagement: React.FC = () => {
         return (
             <div className="settings-page">
                 <div className="access-denied">
-                    <h2>ไม่มีสิทธิ์เข้าถึง</h2>
-                    <p>คุณไม่มีสิทธิ์เข้าถึงการจัดการผู้ใช้</p>
+                    <h2>{t('userManagement.messages.accessDenied')}</h2>
+                    <p>{t('userManagement.messages.accessDeniedDesc')}</p>
                     {currentUser && (
-                        <p>บทบาทปัจจุบันของคุณ: <strong>{getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2)}</strong></p>
+                        <p>{t('userManagement.messages.currentRole', { role: getRoleDisplayName(currentUser.user?.role || UserRole.LEVEL_2, t) })}</p>
                     )}
                 </div>
             </div>
@@ -244,7 +247,7 @@ const UserManagement: React.FC = () => {
     if (loading && !users.length) {
         return (
             <div className="settings-page">
-                <div className="loading">กำลังโหลดข้อมูล...</div>
+                <div className="loading">{t('userManagement.messages.loadingData')}</div>
             </div>
         );
     }
@@ -256,11 +259,11 @@ const UserManagement: React.FC = () => {
         <div className="settings-page">
             <div className="settings-header">
                 <div>
-                    <h1>การจัดการผู้ใช้</h1>
+                    <h1>{t('userManagement.title')}</h1>
                     <p className="result-count">
                         {searchTerm ?
-                            `พบ ${filteredUsers.length} จาก ${users.length} ผู้ใช้` :
-                            `ทั้งหมด ${users.length} ผู้ใช้`
+                            t('userManagement.foundUsers', { found: filteredUsers.length, total: users.length }) :
+                            t('userManagement.totalUsers', { count: users.length })
                         }
                     </p>
                 </div>
@@ -269,7 +272,7 @@ const UserManagement: React.FC = () => {
                     <div className="search-container">
                         <input
                             type="text"
-                            placeholder="ค้นหาด้วยชื่อหรืออีเมล..."
+                            placeholder={t('userManagement.search')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"
@@ -278,7 +281,7 @@ const UserManagement: React.FC = () => {
 
                     <button className="refresh-btn" onClick={loadData}>
                         <FontAwesomeIcon icon={faSync} className={loading ? 'fa-spin' : ''} />
-                        รีเฟรช
+                        {t('userManagement.refresh')}
                     </button>
 
                     <button
@@ -296,20 +299,20 @@ const UserManagement: React.FC = () => {
                         }}
                     >
                         <FontAwesomeIcon icon={faPlus} />
-                        สร้างผู้ใช้ใหม่
+                        {t('userManagement.createUser')}
                     </button>
 
                     <button className="permission-btn" onClick={() => navigate("/allowed-pages-manager")}>
                         <FontAwesomeIcon icon={faUserShield} />
-                        จัดการสิทธิ์เข้าใช้งานหน้า
+                        {t('userManagement.managePermissions')}
                     </button>
                 </div>
             </div>
 
             {/* Counter ออนไลน์/ออฟไลน์ */}
             <div className="user-stats">
-                <p>🟢 ออนไลน์: {users.filter(u => u.isOnline).length} คน</p>
-                <p>🔴 ออฟไลน์: {users.filter(u => !u.isOnline).length} คน</p>
+                <p>{t('userManagement.stats.online', { count: users.filter(u => u.isOnline).length })}</p>
+                <p>{t('userManagement.stats.offline', { count: users.filter(u => !u.isOnline).length })}</p>
             </div>
 
             {/* Alert messages */}
@@ -332,11 +335,11 @@ const UserManagement: React.FC = () => {
                                 lastName: data.lastName,
                                 role: roleToString(data.role)
                             });
-                            setSuccess('สร้างผู้ใช้สำเร็จ!');
+                            setSuccess(t('userManagement.messages.createSuccess'));
                             setShowCreateForm(false);
                             await loadData();
                         } catch (err: any) {
-                            setError(err.message || 'ไม่สามารถสร้างผู้ใช้ได้');
+                            setError(err.message || t('userManagement.messages.createFailed'));
                         } finally {
                             setLoading(false);
                         }
@@ -357,11 +360,11 @@ const UserManagement: React.FC = () => {
                             if (data.role !== undefined && data.role !== editingUser.role) {
                                 await updateUserRole(id, roleToString(data.role as UserRole));
                             }
-                            setSuccess('อัปเดตผู้ใช้สำเร็จ!');
+                            setSuccess(t('userManagement.messages.updateSuccess'));
                             setEditingUser(null);
                             await loadData();
                         } catch (err: any) {
-                            setError(err.message || 'ไม่สามารถอัปเดตผู้ใช้ได้');
+                            setError(err.message || t('userManagement.messages.updateFailed'));
                         } finally {
                             setLoading(false);
                         }
@@ -375,13 +378,13 @@ const UserManagement: React.FC = () => {
                 <table className="users-table">
                     <thead>
                         <tr>
-                            <th>ชื่อ</th>
-                            <th>อีเมล</th>
-                            <th>บทบาท</th>
-                            <th>วันที่สร้าง</th>
-                            <th>ออนไลน์</th>
-                            <th>สถานะ</th>
-                            <th>การจัดการ</th>
+                            <th>{t('userManagement.table.name')}</th>
+                            <th>{t('userManagement.table.email')}</th>
+                            <th>{t('userManagement.table.role')}</th>
+                            <th>{t('userManagement.table.createdDate')}</th>
+                            <th>{t('userManagement.table.online')}</th>
+                            <th>{t('userManagement.table.status')}</th>
+                            <th>{t('userManagement.table.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -418,10 +421,10 @@ const UserManagement: React.FC = () => {
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td>
                                         {user.isOnline ? (
-                                            <span className="status-online">🟢 ออนไลน์</span>
+                                            <span className="status-online">🟢 {t('userManagement.table.online')}</span>
                                         ) : (
                                             <span className="status-offline">
-                                                🔴 ออฟไลน์ <small>({timeAgo(user.lastActive)})</small>
+                                                🔴 {t('userManagement.stats.offline').replace('🔴 ', '').replace('', '')} <small>({timeAgo(user.lastActive, t)})</small>
                                             </span>
                                         )}
                                     </td>
@@ -439,10 +442,10 @@ const UserManagement: React.FC = () => {
                                     <td>
                                         <div className="action-buttons">
                                             <button className="btn-edit" onClick={() => startEdit(user)} disabled={loading || !canEditThisUser}>
-                                                แก้ไข
+                                                {t('userManagement.actions.edit')}
                                             </button>
                                             <button className="btn-delete" onClick={() => handleDeleteUser(user.id)} disabled={loading || !canEditThisUser}>
-                                                ลบ
+                                                {t('userManagement.actions.delete')}
                                             </button>
                                         </div>
                                     </td>

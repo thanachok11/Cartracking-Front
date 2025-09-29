@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../api/auth/auth';
 import '../../styles/components/auth/RegisterModal.css';
+import { useI18n } from '../../i18n';
 
 interface RegisterProps {
     isVisible: boolean;
@@ -22,6 +23,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
     const [isClosing, setIsClosing] = useState(false);
     
     const navigate = useNavigate();
+    const { t } = useI18n();
 
     if (!isVisible) return null;
 
@@ -40,7 +42,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
         e.preventDefault();
 
         if (!acceptedTerms) {
-            setError('You must accept the terms and conditions to register.');
+            setError(t('auth.register.accept'));
             setSuccessMessage('');
             return;
         }
@@ -53,7 +55,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                 firstName: formData.firstName,
                 lastName: formData.lastName
             });
-            setSuccessMessage('Registration successful! Redirecting to login...');
+            setSuccessMessage(t('auth.register.success'));
             setError('');
 
             setTimeout(() => {
@@ -61,7 +63,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                 navigate('/');
             }, 2000);
         } catch (err: any) {
-            setError(err.message || 'Error registering user. Please try again.');
+            setError(err.message || t('auth.register.error'));
             setSuccessMessage('');
         } finally {
             setLoading(false);
@@ -82,11 +84,11 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
             <div className={`register-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
                 <button onClick={handleClose} className="register-close-button">×</button>
                 <form onSubmit={handleRegister} className="register-form">
-                    <h2 className="register-title">สมัครสมาชิก</h2>
+                    <h2 className="register-title">{t('auth.register.title')}</h2>
                     <input
                         type="email"
                         name="email"
-                        placeholder="Email"
+                        placeholder={t('auth.register.email')}
                         value={formData.email}
                         onChange={handleChange}
                         className="register-input"
@@ -95,7 +97,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                     <input
                         type="password"
                         name="password"
-                        placeholder="Password"
+                        placeholder={t('auth.register.password')}
                         value={formData.password}
                         onChange={handleChange}
                         className="register-input"
@@ -104,7 +106,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                     <input
                         type="text"
                         name="firstName"
-                        placeholder="First name"
+                        placeholder={t('auth.register.firstName')}
                         value={formData.firstName}
                         onChange={handleChange}
                         className="register-input"
@@ -113,7 +115,7 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                     <input
                         type="text"
                         name="lastName"
-                        placeholder="Last name"
+                        placeholder={t('auth.register.lastName')}
                         value={formData.lastName}
                         onChange={handleChange}
                         className="register-input"
@@ -127,11 +129,11 @@ const RegisterModal: React.FC<RegisterProps> = ({ isVisible, onClose }) => {
                             onChange={handleCheckboxChange}
                         />
                         <label htmlFor="acceptTerms" className="register-label">
-                            I accept the terms and conditions
+                            {t('auth.register.accept')}
                         </label>
                     </div>
                     <button type="submit" className="register-button" disabled={loading}>
-                        {loading ? 'Registering...' : 'Register'}
+                        {loading ? t('auth.register.submitting') : t('auth.register.submit')}
                     </button>
                     {error && <p className="register-error">{error}</p>}
                     {successMessage && <p className="register-success">{successMessage}</p>}

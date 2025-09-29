@@ -5,6 +5,7 @@ import { fetchUsers, updateAllowedPages } from "../../../api/components/allowedP
 import NotificationToast from "../../../components/common/NotificationToast";
 import { useNotification } from "../../../hooks/useNotification";
 import "../../../styles/components/NotificationToast.css";
+import { useI18n } from "../../../i18n";
 
 interface User {
     _id: string;
@@ -30,6 +31,7 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedPages, setSelectedPages] = useState<string[]>([]);
     const token = localStorage.getItem("token");
+    const { t } = useI18n();
 
     // notification hook
     const { 
@@ -69,28 +71,28 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
 
         updateAllowedPages(token, selectedUser._id, selectedPages)
             .then(() => {
-                showNotification("บันทึกสำเร็จ! ✅", "success", { 
+                showNotification(t('allowedPages.messages.saveSuccess'), "success", { 
                     autoCloseModal: true, 
                     onClose: onClose 
                 });
             })
             .catch(err => {
                 console.error(err.response?.data || err);
-                showNotification("เกิดข้อผิดพลาด ❌", "error");
+                showNotification(t('allowedPages.messages.saveError'), "error");
             });
     };
     const pageLabels: { [key: string]: string } = {
-        "dashboard": "แดชบอร์ด",
-        "map": "GPS รถบรรทุก",
-        "track": "GPS คอนเทนเนอร์",
-        "data-today": "เพิ่มงานและออกรายงาน",
-        "drivers": "คนขับ",
-        "vehicles": "ทะเบียนหัว",
-        "vehiclestail": "ทะเบียนท้าย",
-        "containers": "ตู้คอนเทนเนอร์",
-        "management": "การจัดการผู้ใช้",
-        "allowed-pages-manager":"จัดการสิทธ์เข้าใช้งานหน้า",
-        "workorder": "ใบสั่งงาน",
+        "dashboard": t('nav.dashboard'),
+        "map": t('nav.map'),
+        "track": t('nav.track'),
+        "data-today": t('nav.dataToday'),
+        "drivers": t('nav.drivers'),
+        "vehicles": t('nav.vehicles'),
+        "vehiclestail": t('nav.vehiclesTail'),
+        "containers": t('nav.containers'),
+        "management": t('nav.management'),
+        "allowed-pages-manager": t('nav.allowedPagesManager'),
+        "workorder": t('nav.workorder'),
     };
 
     if (!isOpen || !selectedUser) return null;
@@ -100,7 +102,7 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
             <div className="allowed-pages-modal">
                 <div className="allowed-pages-modal-header">
                     <h2 className="allowed-pages-modal-title">
-                        จัดการสิทธิ์เข้าใช้งาน: {selectedUser.firstName} {selectedUser.lastName}
+                        {t('allowedPages.manageTitle', { name: `${selectedUser.firstName} ${selectedUser.lastName}` })}
                     </h2>
                     <button className="allowed-pages-modal-close-btn" onClick={onClose}>
                         <FontAwesomeIcon icon={faTimes} />
@@ -109,7 +111,7 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
 
                 <div className="allowed-pages-modal-body">
                     <div className="pages-access">
-                        <h3 className="pages-access-title">สิทธิ์การเข้าถึงหน้า</h3>
+                        <h3 className="pages-access-title">{t('allowedPages.sectionTitle')}</h3>
 
                         {/* ปุ่มติ๊ก/ล้างทั้งหมด */}
                         <div className="pages-access-actions" style={{ marginBottom: '10px' }}>
@@ -117,14 +119,14 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
                                 className="select-all-btn"
                                 onClick={() => setSelectedPages([...allPages])}
                             >
-                                เลือกทั้งหมด
+                                {t('allowedPages.selectAll')}
                             </button>
                             <button
                                 className="clear-all-btn"
                                 onClick={() => setSelectedPages([])}
                                 style={{ marginLeft: '8px' }}
                             >
-                                ล้างทั้งหมด
+                                {t('allowedPages.clearAll')}
                             </button>
                         </div>
 
@@ -146,7 +148,7 @@ const AllowedPagesModal: React.FC<AllowedPagesModalProps> = ({ isOpen, onClose, 
 
                 <div className="allowed-pages-modal-footer">
                     <button className="allowed-pages-modal-save-btn" onClick={savePages}>
-                        <FontAwesomeIcon icon={faSave} /> บันทึก
+                        <FontAwesomeIcon icon={faSave} /> {t('allowedPages.save')}
                     </button>
                 </div>
             </div>

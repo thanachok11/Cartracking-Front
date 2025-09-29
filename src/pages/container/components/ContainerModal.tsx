@@ -1,4 +1,5 @@
 import React from "react";
+import { useI18n } from "../../../i18n";
 import { Containers } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -26,6 +27,7 @@ export default function ContainerModal({
   onClose,
   onSave,
 }: ContainerModalProps) {
+  const { t } = useI18n();
   if (!visible) return null;
 
   const formatContainerNumber = (input?: string) => {
@@ -48,7 +50,7 @@ export default function ContainerModal({
         onClick={(e) => e.stopPropagation()}
       ><div className="popup-header">
           <h2 className="popup-title">
-            {editing ? "แก้ไขตู้คอนเทนเนอร์" : "เพิ่มตู้คอนเทนเนอร์ใหม่"}
+            {editing ? t('containers.modal.edit') : t('containers.modal.create')}
           </h2>
           <button className="container-modal-page-close-btn" onClick={onClose}>
             <FontAwesomeIcon icon={faTimes} />
@@ -63,38 +65,38 @@ export default function ContainerModal({
         >
           <div className="popup-body">
             <div className="container-modal-page-form-group">
-              <label>หมายเลขตู้ *</label>
+              <label>{t('containers.form.containerNumber')} *</label>
               <input
                 type="text"
                 value={form.containerNumber}
                 onChange={handleContainerNumberChange}
-                placeholder="XXXX-0000000"
+                placeholder={t('containers.form.placeholderContainer')}
                 maxLength={12}
                 required
               />
             </div>
 
             <div className="container-modal-page-form-group">
-              <label>บริษัท *</label>
+              <label>{t('containers.form.companyName')} *</label>
               <select
                 value={form.companyName}
                 onChange={(e) => onChange({ companyName: e.target.value })}
                 required
               >
-                <option value="">เลือกบริษัท</option>
-                <option value="ป๋อเฉิน">ป๋อเฉิน</option>
-                <option value="บริษัทร่วม">บริษัทร่วม</option>
+                <option value="">{t('containers.form.selectCompany')}</option>
+                <option value="ป๋อเฉิน">{t('containers.company.porchoen')}</option>
+                <option value="บริษัทร่วม">{t('containers.company.partner')}</option>
               </select>
             </div>
 
             <div className="container-modal-page-form-group">
-              <label>ขนาด *</label>
+              <label>{t('containers.form.size')} *</label>
               <select
                 value={form.containerSize}
                 onChange={(e) => onChange({ containerSize: e.target.value })}
                 required
               >
-                <option value="">เลือกขนาด</option>
+                <option value="">{t('containers.form.selectSize')}</option>
                 {sizes.map((s) => (
                   <option key={s.value} value={s.value}>
                     {s.label}
@@ -105,14 +107,14 @@ export default function ContainerModal({
 
             <div className="form-actions">
               <button type="button" onClick={onClose} className="cancel-btn">
-                ยกเลิก
+                {t('containers.buttons.cancel')}
               </button>
               <button type="submit" className="save-btn" disabled={saving}>
                 {saving
-                  ? "กำลังบันทึก..."
+                  ? t('containers.buttons.saving')
                   : editing
-                    ? "บันทึกการแก้ไข"
-                    : "เพิ่มข้อมูล"}
+                    ? t('containers.buttons.saveEdit')
+                    : t('containers.buttons.create')}
               </button>
             </div>
           </div>

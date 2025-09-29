@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { IWorkOrder } from "../../types/WorkOrder";
+import { useI18n } from "../../i18n";
 
 interface Props {
     order: IWorkOrder;
 }
 
 const WorkOrderPrint: React.FC<Props> = ({ order }) => {
+    const { t, lang } = useI18n();
+    const locale = useMemo(() => (lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US'), [lang]);
     const handleExport = () => {
         // แปลงข้อมูลเป็นแนวตั้ง
         const rows = [
-            ["วันที่ออกใบสั่ง", new Date(order.issueDate).toLocaleDateString("th-TH")],
-            ["เลขที่ใบสั่งงาน", order.workOrderNumber],
-            ["สินค้า", order.product],
-            ["พนักงานขับ", order.driverName],
-            ["เบอร์โทร", order.driverPhone],
-            ["ทะเบียนหัว", order.headPlate],
-            ["ทะเบียนหาง", order.tailPlate],
-            ["หมายเลขตู้", order.containerNumber],
-            ["บริษัท", order.companyName],
-            ["รายละเอียด", order.description || "-"],
+            [t('workorder.print.issueDate'), new Date(order.issueDate).toLocaleDateString(locale)],
+            [t('workorder.print.number'), order.workOrderNumber],
+            [t('workorder.print.product'), order.product],
+            [t('workorder.print.driverName'), order.driverName],
+            [t('workorder.print.driverPhone'), order.driverPhone],
+            [t('workorder.print.headPlate'), order.headPlate],
+            [t('workorder.print.tailPlate'), order.tailPlate],
+            [t('workorder.print.containerNumber'), order.containerNumber],
+            [t('workorder.print.companyName'), order.companyName],
+            [t('workorder.print.description'), order.description || "-"],
         ];
 
         // ✅ ใส่ BOM เพื่อให้ Excel อ่านภาษาไทยถูกต้อง
@@ -41,7 +44,7 @@ const WorkOrderPrint: React.FC<Props> = ({ order }) => {
 
     return (
         <button onClick={handleExport} className="work-btn-export">
-            ดาวน์โหลด
+            {t('workorder.print.download')}
         </button>
     );
 };

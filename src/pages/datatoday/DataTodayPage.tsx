@@ -17,10 +17,12 @@ import DataTodayModal from "./components/DataTodayModal/DataTodayModal"; // ✅ 
 import DataTable from "./components/DataTable";
 import NotificationToast from "../../components/common/NotificationToast";
 import { useNotification } from "../../hooks/useNotification";
+import { useI18n } from "../../i18n";
 import "../../styles/pages/DataTodayPage.css";
 import "./components/DataTodayModal/DataTodayModal.css"
 import "../../styles/components/NotificationToast.css";
 export default function DataTodayPage() {
+    const { t, lang } = useI18n();
     const [rows, setRows] = useState<DataToday[]>([]);
     const [form, setForm] = useState<Partial<DataToday>>({});
     const [editing, setEditing] = useState<Partial<DataToday> | null>(null);
@@ -166,7 +168,8 @@ export default function DataTodayPage() {
     const ymdToDmy = (v?: string) => {
         if (!v) return "";
         const d = new Date(v);
-        return isNaN(d.getTime()) ? "" : d.toLocaleDateString("th-TH");
+        const locale = lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US';
+        return isNaN(d.getTime()) ? "" : d.toLocaleDateString(locale);
     };
 
     // filtered rows -- using same logic as WorkOrder page
@@ -203,16 +206,17 @@ export default function DataTodayPage() {
 
     const exportCsv = () => {
         if (!filteredRows.length) return;
+        // Match column order with the table (work order number first)
         const header = [
-            "รูปใบสั่งงาน",
-            "เวลาเข้า",
-            "คนขับ",
-            "ทะเบียนหัว",
-            "ทะเบียนหาง",
-            "หมายเลขตู้",
-            "ตำแหน่ง",
-            "บริษัท",
-            "เลขใบสั่งงาน",
+            t('datatoday.table.booking'),
+            t('datatoday.table.date'),
+            t('datatoday.table.driver'),
+            t('datatoday.table.head'),
+            t('datatoday.table.tail'),
+            t('datatoday.table.container'),
+            t('datatoday.table.station'),
+            t('datatoday.table.company'),
+            t('datatoday.table.bookingImage'),
         ];
         const out = [header.join(",")];
         for (const r of filteredRows) {
@@ -297,16 +301,16 @@ export default function DataTodayPage() {
             setEditing(null);
             
             // Show success notification
-            const action = editing?._id ? "แก้ไข" : "เพิ่ม";
-            showNotification(`${action}รายการสำเร็จ! ✅`, "success");
+            const action = editing?._id ? t('common.edit') : t('common.add');
+            showNotification(`${action} ${t('common.results')} ✅`, "success");
         } catch (err: any) {
             console.error("❌ Save error:", err);
             console.error("❌ Error response:", err.response?.data);
             console.error("❌ Error status:", err.response?.status);
             
             // แสดงข้อความข้อผิดพลาดให้ผู้ใช้
-            const errorMessage = err.response?.data?.message || err.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
-            showNotification(`ไม่สามารถบันทึกข้อมูลได้: ${errorMessage} ❌`, "error");
+            const errorMessage = err.response?.data?.message || err.message || t('common.noData');
+            showNotification(`${t('common.save')} ${t('common.noData')}: ${errorMessage} ❌`, "error");
         } finally {
             setSubmitting(false);
         }
@@ -343,15 +347,15 @@ export default function DataTodayPage() {
 
     const handleDelete = async (id?: string) => {
         if (!id) return;
-        if (!window.confirm("คุณต้องการลบรายการนี้ใช่ไหม?")) return;
+        if (!window.confirm(t('workorder.confirmDelete'))) return;
         try {
             await deleteDataToday(id);
             const d = await fetchAllDataToday();
             setRows(Array.isArray(d) ? d : []);
-            showNotification("ลบรายการสำเร็จ! ✅", "success");
+            showNotification(`${t('common.delete')} ✅`, "success");
         } catch (e) {
             console.error(e);
-            showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
+            showNotification(t('common.noData'), "error");
         }
     };
     const handleAddNew = () => {

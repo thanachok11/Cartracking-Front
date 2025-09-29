@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTrailer } from "@fortawesome/free-solid-svg-icons";
 import { ITruckTail } from "../../../api/components/truckApi";
+import { useI18n } from "../../../i18n";
 
 interface VehicleTailModalProps {
     visible: boolean;
@@ -22,6 +23,7 @@ export default function VehicleTailModal({
     onSubmit,
     onClose,
 }: VehicleTailModalProps) {
+    const { t } = useI18n();
     if (!visible) return null;
 
     // Format license plate function
@@ -48,7 +50,7 @@ export default function VehicleTailModal({
                 <div className="popup-header">
                     <div className="popup-title">
                         <FontAwesomeIcon icon={faTrailer} className="popup-icon" />
-                        <h2>{editing ? "แก้ไขทะเบียนหาง" : "เพิ่มทะเบียนหางใหม่"}</h2>
+                        <h2>{editing ? t('vehicles.modal.edit.tail') : t('vehicles.modal.create.tail')}</h2>
                     </div>
                     <button className="close-btn" onClick={onClose}>
                         <FontAwesomeIcon icon={faTimes} />
@@ -58,27 +60,27 @@ export default function VehicleTailModal({
                 <div className="popup-body">
                     <form onSubmit={onSubmit}>
                         <div className="form-group">
-                            <label htmlFor="licensePlate">ทะเบียนรถ *</label>
+                            <label htmlFor="licensePlate">{t('vehicles.form.licensePlate')} *</label>
                             <input
                                 type="text"
                                 id="licensePlate"
                                 value={form.licensePlate}
                                 onChange={handleLicensePlateChange}
-                                placeholder="xxx-xxxx"
+                                placeholder={t('workorder.form.headPlate.placeholder')}
                                 maxLength={8}
                                 required
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="companyName">ชื่อบริษัท *</label>
+                            <label htmlFor="companyName">{t('vehicles.form.companyName')} *</label>
                             <select
                                 id="companyName"
                                 value={form.companyName}
                                 onChange={(e) => onChange("companyName", e.target.value)}
                                 required
                             >
-                                <option value="">เลือกบริษัท</option>
+                                <option value="">{t('workorder.form.companyName.placeholder')}</option>
                                 <option value="ป๋อเฉิน">ป๋อเฉิน</option>
                                 <option value="รถร่วม">รถร่วม</option>
                             </select>
@@ -86,10 +88,10 @@ export default function VehicleTailModal({
 
                         <div className="form-actions">
                             <button type="button" onClick={onClose} className="cancel-btn">
-                                ยกเลิก
+                                {t('common.cancel')}
                             </button>
                             <button type="submit" className="save-btn" disabled={submitting}>
-                                {submitting ? "กำลังบันทึก..." : editing ? "บันทึกการแก้ไข" : "เพิ่มข้อมูล"}
+                                {submitting ? t('common.loading') : editing ? t('common.save') : t('vehicles.add.tail')}
                             </button>
                         </div>
                     </form>

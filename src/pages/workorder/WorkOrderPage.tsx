@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     fetchWorkOrders,
     createWorkOrder,
@@ -15,6 +15,7 @@ import NotificationToast from "../../components/common/NotificationToast";
 import { useNotification } from "../../hooks/useNotification";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useI18n } from "../../i18n";
 
 import "../../styles/pages/WorkOrderPage.css";
 import "../../styles/components/NotificationToast.css";
@@ -33,6 +34,8 @@ const WorkOrderPage: React.FC = () => {
     const [dateTo, setDateTo] = useState("");
     const [filterTitle, setFilterTitle] = useState("");
     const [companyFilter, setCompanyFilter] = useState("");
+    const { t, lang } = useI18n();
+    const locale = useMemo(() => (lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US'), [lang]);
     
     // สำหรับ description popup
     const [showDescriptionPopup, setShowDescriptionPopup] = useState(false);
@@ -202,12 +205,13 @@ const WorkOrderPage: React.FC = () => {
                     o.driverName.toLowerCase().includes(searchNumber.toLowerCase()) ||
                     o.companyName.toLowerCase().includes(searchNumber.toLowerCase())
             );
-            title = `ผลการค้นหา: "${searchNumber}"`;
+            // title used internally (not displayed); keep minimal
+            title = `"${searchNumber}"`;
         }
 
         if (companyFilter) {
             results = results.filter((o) => o.companyName === companyFilter);
-            title = title ? `${title} บริษัท: ${companyFilter}` : `บริษัท: ${companyFilter}`;
+            title = title ? `${title} ${companyFilter}` : `${companyFilter}`;
         }
 
         if (dateFrom && dateTo) {
@@ -221,18 +225,18 @@ const WorkOrderPage: React.FC = () => {
                     new Date(o.issueDate) <= to
             );
 
-            const dateRange = `${from.toLocaleDateString("th-TH")} - ${to.toLocaleDateString("th-TH")}`;
-            title = title ? `${title} ช่วงเวลา: ${dateRange}` : `ช่วงเวลา: ${dateRange}`;
+            const dateRange = `${from.toLocaleDateString(locale)} - ${to.toLocaleDateString(locale)}`;
+            title = title ? `${title} ${dateRange}` : `${dateRange}`;
         } else if (dateFrom) {
             const from = new Date(dateFrom);
             results = results.filter((o) => new Date(o.issueDate) >= from);
-            const dateRange = `ตั้งแต่ ${from.toLocaleDateString("th-TH")}`;
+            const dateRange = `${from.toLocaleDateString(locale)}`;
             title = title ? `${title} ${dateRange}` : dateRange;
         } else if (dateTo) {
             const to = new Date(dateTo);
             to.setHours(23, 59, 59, 999); // ✅ รวมทั้งวันสุดท้าย
             results = results.filter((o) => new Date(o.issueDate) <= to);
-            const dateRange = `ถึง ${to.toLocaleDateString("th-TH")}`;
+            const dateRange = `${to.toLocaleDateString(locale)}`;
             title = title ? `${title} ${dateRange}` : dateRange;
         }
 
@@ -296,16 +300,16 @@ const WorkOrderPage: React.FC = () => {
 
     const handleDelete = async (id?: string) => {
         if (!id) return;
-        if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบใบสั่งงานนี้?")) return;
+        if (!window.confirm(t('workorder.confirmDelete'))) return;
         try {
             await deleteWorkOrder(id);
             await loadOrders();
-            showNotification("ลบใบสั่งงานสำเร็จ! ✅", "success");
+            showNotification(t('common.delete') + " ✅", "success");
         } catch (err: any) {
             console.error("❌ Error deleting work order:", err);
 
             // ✅ ตรวจสอบ error ที่มาจาก backend (axios response)
-            let errorMessage = "เกิดข้อผิดพลาดในการลบใบสั่งงาน ❌";
+            let errorMessage = t('workorder.confirmDelete');
             if (err.response?.data?.message) {
                 errorMessage = err.response.data.message;
             } else if (err.message) {
@@ -325,23 +329,23 @@ const WorkOrderPage: React.FC = () => {
                     (order) => order.workOrderNumber === form.workOrderNumber
                 );
                 if (existingWorkOrder) {
-                    showNotification("เลขใบสั่งงานนี้มีอยู่แล้ว กรุณาใช้เลขอื่น ⚠️", "error");
+                    showNotification(t('workorder.form.number') + " ⚠️", "error");
                     return;
                 }
                 if (!drivers.includes(form.driverName)) {
-                    showNotification("ชื่อคนขับไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    showNotification(t('drivers.noData.subtitle') + " ⚠️", "error");
                     return;
                 }
                 if (!truckHeadRegs.includes(form.headPlate)) {
-                    showNotification("ทะเบียนหัวไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    showNotification(t('vehicles.noData.head') + " ⚠️", "error");
                     return;
                 }
                 if (!truckTailRegs.includes(form.tailPlate)) {
-                    showNotification("ทะเบียนหางไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    showNotification(t('vehicles.noData.tail') + " ⚠️", "error");
                     return;
                 }
                 if (!containerNumbers.includes(form.containerNumber)) {
-                    showNotification("หมายเลขตู้ไม่ตรงกับข้อมูลในระบบ กรุณาเลือกจาก dropdown ⚠️", "error");
+                    showNotification(t('containers.noData.title') + " ⚠️", "error");
                     return;
                 }
             }
@@ -349,10 +353,10 @@ const WorkOrderPage: React.FC = () => {
             // ✅ แก้ไขหรือสร้างใหม่
             if (editingOrder?._id) {
                 await updateWorkOrder(editingOrder._id, form);
-                showNotification("แก้ไขใบสั่งงานสำเร็จ! ✅", "success");
+                showNotification(t('common.save') + " ✅", "success");
             } else {
                 await createWorkOrder(form);
-                showNotification("สร้างใบสั่งงานสำเร็จ! ✅", "success");
+                showNotification(t('workorder.createNew') + " ✅", "success");
                 // 👉 reset form หลังสร้างเสร็จ (แต่ไม่ reset ถ้าเป็นการแก้ไข)
                 setForm({
                     issueDate: "",
@@ -378,8 +382,8 @@ const WorkOrderPage: React.FC = () => {
         } catch (err: any) {
             console.error("❌ Error saving work order:", err);
 
-            const action = editingOrder?._id ? "แก้ไข" : "สร้าง";
-            let errorMessage = `เกิดข้อผิดพลาดในการ${action}ใบสั่งงาน ❌`;
+            const action = editingOrder?._id ? t('common.edit') : t('common.add');
+            let errorMessage = `${action} ❌`;
 
             if (err.response?.data?.message) {
                 errorMessage = err.response.data.message;
@@ -398,12 +402,12 @@ const WorkOrderPage: React.FC = () => {
             <div className="workorder-header">
                 <div className="workorder-header-top">
                     <h2 className="page-title">
-                        ใบสั่งงาน
+                        {t('workorder.title')}
                         <div className="result-count">
                             {filteredOrders.length > 0 || searchNumber || companyFilter || dateFrom || dateTo ? (
-                                `แสดง ${filteredOrders.length} รายการ`
+                                t('workorder.resultCount', { count: filteredOrders.length })
                             ) : (
-                                `ทั้งหมด ${orders.length} รายการ`
+                                t('workorder.totalCount', { count: orders.length })
                             )}
                         </div>
                     </h2>
@@ -413,12 +417,12 @@ const WorkOrderPage: React.FC = () => {
                                 <FontAwesomeIcon icon={faSync} className={loading ? "fa-spin" : ""} />
 
                             </span>
-                            รีเฟรช
+                            {t('common.refresh')}
                         </button>
                         <button className="workorder-btn-primary" onClick={handleCreate}>
 
                             <FontAwesomeIcon icon={faPlus} />
-                            สร้างใบสั่งงานใหม่
+                            {t('workorder.createNew')}
                         </button>
                     </div>
                 </div>
@@ -426,7 +430,7 @@ const WorkOrderPage: React.FC = () => {
                 <div className="workorder-header-bottom">
                     <input
                         type="text"
-                        placeholder="เลขใบสั่งงาน / สินค้า / บริษัท / คนขับ"
+                        placeholder={t('workorder.searchPlaceholder')}
                         value={searchNumber}
                         onChange={(e) => setSearchNumber(e.target.value)}
                         className="search-input"
@@ -437,9 +441,9 @@ const WorkOrderPage: React.FC = () => {
                         onChange={(e) => setCompanyFilter(e.target.value)}
                         className="filter-select"
                     >
-                        <option value="">ทั้งหมด</option>
-                        <option value="ป๋อเฉิน">ป๋อเฉิน</option>
-                        <option value="รถร่วม">รถร่วม</option>
+                        <option value="">{t('workorder.company.all')}</option>
+                        <option value="ป๋อเฉิน">{t('workorder.form.header.porchoen')}</option>
+                        <option value="บริษัทร่วม">{t('workorder.form.header.rotruam')}</option>
                     </select>
 
                     <input
@@ -447,7 +451,7 @@ const WorkOrderPage: React.FC = () => {
                         value={dateFrom}
                         onChange={(e) => setDateFrom(e.target.value)}
                         className="date-input"
-                        title="จากวันที่"
+                        title={t('workorder.fromDate')}
                     />
 
                     <input
@@ -455,39 +459,39 @@ const WorkOrderPage: React.FC = () => {
                         value={dateTo}
                         onChange={(e) => setDateTo(e.target.value)}
                         className="date-input"
-                        title="ถึงวันที่"
+                        title={t('workorder.toDate')}
                     />
                 </div>
             </div>
 
             {loading ? (
-                <p className="workorder-loading">⏳ กำลังโหลด...</p>
+                <p className="workorder-loading">⏳ {t('common.loading')}</p>
             ) : filteredOrders.length === 0 && (searchNumber || companyFilter || dateFrom || dateTo) ? (
-                <p className="workorder-no-data">⚠️ ไม่พบข้อมูลตามเงื่อนไขที่ค้นหา</p>
+                <p className="workorder-no-data">⚠️ {t('workorder.noDataFiltered')}</p>
             ) : filteredOrders.length === 0 ? (
-                <p className="workorder-no-data">⚠️ กรุณาใส่เลขที่ใบสั่งงาน หรือช่วงเวลาเพื่อค้นหา</p>
+                <p className="workorder-no-data">⚠️ {t('workorder.noData')}</p>
             ) : (
                 <table className="workorder-table">
                     <thead>
                         <tr>
-                            <th>วันที่ออกใบสั่ง</th>
-                            <th>เลขใบสั่งงาน</th>
-                            <th>สินค้า</th>
-                            <th>พนักงานขับ</th>
-                            <th>เบอร์โทร</th>
-                            <th>ทะเบียนหัว</th>
-                            <th>ทะเบียนหาง</th>
-                            <th>หมายเลขตู้</th>
-                            <th>บริษัท</th>
-                            <th>รายละเอียด</th>
-                            <th>การจัดการ</th>
+                            <th>{t('workorder.table.issueDate')}</th>
+                            <th>{t('workorder.table.number')}</th>
+                            <th>{t('workorder.table.product')}</th>
+                            <th>{t('workorder.table.driverName')}</th>
+                            <th>{t('workorder.table.driverPhone')}</th>
+                            <th>{t('workorder.table.headPlate')}</th>
+                            <th>{t('workorder.table.tailPlate')}</th>
+                            <th>{t('workorder.table.containerNumber')}</th>
+                            <th>{t('workorder.table.companyName')}</th>
+                            <th>{t('workorder.table.description')}</th>
+                            <th>{t('workorder.table.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredOrders.map((o) => {
                             return (
                                 <tr key={o._id}>
-                                    <td>{new Date(o.issueDate).toLocaleDateString("th-TH")}</td>
+                                    <td>{new Date(o.issueDate).toLocaleDateString(locale)}</td>
                                     <td>{o.workOrderNumber}</td>
                                     <td>{o.product}</td>
                                     <td>{o.driverName}</td>
@@ -506,7 +510,7 @@ const WorkOrderPage: React.FC = () => {
                                                     className="toggle-desc-btn"
                                                     onClick={() => openDescriptionPopup(o.description || "")}
                                                 >
-                                                    เพิ่มเติม
+                                                    {t('workorder.viewMore')}
                                                 </button>
                                             </>
                                         ) : (
@@ -515,8 +519,8 @@ const WorkOrderPage: React.FC = () => {
                                     </td>
                                     <td>
                                         <div style={{ display: 'flex', gap: '8px' }}>
-                                        <button className="work-btn-edit" onClick={() => handleEdit(o)}>แก้ไข</button>
-                                        <button className="work-btn-delete" onClick={() => handleDelete(o._id)}>ลบ</button>
+                                        <button className="work-btn-edit" onClick={() => handleEdit(o)}>{t('common.edit')}</button>
+                                        <button className="work-btn-delete" onClick={() => handleDelete(o._id)}>{t('common.delete')}</button>
                                         <WorkOrderPrint order={o} />
                                     </div>
                                     </td>
@@ -560,9 +564,9 @@ const WorkOrderPage: React.FC = () => {
                 <div className="description-popup-backdrop" onClick={closeDescriptionPopup}>
                     <div className="description-popup" onClick={(e) => e.stopPropagation()}>
                         <div className="description-popup-header">
-                            <h3>รายละเอียดงาน</h3>
+                            <h3>{t('workorder.description.title')}</h3>
                             <button className="description-popup-close" onClick={closeDescriptionPopup}>
-                                ✖ ปิด
+                                ✖ {t('common.close')}
                             </button>
                         </div>
                         <div className="description-popup-content">

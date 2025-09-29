@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ITruckHead } from "../../../api/components/truckApi";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTruck, faEdit, faTrash, faBuilding } from "@fortawesome/free-solid-svg-icons";
+import { useI18n } from "../../../i18n";
 
 interface VehicleGridProps {
     items: ITruckHead[];
@@ -10,6 +11,7 @@ interface VehicleGridProps {
 }
 
 export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProps) {
+    const { t, lang } = useI18n();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -19,7 +21,7 @@ export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProp
     const totalPages = Math.ceil(items.length / itemsPerPage);
 
     if (items.length === 0) {
-        return <div className="no-results">ไม่พบข้อมูลทะเบียนหัว</div>;
+        return <div className="no-results">{t('vehicles.noData.head')}</div>;
     }
 
     return (
@@ -27,7 +29,6 @@ export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProp
             {/* ตัวเลือกจำนวนที่แสดง */}
             <div className="grid-container-page-controls">
                 <label>
-                    แสดง&nbsp;
                     <select
                         value={itemsPerPage}
                         onChange={(e) => {
@@ -40,7 +41,7 @@ export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProp
                         <option value={30}>30</option>
                         <option value={40}>40</option>
                     </select>
-                    &nbsp;รายการต่อหน้า
+                    &nbsp;{t('common.itemsPerPage')}
                 </label>
             </div>
 
@@ -65,12 +66,18 @@ export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProp
                         <div className="card-content">
                             <p>
                                 <FontAwesomeIcon icon={faBuilding} className="info-icon" />
-                                <strong>บริษัท:</strong> {truck.companyName}
+                                <strong>{t('vehicles.form.companyName')}:</strong> {
+                                    truck.companyName === 'ป๋อเฉิน' 
+                                        ? t('vehicles.company.porchoen')
+                                        : truck.companyName === 'รถร่วม' 
+                                            ? t('vehicles.company.rotruam')
+                                            : truck.companyName
+                                }
                             </p>
                             {truck.createdAt && (
                                 <p className="created-date">
-                                    <strong>สร้างเมื่อ:</strong>{" "}
-                                    {new Date(truck.createdAt).toLocaleDateString("th-TH")}
+                                    <strong>{t('vehicles.grid.createdAt')}:</strong>{" "}
+                                    {new Date(truck.createdAt).toLocaleDateString(lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US')}
                                 </p>
                             )}
                         </div>
@@ -85,16 +92,16 @@ export default function VehicleGrid({ items, onEdit, onDelete }: VehicleGridProp
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage((prev) => prev - 1)}
                     >
-                        ◀ ก่อนหน้า
+                        ◀ {t('common.previous')}
                     </button>
                     <span>
-                        หน้า {currentPage} จาก {totalPages}
+                        {t('datatoday.pagination.page', { current: String(currentPage), total: String(totalPages) })}
                     </span>
                     <button
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((prev) => prev + 1)}
                     >
-                        ถัดไป ▶
+                        {t('common.next')} ▶
                     </button>
                 </div>
             )}

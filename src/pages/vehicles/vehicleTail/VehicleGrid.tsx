@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ITruckTail } from "../../../api/components/truckApi";
 import VehicleCard from "./VehicleTailCard";
+import { useI18n } from "../../../i18n";
 
 interface VehicleTailGridProps {
     items: ITruckTail[];
@@ -9,6 +10,7 @@ interface VehicleTailGridProps {
 }
 
 export default function VehicleTailGrid({ items, onEdit, onDelete }: VehicleTailGridProps) {
+    const { t } = useI18n();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -17,14 +19,13 @@ export default function VehicleTailGrid({ items, onEdit, onDelete }: VehicleTail
     const totalPages = Math.ceil(items.length / itemsPerPage);
 
     if (items.length === 0) {
-        return <div className="no-results">ไม่พบข้อมูลทะเบียนหาง</div>;
+        return <div className="no-results">{t('vehicles.noData.tail')}</div>;
     }
 
     return (
         <div>
             <div className="grid-container-page-controls">
                 <label>
-                    แสดง&nbsp;
                     <select
                         value={itemsPerPage}
                         onChange={(e) => {
@@ -37,7 +38,7 @@ export default function VehicleTailGrid({ items, onEdit, onDelete }: VehicleTail
                         <option value={30}>30</option>
                         <option value={40}>40</option>
                     </select>
-                    &nbsp;รายการต่อหน้า
+                    &nbsp;{t('common.itemsPerPage')}
                 </label>
             </div>
 
@@ -56,16 +57,16 @@ export default function VehicleTailGrid({ items, onEdit, onDelete }: VehicleTail
             {totalPages > 1 && (
                 <div className="pagination">
                     <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)}>
-                        ◀ ก่อนหน้า
+                        ◀ {t('common.previous')}
                     </button>
                     <span>
-                        หน้า {currentPage} จาก {totalPages}
+                        {t('datatoday.pagination.page', { current: String(currentPage), total: String(totalPages) })}
                     </span>
                     <button
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((p) => p + 1)}
                     >
-                        ถัดไป ▶
+                        {t('common.next')} ▶
                     </button>
                 </div>
             )}

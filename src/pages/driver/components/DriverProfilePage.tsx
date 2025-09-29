@@ -11,10 +11,12 @@ import {
 import DriverModal from './DriverModal';
 import { useNotification } from '../../../hooks/useNotification';
 import NotificationToast from '../../../components/common/NotificationToast';
+import { useI18n } from '../../../i18n';
 
 export default function DriverProfilePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const [driver, setDriver] = useState<Driver | null>(null);
   const [loading, setLoading] = useState(true);
@@ -122,11 +124,10 @@ export default function DriverProfilePage() {
   return (
     <div className="driver-page">
       <div className="header-row">
-        <h2 className="page-title">โปรไฟล์คนขับ</h2>
+        <h2 className="page-title">{t('drivers.profile.title')}</h2>
         <div className="driver-action-buttons">
-          <button className="driver-back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
+          <button className="driver-back-btn" onClick={() => navigate(-1)}>{t('buttons.back')}</button>
         </div>
-
       </div>
 
       <div className="driver-card" style={{ cursor: 'default' }}>
@@ -135,16 +136,30 @@ export default function DriverProfilePage() {
         )}
         <div className="driver-info">
           <h3>{driver.firstName} {driver.lastName}</h3>
-          <p><strong>ตำแหน่ง :</strong> {driver.position}</p>
-          <p><strong>บริษัท :</strong> {driver.company}</p>
-          <p><strong>เบอร์โทรศัพท์ :</strong> {driver.phoneNumber}</p>
-          {driver.detail && <p><strong>รายละเอียด :</strong> {driver.detail}</p>}
+          <p><strong>{t('drivers.form.position')} :</strong> {
+            driver.position === 'พนักงานขับรถ' 
+                ? t('drivers.position.driver')
+                : driver.position === 'คนขับ' 
+                    ? t('drivers.position.helper')
+                    : driver.position === 'คนขับ(เจ้าของ)' 
+                        ? t('drivers.position.owner')
+                        : driver.position
+          }</p>
+          <p><strong>{t('drivers.form.company')} :</strong> {
+            driver.company === 'ป๋อเฉิน2014' 
+                ? t('drivers.form.company.po-chern')
+                : driver.company === 'รถร่วม' 
+                    ? t('drivers.form.company.rot-ruam')
+                    : driver.company
+          }</p>
+          <p><strong>{t('drivers.form.phone')} :</strong> {driver.phoneNumber}</p>
+          {driver.detail && <p><strong>{t('drivers.form.detail')} :</strong> {driver.detail}</p>}
         </div>
         <div className="driver-id">ID: {driver._id}</div>
         <div className="card-action-buttons">
-          <button className="driver-edit-btn" onClick={() => setShowEdit(true)}>แก้ไข</button>
+          <button className="driver-edit-btn" onClick={() => setShowEdit(true)}>{t('common.edit')}</button>
           <button className="driver-delete-btn" onClick={handleDelete} disabled={saving}>
-            {saving ? 'กำลังลบ...' : 'ลบ'}
+            {saving ? t('common.deleting') : t('common.delete')}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { useI18n } from "../../../i18n";
 
 interface HeaderProps {
   onRefresh: () => void;
@@ -22,14 +23,15 @@ export default function DriverHeader({
   onFilter,
   resultsCount,
 }: HeaderProps) {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
   return (
     <div className="driver-header">
       <div className="driver-header-top">
         <h2 className="page-title">
-          ข้อมูลคนขับ
-          <div className="result-count">จำนวน {resultsCount} คน</div>
+          {t('drivers.title')}
+          <div className="result-count">{t('drivers.results', { count: String(resultsCount) })}</div>
         </h2>
         <div className="header-actions">
           <button
@@ -41,10 +43,10 @@ export default function DriverHeader({
             }}
           >
             <FontAwesomeIcon icon={faSync} className={loading ? "fa-spin" : ""} />
-            รีเฟรช
+            {t('drivers.refresh')}
           </button>
           <button className="add-driver-button" onClick={onAdd}>
-            + เพิ่มคนขับ
+            + {t('drivers.add')}
           </button>
         </div>
       </div>
@@ -52,7 +54,7 @@ export default function DriverHeader({
       <div className="driver-header-bottom">
         <input
           type="text"
-          placeholder="ค้นหาชื่อคนขับ, บริษัท หรือตำแหน่ง..."
+          placeholder={t('drivers.searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => onSearch(e.target.value)}
           className="search-input"
@@ -62,9 +64,9 @@ export default function DriverHeader({
           onChange={(e) => onFilter(e.target.value)}
           className="filter-select"
         >
-          <option value="all">ทั้งหมด</option>
-          <option value="po-chern">ป๋อเฉิน</option>
-          <option value="rot-ruam">รถร่วม</option>
+          <option value="all">{t('drivers.filter.all')}</option>
+          <option value="po-chern">{t('drivers.filter.po-chern')}</option>
+          <option value="rot-ruam">{t('drivers.filter.rot-ruam')}</option>
         </select>
       </div>
     </div>

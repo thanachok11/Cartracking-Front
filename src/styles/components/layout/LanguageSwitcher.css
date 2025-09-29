@@ -1,0 +1,13 @@
+.lang-switcher { 
+  display: inline-flex; 
+  align-items: center; 
+  margin-left: 12px;
+}
+.lang-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 0.9rem;
+  color: #111827;
+}

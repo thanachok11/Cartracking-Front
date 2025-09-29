@@ -12,11 +12,11 @@
 /* Modal box */
 .workorder-modal {
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px #0000004d;
+    border-radius: 16px;
+    width: 900px;
     max-width: 95%;
     padding: 24px;
-    width: 700px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
     animation: slideUp 0.3s ease;
 }
 
@@ -86,7 +86,7 @@
 
 .workorder-form-full textarea {
     width: 100%;
-    min-height: 150px;
+    min-height: 200px;
     line-height: 1.5;
 
 }

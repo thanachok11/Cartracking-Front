@@ -1,4 +1,5 @@
 import React from "react";
+import { useI18n } from "../../../i18n";
 
 interface FilterToolbarProps {
     drivers: string[];
@@ -59,18 +60,19 @@ export default function FilterToolbar({
     filterTo,
     onChange,
 }: FilterToolbarProps) {
+    const { t } = useI18n();
     return (
         <div className="data-today-toolbar">
 
             <div className="data-today-toolbar-inner">
                 {/* คนขับ */}
                 <label className="data-today-filter-label">
-                    คนขับ
+                    {t('datatoday.filters.driver')}
                     <input
                         list="filter-driver-list"
                         value={filterDriver}
                         onChange={(e) => onChange.driver(e.target.value)}
-                        placeholder="ทุกคนขับ"
+                        placeholder={t('common.all')}
                         className="data-today-filter-input"
                     />
                     <datalist id="filter-driver-list">
@@ -82,12 +84,12 @@ export default function FilterToolbar({
 
                 {/* หมายเลขตู้ */}
                 <label className="data-today-filter-label">
-                    หมายเลขตู้
+                    {t('datatoday.filters.container')}
                     <input
                         list="filter-container-list"
                         value={filterContainer}
                         onChange={(e) => onChange.container(e.target.value)}
-                        placeholder="ทุกตู้"
+                        placeholder={t('common.all')}
                         className="data-today-filter-input"
                     />
                     <datalist id="filter-container-list">
@@ -99,12 +101,12 @@ export default function FilterToolbar({
 
                 {/* ทะเบียนหัว */}
                 <label className="data-today-filter-label">
-                    ทะเบียนหัว
+                    {t('datatoday.filters.headReg')}
                     <input
                         list="filter-headreg-list"
                         value={filterHeadReg}
                         onChange={(e) => onChange.headReg(e.target.value)}
-                        placeholder="ทุกทะเบียน"
+                        placeholder={t('common.all')}
                         className="data-today-filter-input"
                     />
                     <datalist id="filter-headreg-list">
@@ -116,14 +118,14 @@ export default function FilterToolbar({
 
                 {/* เลขใบสั่งงาน */}
                 <label className="data-today-filter-label">
-                    เลขใบสั่งงาน
+                    {t('datatoday.filters.booking')}
                     <input
                         value={filterBooking || ""}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             const v = formatBookingId(e.target.value);
                             onChange.booking && onChange.booking(v);
                         }}
-                        placeholder="เช่น LL12-34-567"
+                        placeholder={t('workorder.form.number.placeholder')}
                         className="data-today-filter-input"
                     />
                 </label>
@@ -131,7 +133,7 @@ export default function FilterToolbar({
 
                 {/* จากวันที่ */}
                 <label className="data-today-filter-label">
-                    จากวันที่
+                    {t('datatoday.filters.from')}
                     <input
                         type="date"
                         value={filterFrom}
@@ -142,7 +144,7 @@ export default function FilterToolbar({
 
                 {/* ถึงวันที่ */}
                 <label className="data-today-filter-label">
-                    ถึงวันที่
+                    {t('datatoday.filters.to')}
                     <input
                         type="date"
                         value={filterTo}
@@ -153,10 +155,10 @@ export default function FilterToolbar({
 
                 <div className="data-today-toolbar-actions">
                     <button className="data-today-btn-ghost" onClick={onChange.reset}>
-                        ล้างตัวกรอง
+                        {t('datatoday.filters.reset')}
                     </button>
                     <button className="data-today-button" onClick={onChange.addNew}>
-                        เพิ่มรายการ
+                        {t('datatoday.filters.addNew')}
                     </button>
                 </div>
 

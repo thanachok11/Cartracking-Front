@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { fetchVehicle, VehiclePosition } from '../api/components/MapApi';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useGoogleMaps } from './GoogleMapsProvider';
 import '../styles/pages/Dashboard.css';
+import { useI18n } from '../i18n';
 
 interface DashboardStats {
   totalVehicles: number;
@@ -18,11 +19,14 @@ interface SummaryCardProps {
   className?: string;
 }
 
-const DashboardHeader: React.FC = () => (
-  <header className="dashboard-header">
-    <h1>Dashboard</h1>
-  </header>
-);
+const DashboardHeader: React.FC = () => {
+  const { t } = useI18n();
+  return (
+    <header className="dashboard-header">
+      <h1>{t('dashboard.title')}</h1>
+    </header>
+  );
+};
 
 const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, className }) => (
   <div className={`summary-card ${className || ''}`}>
@@ -34,6 +38,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, className }) =>
 // Dashboard Map Component
 const DashboardMap: React.FC<{ vehicles: VehiclePosition[] }> = ({ vehicles }) => {
   const { isLoaded } = useGoogleMaps();
+  const { t } = useI18n();
 
   const containerStyle = {
     width: '100%',
@@ -56,7 +61,7 @@ const DashboardMap: React.FC<{ vehicles: VehiclePosition[] }> = ({ vehicles }) =
     return (
       <div className="map-loading">
         <div className="spinner"></div>
-        <p>กำลังโหลดแผนที่...</p>
+        <p>{t('dashboard.loadingMap')}</p>
       </div>
     );
   }
@@ -94,7 +99,7 @@ const DashboardMap: React.FC<{ vehicles: VehiclePosition[] }> = ({ vehicles }) =
               strokeColor: '#ffffff',
               strokeWeight: 2,
             }}
-            title={`${vehicle.registration} - ${translateStatus(vehicle.statusClassName || '')}`}
+            title={`${vehicle.registration} - ${statusToLabel(vehicle.statusClassName || '', t)}`}
           />
         );
       })}
@@ -106,22 +111,24 @@ const DashboardContainer: React.FC<{ children: React.ReactNode }> = ({ children 
   <div className="dashboard-container">{children}</div>
 );
 
-// ฟังก์ชันแปลสถานะเป็นภาษาไทย
-const translateStatus = (status: string): string => {
-  const statusMap: Record<string, string> = {
-    'driving': 'กำลังขับ',
-    'idling': 'จอดนิ่ง',
-    'stationary': 'สถานี',
-    'ignition-off': 'ดับเครื่อง',
-    'ignition off': 'ดับเครื่อง',
-    'Driving': 'กำลังขับ',
-    'Idling': 'จอดนิ่ง',
-    'Stationary': 'สถานี',
-    'Ignition Off': 'ดับเครื่อง',
-    'Ignition-Off': 'ดับเครื่อง'
-  };
-  
-  return statusMap[status] || status;
+// Normalize status then map to translation key
+const normalizeStatus = (status: string) => status.toLowerCase().replace(/\s+/g, '-');
+const statusToLabel = (status: string, t: (k: string, vars?: any) => string) => {
+  const s = normalizeStatus(status);
+  switch (s) {
+    case 'driving':
+      return t('vehicle.status.driving');
+    case 'idling':
+      return t('vehicle.status.idling');
+    case 'stationary':
+      return t('vehicle.status.stationary');
+    case 'ignition-off':
+    case 'ignition':
+    case 'ignitionoff':
+      return t('vehicle.status.ignitionOff');
+    default:
+      return status;
+  }
 };
 
 const Dashboard: React.FC = () => {
@@ -135,6 +142,8 @@ const Dashboard: React.FC = () => {
   const [vehicles, setVehicles] = useState<VehiclePosition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t, lang } = useI18n();
+  const locale = useMemo(() => (lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US'), [lang]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -177,10 +186,10 @@ const Dashboard: React.FC = () => {
         });
 
         if (vehiclesData.length === 0) {
-          setError('ไม่พบข้อมูลรถในระบบ กรุณาลองใหม่อีกครั้ง');
+          setError(t('dashboard.noVehicles'));
         }
       } catch (err) {
-        setError('ไม่สามารถดึงข้อมูลรถได้ กรุณาลองใหม่อีกครั้ง');
+        setError(t('dashboard.loadingData'));
       } finally {
         setLoading(false);
       }
@@ -193,7 +202,7 @@ const Dashboard: React.FC = () => {
     return (
       <div className="dashboard-container loading">
         <div className="spinner"></div>
-        <p>กำลังโหลดข้อมูล...</p>
+        <p>{t('dashboard.loadingData')}</p>
       </div>
     );
 
@@ -206,22 +215,22 @@ const Dashboard: React.FC = () => {
 
   return (
     <DashboardContainer>
-      <DashboardHeader />
+  <DashboardHeader />
 
       {/* Summary Cards */}
       <section className="dashboard-summary">
-        <SummaryCard title="จำนวนรถทั้งหมด" value={stats.totalVehicles} className="total" />
-        <SummaryCard title="กำลับขับ" value={stats.driving} className="driving" />
-        <SummaryCard title="จอดนิ่ง" value={stats.idling} className="idling" />
-        <SummaryCard title="ถึงสถานี" value={stats.stationary} className="stationary" />
-        <SummaryCard title="ดับเครื่อง" value={stats.ignitionOff} className="ignition-off" />
+        <SummaryCard title={t('dashboard.totalVehicles')} value={stats.totalVehicles} className="total" />
+        <SummaryCard title={t('dashboard.driving')} value={stats.driving} className="driving" />
+        <SummaryCard title={t('dashboard.idling')} value={stats.idling} className="idling" />
+        <SummaryCard title={t('dashboard.stationary')} value={stats.stationary} className="stationary" />
+        <SummaryCard title={t('dashboard.ignitionOff')} value={stats.ignitionOff} className="ignition-off" />
       </section>
 
       {/* Main Content */}
       <section className="dashboard-main">
         <div className="main-left">
           <div className="card map-container">
-            <h3>ตำแหน่งรถ</h3>
+            <h3>{t('dashboard.mapTitle')}</h3>
             <div className="map-wrapper">
               <DashboardMap vehicles={vehicles} />
             </div>
@@ -232,13 +241,13 @@ const Dashboard: React.FC = () => {
 
       {/* Data Table */}
       <section className="dashboard-table">
-        <h2>บันทึกข้อมูลรถล่าสุด</h2>
+        <h2>{t('dashboard.table.title')}</h2>
         <table>
           <thead>
             <tr>
-              <th>ทะเบียนรถ</th>
-              <th>สถานะ</th>
-              <th>เวลาที่อัปเดตล่าสุด</th>
+              <th>{t('dashboard.table.registration')}</th>
+              <th>{t('dashboard.table.status')}</th>
+              <th>{t('dashboard.table.lastUpdated')}</th>
             </tr>
           </thead>
           <tbody>
@@ -255,19 +264,19 @@ const Dashboard: React.FC = () => {
                   <td>{vehicle.registration}</td>
                   <td>
                     <span className={`status-badge ${vehicle.statusClassName?.toLowerCase().replace(/\s+/g, '-')}`}>
-                      {translateStatus(vehicle.statusClassName || '')}
+                      {statusToLabel(vehicle.statusClassName || '', t)}
                     </span>
                   </td>
                   <td>
                     {vehicle.event_ts 
-                      ? new Date(vehicle.event_ts).toLocaleString('th-TH', {
+                      ? new Date(vehicle.event_ts).toLocaleString(locale, {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',
                           hour: '2-digit',
                           minute: '2-digit',
                         })
-                      : 'ไม่มีข้อมูล'
+                      : t('common.noData')
                     }
                   </td>
                 </tr>
@@ -275,7 +284,7 @@ const Dashboard: React.FC = () => {
             {vehicles.length === 0 && (
               <tr>
                 <td colSpan={3} style={{ textAlign: 'center', color: '#888' }}>
-                  ไม่มีข้อมูลรถ
+                  {t('dashboard.noVehicles')}
                 </td>
               </tr>
             )}

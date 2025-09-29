@@ -23,6 +23,7 @@ import WorkOrderPage from "./pages/workorder/WorkOrderPage";
 import VehicleTailPage from "./pages/vehicles/VehicleTailPage";
 import AllowedPagesManager from "./pages/usermanagement/components/AllowedPagesManager";
 import "./App.css";
+import "./styles/i18n-fonts.css";
 import { jwtDecode } from "jwt-decode";
 import { logoutUser, renewToken } from "./api/auth/auth";
 

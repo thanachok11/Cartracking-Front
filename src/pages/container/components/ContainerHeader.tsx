@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useI18n } from "../../../i18n";
 
 interface ContainerHeaderProps {
     onRefresh: () => void;
@@ -23,19 +24,16 @@ export default function ContainerHeader({
     onFilter,
     resultsCount,
 }: ContainerHeaderProps) {
+    const { t } = useI18n();
     const [loading, setLoading] = useState(false);
 
     return (
         <div className="container-header-page">
             <div className="container-header-page-top">
                 <h2 className="container-header-page-title">
-                    ตู้คอนเทนเนอร์
+                    {t('containers.title')}
                     <div className="container-header-page-count">
-                        {searchTerm || filterBy !== "all" ? (
-                            `แสดง ${resultsCount} ตู้`
-                        ) : (
-                            `ทั้งหมด ${totalCount} ตู้`
-                        )}
+                        {t('containers.results', { count: String(searchTerm || filterBy !== "all" ? resultsCount : totalCount) })}
                     </div>
                 </h2>
                 <div className="container-header-page-actions">
@@ -48,14 +46,14 @@ export default function ContainerHeader({
                         }}
                     >
                         <FontAwesomeIcon icon={faSync} className={loading ? "fa-spin" : ""} />
-                        รีเฟรช
+                        {t('users.refresh')}
                     </button>
                     <button
                         className="container-header-page-add-btn"
                         onClick={onAdd}
                     >
                         <FontAwesomeIcon icon={faPlus} />
-                        เพิ่มตู้คอนเทนเนอร์
+                        {t('containers.add')}
                     </button>
                 </div>
             </div>
@@ -63,7 +61,7 @@ export default function ContainerHeader({
             <div className="container-header-page-bottom">
                 <input
                     type="text"
-                    placeholder="ค้นหาหมายเลขตู้หรือบริษัท..."
+                    placeholder={t('containers.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => onSearch(e.target.value)}
                     className="container-header-page-search-input"
@@ -73,9 +71,9 @@ export default function ContainerHeader({
                     onChange={(e) => onFilter(e.target.value)}
                     className="container-header-page-filter-select"
                 >
-                    <option value="all">ทั้งหมด</option>
-                    <option value="ป๋อเฉิน">ป๋อเฉิน</option>
-                    <option value="บริษัทร่วม">บริษัทร่วม</option>
+                    <option value="all">{t('containers.filter.all')}</option>
+                    <option value="ป๋อเฉิน">{t('containers.company.porchoen')}</option>
+                    <option value="บริษัทร่วม">{t('containers.company.rotruam')}</option>
                 </select>
             </div>
         </div>

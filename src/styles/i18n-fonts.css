@@ -1,0 +1,149 @@
+/* =============================
+   Multi-language Font Support
+   จัดการ font สำหรับภาษาต่าง ๆ
+============================= */
+
+/* Default fallback fonts */
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Thai Language - เพิ่ม font ที่รองรับไทยดี */
+html[lang="th"],
+html[lang="th"] * {
+    font-family: 'Sarabun', 'Prompt', 'Kanit', 'Noto Sans Thai', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* English Language - ใช้ font ที่เหมาะกับภาษาอังกฤษ */
+html[lang="en"],
+html[lang="en"] * {
+    font-family: 'Inter', 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* Chinese Language - ใช้ font ที่รองรับจีน */
+html[lang="zh"],
+html[lang="zh"] * {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', 'SimSun', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif !important;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* Specific adjustments for different languages */
+
+/* Thai text improvements */
+html[lang="th"] h1,
+html[lang="th"] h2,
+html[lang="th"] h3,
+html[lang="th"] h4,
+html[lang="th"] h5,
+html[lang="th"] h6 {
+    font-family: 'Sarabun', 'Prompt', 'Kanit', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="th"] button,
+html[lang="th"] .btn,
+html[lang="th"] input,
+html[lang="th"] select,
+html[lang="th"] textarea {
+    font-family: 'Sarabun', 'Prompt', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="th"] table,
+html[lang="th"] td,
+html[lang="th"] th {
+    font-family: 'Sarabun', sans-serif !important;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+}
+
+/* English text improvements */
+html[lang="en"] h1,
+html[lang="en"] h2,
+html[lang="en"] h3,
+html[lang="en"] h4,
+html[lang="en"] h5,
+html[lang="en"] h6 {
+    font-family: 'Inter', 'Roboto', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="en"] button,
+html[lang="en"] .btn,
+html[lang="en"] input,
+html[lang="en"] select,
+html[lang="en"] textarea {
+    font-family: 'Inter', 'Roboto', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="en"] table,
+html[lang="en"] td,
+html[lang="en"] th {
+    font-family: 'Inter', 'Roboto', sans-serif !important;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+}
+
+/* Chinese text improvements */
+html[lang="zh"] h1,
+html[lang="zh"] h2,
+html[lang="zh"] h3,
+html[lang="zh"] h4,
+html[lang="zh"] h5,
+html[lang="zh"] h6 {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="zh"] button,
+html[lang="zh"] .btn,
+html[lang="zh"] input,
+html[lang="zh"] select,
+html[lang="zh"] textarea {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif !important;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+html[lang="zh"] table,
+html[lang="zh"] td,
+html[lang="zh"] th {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif !important;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+}
+
+/* Responsive font adjustments */
+@media (max-width: 768px) {
+    html[lang="th"] *,
+    html[lang="en"] *,
+    html[lang="zh"] * {
+        font-size: 14px;
+    }
+}
+
+/* Font loading states */
+.font-loading {
+    visibility: hidden;
+}
+
+.font-loaded {
+    visibility: visible;
+}

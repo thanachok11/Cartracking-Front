@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCurrentUserInfo, changePassword, updateProfileWithImage, updateUser } from '../../api/components/usersApi';
 import '../../styles/pages/UserInfo.css';
 import { UserRole } from '../../types/User';
+import { useI18n } from '../../i18n';
 
 interface UserProfile {
   _id?: string;
@@ -21,6 +22,7 @@ interface PasswordChange {
 
 export default function UserInfo() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   
   // User profile state
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -92,7 +94,7 @@ export default function UserInfo() {
       }
     } catch (err: any) {
       console.error('❌ Error loading user data:', err);
-      setError(err.message || 'ไม่สามารถโหลดข้อมูลผู้ใช้ได้');
+      setError(err.message || t('userinfo.messages.loadUserFailed'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +105,7 @@ export default function UserInfo() {
 
     const userId = user?._id || user?.id;
     if (!userId) {
-      setError('ไม่พบข้อมูลผู้ใช้');
+      setError(t('userinfo.messages.userNotFound'));
       return;
     }
 
@@ -128,7 +130,7 @@ export default function UserInfo() {
         console.log('🔄 Token updated:', result.token);
       }
 
-      setSuccess('อัพเดตข้อมูลส่วนตัวสำเร็จ');
+      setSuccess(t('userinfo.messages.updateSuccess'));
       setShowProfileEdit(false);
       setImageFile(null);
       setImagePreview(null);
@@ -137,7 +139,7 @@ export default function UserInfo() {
       await loadUserData();
     } catch (err: any) {
       console.error('❌ Profile update error:', err);
-      setError(err.message || 'ไม่สามารถอัพเดตข้อมูลได้');
+      setError(err.message || t('userinfo.messages.updateFailed'));
     } finally {
       setSaving(false);
     }
@@ -148,12 +150,12 @@ export default function UserInfo() {
     
     // Validate passwords
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setError('รหัสผ่านใหม่ไม่ตรงกัน');
+      setError(t('userinfo.messages.passwordMismatch'));
       return;
     }
     
     if (passwordForm.newPassword.length < 6) {
-      setError('รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร');
+      setError(t('userinfo.messages.passwordTooShort'));
       return;
     }
 
@@ -164,7 +166,7 @@ export default function UserInfo() {
       // ใช้ API ที่เพิ่มใหม่
       await changePassword(passwordForm.currentPassword, passwordForm.newPassword);
 
-      setSuccess('เปลี่ยนรหัสผ่านสำเร็จ');
+      setSuccess(t('userinfo.messages.passwordChangeSuccess'));
       setShowPasswordChange(false);
       setPasswordForm({
         currentPassword: '',
@@ -173,7 +175,7 @@ export default function UserInfo() {
       });
     } catch (err: any) {
       console.error('❌ Password change error:', err);
-      setError(err.message || 'ไม่สามารถเปลี่ยนรหัสผ่านได้');
+      setError(err.message || t('userinfo.messages.passwordChangeFailed'));
     } finally {
       setSaving(false);
     }
@@ -184,13 +186,13 @@ export default function UserInfo() {
     if (file) {
       // Validate file size (5MB)
       if (file.size > 5 * 1024 * 1024) {
-        setError('ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB');
+        setError(t('userinfo.messages.fileTooLarge'));
         return;
       }
 
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+        setError(t('userinfo.messages.invalidFileType'));
         return;
       }
 
@@ -222,11 +224,11 @@ export default function UserInfo() {
   // };
   const getRoleDisplayName = (role: UserRole): string => {
       switch (role) {
-          case UserRole.LEVEL_5: return 'Super Admin';
-          case UserRole.LEVEL_4: return 'Admin';
-          case UserRole.LEVEL_3: return 'Manager';
-          case UserRole.LEVEL_2: return 'User';
-          default: return 'User';
+          case UserRole.LEVEL_5: return t('roles.superAdmin');
+          case UserRole.LEVEL_4: return t('roles.admin');
+          case UserRole.LEVEL_3: return t('roles.manager');
+          case UserRole.LEVEL_2: return t('roles.user');
+          default: return t('roles.user');
       }
 };
   if (loading) {
@@ -234,7 +236,7 @@ export default function UserInfo() {
       <div className="userinfo-page">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>กำลังโหลดข้อมูล...</p>
+          <p>{t('userinfo.loading')}</p>
         </div>
       </div>
     );
@@ -244,9 +246,9 @@ export default function UserInfo() {
     return (
       <div className="userinfo-page">
         <div className="error-container">
-          <p>ไม่พบข้อมูลผู้ใช้</p>
+          <p>{t('userinfo.notFound')}</p>
           <button onClick={() => navigate('/')} className="btn-primary">
-            กลับหน้าหลัก
+            {t('userinfo.back')}
           </button>
         </div>
       </div>
@@ -257,12 +259,12 @@ export default function UserInfo() {
     <div className="userinfo-page">
       <div className="userinfo-container">
         <div className="userinfo-header">
-          <h2>ข้อมูลส่วนตัว</h2>
+          <h2>{t('userinfo.title')}</h2>
           <button 
             onClick={() => navigate(-1)} 
             className="back-button"
           >
-            ← ย้อนกลับ
+            ← {t('userinfo.back')}
           </button>
         </div>
 
@@ -316,7 +318,7 @@ export default function UserInfo() {
             disabled={user?.role === UserRole.LEVEL_5} // type-safe
             className={`btn-edit ${user?.role === UserRole.LEVEL_5 ? "btn-disabled" : ""}`}
           >
-            แก้ไขข้อมูลส่วนตัว
+            {t('userinfo.editProfile')}
           </button>
 
           <button
@@ -324,7 +326,7 @@ export default function UserInfo() {
             disabled={user?.role === UserRole.LEVEL_5} // ป้องกัน super admin
             className={`btn-secondary ${user?.role === UserRole.LEVEL_5 ? "btn-disabled" : ""}`}
           >
-            เปลี่ยนรหัสผ่าน
+            {t('userinfo.changePassword')}
           </button>
         </div>
 
@@ -333,7 +335,7 @@ export default function UserInfo() {
           <div className="modal-overlay">
             <div className="modal-content">
               <div className="modal-header">
-                <h3>แก้ไขข้อมูลส่วนตัว</h3>
+                <h3>{t('userinfo.modal.editTitle')}</h3>
                 <button 
                   onClick={() => setShowProfileEdit(false)}
                   className="modal-close"
@@ -351,7 +353,7 @@ export default function UserInfo() {
               >
                 <div className="form-row">
                   <div className="form-group">
-                    <label>ชื่อ</label>
+                    <label>{t('userinfo.labels.firstName')}</label>
                     <input
                       type="text"
                       value={profileForm.firstName}
@@ -360,7 +362,7 @@ export default function UserInfo() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>นามสกุล</label>
+                    <label>{t('userinfo.labels.lastName')}</label>
                     <input
                       type="text"
                       value={profileForm.lastName}
@@ -371,7 +373,7 @@ export default function UserInfo() {
                 </div>
                 
                 <div className="form-group">
-                  <label>อีเมล</label>
+                  <label>{t('userinfo.labels.email')}</label>
                   <input
                     type="email"
                     value={profileForm.email}
@@ -382,7 +384,7 @@ export default function UserInfo() {
 
                 {/* Image Upload */}
                 <div className="form-group">
-                  <label>รูปโปรไฟล์</label>
+                  <label>{t('userinfo.labels.profileImage')}</label>
                   <div className="image-upload-container">
                     {imagePreview ? (
                       <div className="image-preview">
@@ -408,7 +410,7 @@ export default function UserInfo() {
                       onChange={handleImageChange}
                       className="file-input"
                     />
-                    <p className="file-hint">รองรับไฟล์ JPG, PNG ขนาดไม่เกิน 5MB</p>
+                    <p className="file-hint">{t('userinfo.image.hint')}</p>
                   </div>
                 </div>
                 
@@ -419,14 +421,14 @@ export default function UserInfo() {
                     disabled={saving}
                     onClick={() => console.log('🔘 Submit button clicked')}
                   >
-                    {saving ? 'กำลังบันทึก...' : 'บันทึก'}
+                    {saving ? `${t('userinfo.buttons.save')}...` : t('userinfo.buttons.save')}
                   </button>
                   <button 
                     type="button" 
                     onClick={() => setShowProfileEdit(false)}
                     className="btn-secondary"
                   >
-                    ยกเลิก
+                    {t('userinfo.buttons.cancel')}
                   </button>
                 </div>
               </form>
@@ -439,7 +441,7 @@ export default function UserInfo() {
           <div className="modal-overlay">
             <div className="modal-content">
               <div className="modal-header">
-                <h3>เปลี่ยนรหัสผ่าน</h3>
+                <h3>{t('userinfo.modal.passwordTitle')}</h3>
                 <button 
                   onClick={() => setShowPasswordChange(false)}
                   className="modal-close"
@@ -450,7 +452,7 @@ export default function UserInfo() {
               
               <form onSubmit={handlePasswordChange} className="password-form">
                 <div className="form-group">
-                  <label>รหัสผ่านปัจจุบัน</label>
+                  <label>{t('userinfo.password.current')}</label>
                   <input
                     type="password"
                     value={passwordForm.currentPassword}
@@ -460,7 +462,7 @@ export default function UserInfo() {
                 </div>
                 
                 <div className="form-group">
-                  <label>รหัสผ่านใหม่</label>
+                  <label>{t('userinfo.password.new')}</label>
                   <input
                     type="password"
                     value={passwordForm.newPassword}
@@ -468,11 +470,11 @@ export default function UserInfo() {
                     required
                     minLength={6}
                   />
-                  <small>รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร</small>
+                  <small>{t('userinfo.messages.passwordTooShort')}</small>
                 </div>
                 
                 <div className="form-group">
-                  <label>ยืนยันรหัสผ่านใหม่</label>
+                  <label>{t('userinfo.password.confirm')}</label>
                   <input
                     type="password"
                     value={passwordForm.confirmPassword}
@@ -487,14 +489,14 @@ export default function UserInfo() {
                     className="btn-primary"
                     disabled={saving}
                   >
-                    {saving ? 'กำลังเปลี่ยน...' : 'เปลี่ยนรหัสผ่าน'}
+                    {saving ? `${t('userinfo.changePassword')}...` : t('userinfo.changePassword')}
                   </button>
                   <button 
                     type="button" 
                     onClick={() => setShowPasswordChange(false)}
                     className="btn-secondary"
                   >
-                    ยกเลิก
+                    {t('userinfo.buttons.cancel')}
                   </button>
                 </div>
               </form>

@@ -2,6 +2,7 @@ import React from "react";
 import { DataToday } from "../../../types/DataToday";
 import { IWorkOrder } from "../../../types/WorkOrder";
 import { fetchWorkOrderById, fetchWorkOrderByNumber } from "../../../api/components/orderApi";
+import { useI18n } from "../../../i18n";
 
 interface DataTableProps {
     rows: DataToday[];
@@ -12,6 +13,7 @@ interface DataTableProps {
 }
 
 export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy }: DataTableProps) {
+    const { t, lang } = useI18n();
     const [previewSrc, setPreviewSrc] = React.useState<string | null>(null);
     const [previewVisible, setPreviewVisible] = React.useState(false);
     
@@ -72,7 +74,6 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
         <>
             <div className="data-today-table-controls">
                 <label>
-                    แสดง&nbsp;
                     <select
                         value={itemsPerPage}
                         onChange={(e) => {
@@ -85,7 +86,7 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                         <option value={30}>30</option>
                         <option value={40}>40</option>
                     </select>
-                    &nbsp;รายการต่อหน้า
+                    &nbsp;{t('common.itemsPerPage')}
                 </label>
             </div>
 
@@ -93,15 +94,15 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                 <table className="data-today-table">
                     <thead>
                         <tr>
-                            <th>เลขใบสั่งงาน</th>
-                            <th>วันที่</th>
-                            <th>คนขับ</th>
-                            <th>ทะเบียนหัว</th>
-                            <th>ทะเบียนหาง</th>
-                            <th>หมายเลขตู้</th>
-                            <th>ตำแหน่งคนขับรถ</th>
-                            <th>บริษัท</th>
-                            <th>รูปใบสั่งงาน</th>
+                            <th>{t('datatoday.table.booking')}</th>
+                            <th>{t('datatoday.table.date')}</th>
+                            <th>{t('datatoday.table.driver')}</th>
+                            <th>{t('datatoday.table.head')}</th>
+                            <th>{t('datatoday.table.tail')}</th>
+                            <th>{t('datatoday.table.container')}</th>
+                            <th>{t('datatoday.table.station')}</th>
+                            <th>{t('datatoday.table.company')}</th>
+                            <th>{t('datatoday.table.bookingImage')}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -109,7 +110,7 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                         {displayedRows.length === 0 ? (
                             <tr>
                                 <td colSpan={10} style={{ textAlign: "center", padding: "20px" }}>
-                                    ไม่พบข้อมูลที่ค้นหา
+                                    {t('datatoday.table.noData')}
                                 </td>
                             </tr>
                         ) : (
@@ -139,7 +140,7 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                                     <td>
                                         {(r as any).booking_image ? (
                                             <button type="button" className="link-button" onClick={() => openPreview((r as any).booking_image)}>
-                                                ดูเอกสาร
+                                                {t('datatoday.table.viewDocument')}
                                             </button>
                                         ) : '-'}
                                     </td>
@@ -149,13 +150,13 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                                                 className="data-today-btn data-today-btn-small data-today-btn-edit"
                                                 onClick={() => onEdit(r)}
                                             >
-                                                แก้ไข
+                                                {t('common.edit')}
                                             </button>
                                             <button
                                                 className="data-today-btn data-today-btn-small data-today-btn-danger"
                                                 onClick={() => onDelete(r._id)}
                                             >
-                                                ลบ
+                                                {t('common.delete')}
                                             </button>
                                         </div>
                                     </td>
@@ -173,14 +174,14 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage((p) => p - 1)}
                     >
-                        ก่อนหน้า
+                        {t('common.previous')}
                     </button>
-                    <span>หน้า {currentPage} จาก {totalPages}</span>
+                    <span>{t('datatoday.pagination.page', { current: String(currentPage), total: String(totalPages) })}</span>
                     <button
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((p) => p + 1)}
                     >
-                        ถัดไป
+                        {t('common.next')}
                     </button>
                 </div>
             )}
@@ -188,7 +189,7 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
             {previewVisible && previewSrc && (
                 <div className="data-today-modal-preview-backdrop" onClick={closePreview}>
                     <div className="data-today-modal-preview" onClick={(e) => e.stopPropagation()}>
-                        <button className="data-today-modal-preview-close" onClick={closePreview}>ปิด</button>
+                        <button className="data-today-modal-preview-close" onClick={closePreview}>{t('common.close')}</button>
                         <img src={previewSrc || undefined} alt="preview" style={{ maxWidth: '90vw', maxHeight: '80vh' }} />
                     </div>
                 </div>
@@ -200,70 +201,70 @@ export default function DataTable({ rows, onEdit, onDelete, openOnMap, ymdToDmy 
                     <div className="data-today-modal-preview" onClick={(e) => e.stopPropagation()}>
                         <div className="work-order-popup">
                             <div className="work-order-popup-header">
-                                <h3>ข้อมูลใบสั่งงาน</h3>
-                                <button className="data-today-modal-preview-close" onClick={closeWorkOrderPopup}>ปิด</button>
+                                <h3>{t('workorder.title')}</h3>
+                                <button className="data-today-modal-preview-close" onClick={closeWorkOrderPopup}>{t('common.close')}</button>
                             </div>
                             
                             {loadingWorkOrder ? (
                                 <div className="work-order-loading">
-                                    <p>กำลังโหลดข้อมูล...</p>
+                                    <p>{t('common.loading')}</p>
                                 </div>
                             ) : workOrder ? (
                                 <div className="work-order-content">
                                     <div className="work-order-field">
-                                        <label>เลขใบสั่งงาน:</label>
+                                        <label>{t('datatoday.table.booking')}:</label>
                                         <span>{workOrder.workOrderNumber}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>วันที่ออกใบสั่ง:</label>
-                                        <span>{workOrder.issueDate ? new Date(workOrder.issueDate).toLocaleDateString('th-TH') : '-'}</span>
+                                        <label>{t('workorder.table.issueDate')}:</label>
+                                        <span>{workOrder.issueDate ? new Date(workOrder.issueDate).toLocaleDateString(lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US') : '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>สินค้า:</label>
+                                        <label>{t('workorder.table.product')}:</label>
                                         <span>{workOrder.product || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>คนขับ:</label>
+                                        <label>{t('workorder.table.driverName')}:</label>
                                         <span>{workOrder.driverName || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>เบอร์โทร:</label>
+                                        <label>{t('workorder.table.driverPhone')}:</label>
                                         <span>{workOrder.driverPhone || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>ทะเบียนหัว | หาง:</label>
+                                        <label>{t('workorder.table.headPlate')} | {t('workorder.table.tailPlate')}:</label>
                                         <span>{workOrder.headPlate || '-'} | {workOrder.tailPlate || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>หมายเลขตู้:</label>
+                                        <label>{t('workorder.table.containerNumber')}:</label>
                                         <span>{workOrder.containerNumber || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>บริษัท:</label>
+                                        <label>{t('workorder.table.companyName')}:</label>
                                         <span>{workOrder.companyName || '-'}</span>
                                     </div>
                                     <div className="work-order-field">
-                                        <label>รายละเอียด:</label>
+                                        <label>{t('workorder.table.description')}:</label>
                                         <span>{workOrder.description || '-'}</span>
                                     </div>
                                     {workOrder.createdAt && (
                                         <div className="work-order-field">
-                                            <label>สร้างเมื่อ:</label>
-                                            <span>{new Date(workOrder.createdAt).toLocaleString('th-TH')}</span>
+                                            <label>{t('vehicles.grid.createdAt')}:</label>
+                                            <span>{new Date(workOrder.createdAt).toLocaleString(lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US')}</span>
                                         </div>
                                     )}
                                     {workOrder.updatedAt && (
                                         <div className="work-order-field">
-                                            <label>แก้ไขเมื่อ:</label>
-                                            <span>{new Date(workOrder.updatedAt).toLocaleString('th-TH')}</span>
+                                            <label>{t('dashboard.table.lastUpdated')}:</label>
+                                            <span>{new Date(workOrder.updatedAt).toLocaleString(lang === 'th' ? 'th-TH' : lang === 'zh' ? 'zh-CN' : 'en-US')}</span>
                                         </div>
                                     )}
                                 </div>
                             ) : (
                                 <div className="work-order-error">
-                                    <p>ไม่พบข้อมูลใบสั่งงานในระบบ</p>
+                                    <p>{t('datatoday.table.noData')}</p>
                                     <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '10px' }}>
-                                        กรุณาติดต่อผู้ดูแลระบบเพื่อเพิ่มข้อมูลใบสั่งงาน
+                                        {t('protected.denied')}
                                     </p>
                                 </div>
                             )}

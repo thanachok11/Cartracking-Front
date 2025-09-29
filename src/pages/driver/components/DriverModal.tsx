@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import type { Driver } from '../../../api/components/driversApi';
+import { useI18n } from '../../../i18n';
 interface Props {
   visible: boolean;
   editing: Driver | null;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function DriverModal({ visible, editing, error, saving, form, onChange, onClose, onSave, imageFile, onImageFileChange }: Props) {
+  const { t } = useI18n();
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   useEffect(() => {
     if (imageFile) {
@@ -38,12 +40,12 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
       return;
     }
     if (!file.type.startsWith('image/')) {
-      alert("กรุณาเลือกรูปภาพเท่านั้น")
+      alert(t('userinfo.image.hint'))
       return;
     }
     const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     if (file.size > MAX_SIZE) {
-      alert("ขนาดไฟล์ต้องไม่เกิน 5MB");
+      alert(t('userinfo.image.hint'));
       return;
     }
     onImageFileChange(file);
@@ -69,22 +71,22 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>{editing ? 'แก้ไขข้อมูลคนขับ' : 'เพิ่มคนขับใหม่'}</h3>
+        <h3>{editing ? t('drivers.modal.edit') : t('drivers.modal.create')}</h3>
         {error && <div className="error-alert">{error}</div>}
         <form onSubmit={(e) => { e.preventDefault(); onSave(); }}>
           <div className="form-row">
             <div className="form-group">
-              <label>ชื่อ:</label>
+              <label>{t('drivers.form.firstName')}:</label>
               <input type="text" value={form.firstName} onChange={(e) => onChange({ firstName: e.target.value })} required />
             </div>
             <div className="form-group">
-              <label>นามสกุล:</label>
+              <label>{t('drivers.form.lastName')}:</label>
               <input type="text" value={form.lastName} onChange={(e) => onChange({ lastName: e.target.value })} required />
             </div>
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>เบอร์โทรศัพท์:</label>
+              <label>{t('drivers.form.phone')}:</label>
               <input 
                 type="tel" 
                 value={form.phoneNumber} 
@@ -94,29 +96,29 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
               />
             </div>
             <div className="form-group">
-              <label>ตำแหน่ง:</label>
+              <label>{t('drivers.form.position')}:</label>
               <input type="text" value={form.position} onChange={(e) => onChange({ position: e.target.value })} required />
             </div>
           </div>       
           <div className="form-group">
-            <label htmlFor="companyName">ชื่อบริษัท *</label>
+            <label htmlFor="companyName">{t('drivers.form.company')} *</label>
             <select
               id="companyName"
               value={form.company}
               onChange={(e) => onChange({ company: e.target.value })} required 
               >
             
-              <option value="">เลือกบริษัท</option>
+              <option value="">{t('workorder.form.companyName.placeholder')}</option>
               <option value="ป๋อเฉิน2014">ป๋อเฉิน2014</option>
               <option value="รถร่วม">รถร่วม</option>
             </select>
           </div>
           <div className="form-group">
-            <label>รายละเอียด:</label>
-            <textarea value={form.detail} onChange={(e) => onChange({ detail: e.target.value })} rows={3} placeholder="รายละเอียดเพิ่มเติม (ไม่บังคับ)" />
+            <label>{t('drivers.form.detail')}:</label>
+            <textarea value={form.detail} onChange={(e) => onChange({ detail: e.target.value })} rows={3} placeholder={t('drivers.form.detail')} />
           </div>
           <div className="form-group">
-            <label>รูปโปรไฟล์:</label>
+            <label>{t('drivers.form.profileImage')}:</label>
             <div className="image-upload-container">
               <input 
                 type="file" 
@@ -138,19 +140,19 @@ export default function DriverModal({ visible, editing, error, saving, form, onC
                       className="remove-image-btn"
                       onClick={() => onImageFileChange(null)}
                     >
-                      ลบรูป
+                      {t('common.delete')}
                     </button>
                   )}
                 </div>
               )}
-              <small className="hint">รองรับไฟล์ภาพ JPG, PNG, GIF ขนาดไม่เกิน 5MB</small>
+              <small className="hint">{t('userinfo.image.hint')}</small>
             </div>
           </div>
           <div className="modal-actions">
           
-            <button type="button" className="cancel-btn" onClick={onClose} disabled={saving}>ยกเลิก</button>
+            <button type="button" className="cancel-btn" onClick={onClose} disabled={saving}>{t('common.cancel')}</button>
             <button type="submit" className="save-btn" disabled={saving}>
-              {saving ? 'กำลังบันทึก...' : editing ? 'บันทึกการแก้ไข' : 'เพิ่มคนขับ'}
+              {saving ? t('common.loading') : editing ? t('common.save') : t('drivers.add')}
             </button>
           </div>
         </form>

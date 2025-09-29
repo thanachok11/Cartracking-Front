@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useI18n } from '../../../i18n';
 import { User, UserRole } from '../../../types/User';
 import '../../../styles/pages/EditUserModal.css';
 
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, onUpdate, onCancel }) => {
+    const { t } = useI18n();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -47,11 +49,11 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
     return (
         <div className="EditUser-Modal-overlay">
             <div className="EditUser-Modal-container">
-                <h3 className="EditUser-Modal-title">แก้ไขผู้ใช้</h3>
+                <h3 className="EditUser-Modal-title">{t('userManagement.actions.edit')}</h3>
                 <form className="EditUser-Modal-form" onSubmit={handleSubmit}>
                     <div className="EditUser-Modal-row">
                         <div className="EditUser-Modal-group">
-                            <label>ชื่อจริง:</label>
+                            <label>{t('userinfo.labels.firstName')}:</label>
                             <input
                                 className="EditUser-Modal-input"
                                 name="firstName"
@@ -61,7 +63,7 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
                             />
                         </div>
                         <div className="EditUser-Modal-group">
-                            <label>นามสกุล:</label>
+                            <label>{t('userinfo.labels.lastName')}:</label>
                             <input
                                 className="EditUser-Modal-input"
                                 name="lastName"
@@ -73,7 +75,7 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
                     </div>
 
                     <div className="EditUser-Modal-group">
-                        <label>อีเมล:</label>
+                        <label>{t('userinfo.labels.email')}:</label>
                         <input
                             className="EditUser-Modal-email"
                             type="email"
@@ -84,7 +86,7 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
                     </div>
 
                     <div className="EditUser-Modal-group">
-                        <label>บทบาท:</label>
+                        <label>{t('userManagement.table.role')}:</label>
                         <select
                             className="EditUser-Modal-select"
                             name="role"
@@ -102,10 +104,10 @@ const EditUserForm: React.FC<Props> = ({ loading, editingUser, availableRoles, o
 
                     <div className="EditUser-Modal-actions">
                         <button type="button" className="create-user-modal__btn create-user-modal__btn--secondary" onClick={onCancel}>
-                            ยกเลิก
+                            {t('userinfo.buttons.cancel')}
                         </button>
                         <button type="submit" className="create-user-modal__btn create-user-modal__btn--primary" disabled={loading}>
-                            {loading ? 'กำลังอัพเดทข้อมูล...' : 'อัปเดตผู้ใช้'}
+                            {loading ? t('common.loading') : t('userinfo.buttons.save')}
                         </button>
                     </div>
                 </form>

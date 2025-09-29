@@ -1,4 +1,5 @@
 import React from "react";
+import { useI18n } from "../../../../i18n";
 import DataTodayForm from "./DataTodayForm";
 import DataTodayPreview from "./DataTodayPreview";
 import { DataToday } from "../../../../types/DataToday";
@@ -42,6 +43,7 @@ export default function DataTodayModal({
     onSubmit,
     onCancel,
 }: DataTodayModalProps) {
+    const { t } = useI18n();
     if (!show) return null;
 
     return (
@@ -51,7 +53,7 @@ export default function DataTodayModal({
                 onClick={(e) => e.stopPropagation()}
             >
                 <h3 className="data-today-modal-title">
-                    {editing ? "แก้ไขรายการ" : "เพิ่มรายการใหม่"}
+                    {editing ? t('common.edit') : t('common.add')}
                 </h3>
 
                 <DataTodayForm

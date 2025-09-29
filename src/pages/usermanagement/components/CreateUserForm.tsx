@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useI18n } from "../../../i18n";
 import { UserRole } from "../../../types/User";
 import '../../../styles/pages/CreateUserModal.css';
 interface Props {
@@ -22,6 +23,7 @@ const CreateUserModal: React.FC<Props> = ({
     onCreate,
     onCancel,
 }) => {
+    const { t } = useI18n();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -54,11 +56,11 @@ const CreateUserModal: React.FC<Props> = ({
                 onClick={(e) => e.stopPropagation()}
             >
                 
-                <h3 className="create-user-modal__title">เพิ่มผู้ใช้ใหม่</h3>
+                <h3 className="create-user-modal__title">{t('userManagement.createUser')}</h3>
                 <form onSubmit={handleSubmit} className="create-user-modal__form">
                     <div className="create-user-modal__row">
                         <div className="create-user-modal__group">
-                            <label>ชื่อจริง:</label>
+                            <label>{t('userinfo.labels.firstName')}:</label>
                             <input
                                 name="firstName"
                                 value={formData.firstName}
@@ -67,7 +69,7 @@ const CreateUserModal: React.FC<Props> = ({
                             />
                         </div>
                         <div className="create-user-modal__group">
-                            <label>นามสกุล:</label>
+                            <label>{t('userinfo.labels.lastName')}:</label>
                             <input
                                 name="lastName"
                                 value={formData.lastName}
@@ -78,7 +80,7 @@ const CreateUserModal: React.FC<Props> = ({
                     </div>
 
                     <div className="create-user-modal__group">
-                        <label>อีเมล:</label>
+                        <label>{t('userinfo.labels.email')}:</label>
                         <input
                             type="email"
                             name="email"
@@ -89,7 +91,7 @@ const CreateUserModal: React.FC<Props> = ({
                     </div>
 
                     <div className="create-user-modal__group">
-                        <label>รหัสผ่าน:</label>
+                        <label>{t('userinfo.password.new')}:</label>
                         <input
                             type="password"
                             name="password"
@@ -106,14 +108,14 @@ const CreateUserModal: React.FC<Props> = ({
                             className="create-user-modal__btn create-user-modal__btn--secondary"
                             onClick={onCancel}
                         >
-                            ยกเลิก
+                            {t('userinfo.buttons.cancel')}
                         </button>
                         <button
                             type="submit"
                             className="create-user-modal__btn create-user-modal__btn--primary"
                             disabled={loading}
                         >
-                            {loading ? "กำลังเพิ่มผู้ใช้..." : "เพิ่มผู้ใช้"}
+                            {loading ? t('common.loading') : t('userManagement.createUser')}
                         </button>
                     </div>
                 </form>

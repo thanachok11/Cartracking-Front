@@ -12,8 +12,10 @@ import VehicleTailModal from "./vehicleTail/VehicleTailModal";
 import "../../styles/pages/VehiclePage.css";
 import { useNotification } from "../../hooks/useNotification";
 import NotificationToast from "../../components/common/NotificationToast";
+import { useI18n } from "../../i18n";
 
 const VehicleTailPage: React.FC = () => {
+    const { t } = useI18n();
     const [truckTails, setTruckTails] = useState<ITruckTail[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("all");
@@ -48,15 +50,15 @@ const VehicleTailPage: React.FC = () => {
         try {
             if (editingTruck) {
                 await updateTruckTail(editingTruck._id!, form);
-                showNotification("แก้ไขทะเบียนท้ายสำเร็จ! ✅", "success");
+                showNotification(`${t('common.save')} ✅`, "success");
             } else {
                 await createTruckTail(form);
-                showNotification("เพิ่มทะเบียนท้ายสำเร็จ! ✅", "success");
+                showNotification(`${t('vehicles.add.tail')} ✅`, "success");
             }
             await loadTruckTails();
             handleCloseModal();
         } catch (error) {
-            showNotification("เกิดข้อผิดพลาดในการบันทึกข้อมูล ❌", "error");
+            showNotification(`${t('common.noData')} ❌`, "error");
         } finally {
             setSubmitting(false);
         }
@@ -69,13 +71,13 @@ const VehicleTailPage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
+        if (window.confirm(`${t('common.delete')}?`)) {
             try {
                 await deleteTruckTail(id);
                 await loadTruckTails();
-                showNotification("ลบทะเบียนท้ายสำเร็จ! ✅", "success");
+                showNotification(`${t('common.delete')} ✅`, "success");
             } catch (error) {
-                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
+                showNotification(`${t('common.noData')} ❌`, "error");
             }
         }
     };

@@ -14,7 +14,6 @@ import {
     faBars,
     faTimes,
     faUserCog,
-    faFileAlt,
     faFileInvoice,
     faClipboardList,
 } from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +21,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { getUserPermissions, logoutUser } from "../../api/auth/auth";
 import { getRoleName, UserRole } from "../../types/User";
 import "../../styles/components/layout/Sidebar.css";
+import LanguageSwitcher from "../common/LanguageSwitcher";
+import { useI18n } from "../../i18n";
 
 // Define UserProfile type
 type UserProfile = {
@@ -44,6 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
     const userRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useI18n();
 
     // Check if device is mobile
     useEffect(() => {
@@ -165,21 +167,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
     const menuItems: Array<{
         path: string;
         icon: any;
-        label: string;
-        tooltip?: string;
+        labelKey: string;
+        tooltipKey?: string;
         minRole?: UserRole;
-        externalUrl?: string; // ✅ เพิ่ม field สำหรับ external link
+        externalUrl?: string; // ✅ external link
     }> = [
-            { path: "/dashboard", icon: faTachometerAlt, label: "แดชบอร์ด", tooltip: "Dashboard", minRole: UserRole.LEVEL_2 },
-            { path: "/map", icon: faMapMarkedAlt, label: "GPS รถบรรทุก", tooltip: "Map View", minRole: UserRole.LEVEL_2, externalUrl: "https://fleetweb-th.cartrack.com/" }, // ✅ external link
-            { path: "/track", icon: faBox, label: "GPS คอนเทนเนอร์", tooltip: "Track Containers", minRole: UserRole.LEVEL_2, externalUrl: "https://ucontainers.com.cn/login.php" }, // ✅ external link
-            { path: "/workorder", icon: faFileInvoice, label: "ใบสั่งงาน", tooltip: "Work Order", minRole: UserRole.LEVEL_2 }, 
-            { path: "/data-today", icon: faClipboardList, label: "เพิ่มงานและออกรายงาน", tooltip: "Data Today", minRole: UserRole.LEVEL_2 },
-            { path: "/drivers", icon: faUsers, label: "คนขับ", tooltip: "Drivers", minRole: UserRole.LEVEL_2 },
-            { path: "/vehicles", icon: faCar, label: "ทะเบียนหัว", tooltip: "Vehicles", minRole: UserRole.LEVEL_2 },
-            { path: "/vehiclestail", icon: faCar, label: "ทะเบียนท้าย", tooltip: "Vehicles_tail", minRole: UserRole.LEVEL_2 },
-            { path: "/containers", icon: faBox, label: "ตู้คอนเทนเนอร์", tooltip: "Container", minRole: UserRole.LEVEL_2 },
-            { path: "/management", icon: faUserCog, label: "การจัดการผู้ใช้", tooltip: "User Management", minRole: UserRole.LEVEL_3 },
+            { path: "/dashboard", icon: faTachometerAlt, labelKey: "nav.dashboard", tooltipKey: "nav.dashboard", minRole: UserRole.LEVEL_2 },
+            { path: "/map", icon: faMapMarkedAlt, labelKey: "nav.map", tooltipKey: "nav.map", minRole: UserRole.LEVEL_2, externalUrl: "https://fleetweb-th.cartrack.com/" },
+            { path: "/track", icon: faBox, labelKey: "nav.track", tooltipKey: "nav.track", minRole: UserRole.LEVEL_2, externalUrl: "https://ucontainers.com.cn/login.php" },
+            { path: "/workorder", icon: faFileInvoice, labelKey: "nav.workorder", tooltipKey: "nav.workorder", minRole: UserRole.LEVEL_2 }, 
+            { path: "/data-today", icon: faClipboardList, labelKey: "nav.dataToday", tooltipKey: "nav.dataToday", minRole: UserRole.LEVEL_2 },
+            { path: "/drivers", icon: faUsers, labelKey: "nav.drivers", tooltipKey: "nav.drivers", minRole: UserRole.LEVEL_2 },
+            { path: "/vehicles", icon: faCar, labelKey: "nav.vehicles", tooltipKey: "nav.vehicles", minRole: UserRole.LEVEL_2 },
+            { path: "/vehiclestail", icon: faCar, labelKey: "nav.vehiclesTail", tooltipKey: "nav.vehiclesTail", minRole: UserRole.LEVEL_2 },
+            { path: "/containers", icon: faBox, labelKey: "nav.containers", tooltipKey: "nav.containers", minRole: UserRole.LEVEL_2 },
+            { path: "/management", icon: faUserCog, labelKey: "nav.management", tooltipKey: "nav.management", minRole: UserRole.LEVEL_3 },
         ];
 
     // Role ของ user ตอนนี้
@@ -215,6 +217,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     </div>
                 </div>
 
+                <div style={{ padding: '0 12px', marginBottom: 8 }}>
+                    <LanguageSwitcher />
+                </div>
+
                 {/* Menu */}
                 <nav className="sidebar-menu">
                     {(() => {
@@ -244,7 +250,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                                     ? "active sidebar-link"
                                     : "sidebar-link"
                             }
-                            data-tooltip={item.tooltip}
+                            data-tooltip={t(item.tooltipKey || item.labelKey)}
                             style={{
                                 textAlign: "left",
                                 display: "flex",
@@ -253,7 +259,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                         >
                             <FontAwesomeIcon icon={item.icon} />
                             {(isSidebarOpen || isMobile) && (
-                                <span>{item.label}</span>
+                                <span>{t(item.labelKey)}</span>
                             )}
                         </button>
                     ))}
@@ -291,10 +297,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                         {userDropdown && (isSidebarOpen || isMobile) && (
                             <div className="user-dropdown-menu">
                                 <button onClick={() => navigate("/settings")}>
-                                    <FontAwesomeIcon icon={faCog} /> Settings
+                                    <FontAwesomeIcon icon={faCog} /> {t('common.settings')}
                                 </button>
                                 <button onClick={handleLogout}>
-                                    <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> {t('common.logout')}
                                 </button>
                             </div>
                         )}

@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { DataToday } from "../../../../types/DataToday";
 import { fetchWorkOrderByNumber } from "../../../../api/components/orderApi";
+import { useI18n } from "../../../../i18n";
 
 interface DataTodayFormProps {
     editing: Partial<DataToday> | null;
@@ -33,6 +34,7 @@ export default function DataTodayForm({
     onSubmit,
     onCancel,
 }: DataTodayFormProps) {
+    const { t } = useI18n();
     const [loading, setLoading] = React.useState(false);
     const [validationStates, setValidationStates] = React.useState({
         booking_id: { isValid: true, checking: false },
@@ -244,13 +246,13 @@ export default function DataTodayForm({
     return (
         <form className="data-today-modal-form" onSubmit={onSubmit}>
             <div className="data-today-modal-row">
-                <label>เลขใบสั่งงาน</label>
+                <label>{t('datatoday.table.booking')}</label>
                 <div style={{ position: 'relative' }}>
                     <input
                         list="workorder-list"
                         value={(form as any).booking_id || ""}
                         onChange={(e) => handleWorkOrderChange(e.target.value)}
-                        placeholder="LL99-99-999"
+                        placeholder={t('workorder.form.number.placeholder')}
                         maxLength={11}
                         style={{
                             borderColor: validationStates.booking_id.checking 
@@ -270,7 +272,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: loading ? '#666' : '#f59e0b'
                         }}>
-                            {loading ? 'กำลังค้นหา...' : 'ตรวจสอบ...'}
+                            {t('common.loading')}
                         </div>
                     )}
                     {!validationStates.booking_id.checking && 
@@ -285,7 +287,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#ef4444'
                         }}>
-                            ไม่พบข้อมูล
+                            {t('common.noData')}
                         </div>
                     )}
                     <datalist id="workorder-list">
@@ -297,7 +299,7 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>วันที่</label>
+                <label>{t('datatoday.table.date')}</label>
                 <input
                     type="date"
                     value={form.datetime_in || ""}
@@ -307,7 +309,7 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>คนขับ</label>
+                <label>{t('datatoday.table.driver')}</label>
                 <input
                     list="driver-list"
                     value={form.driver_name || ""}
@@ -322,13 +324,13 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>ทะเบียนหัว</label>
+                <label>{t('workorder.table.headPlate')}</label>
                 <div style={{ position: 'relative' }}>
                     <input
                         list="truck-head-list"
                         value={form.head_registration || ""}
                         onChange={(e) => handleHeadRegistrationChange(e.target.value)}
-                        placeholder="000-0000"
+                        placeholder={t('workorder.form.headPlate.placeholder')}
                         maxLength={8}
                         style={{
                             borderColor: validationStates.head_registration.checking 
@@ -348,7 +350,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#f59e0b'
                         }}>
-                            ตรวจสอบ...
+                            {t('common.loading')}
                         </div>
                     )}
                     {!validationStates.head_registration.checking && 
@@ -362,7 +364,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#ef4444'
                         }}>
-                            ไม่พบข้อมูล
+                            {t('common.noData')}
                         </div>
                     )}
                     <datalist id="truck-head-list">
@@ -374,13 +376,13 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>ทะเบียนหาง</label>
+                <label>{t('workorder.table.tailPlate')}</label>
                 <div style={{ position: 'relative' }}>
                     <input
                         list="truck-tail-list"
                         value={form.tail_registration || ""}
                         onChange={(e) => handleTailRegistrationChange(e.target.value)}
-                        placeholder="000-0000"
+                        placeholder={t('workorder.form.tailPlate.placeholder')}
                         maxLength={8}
                         style={{
                             borderColor: validationStates.tail_registration.checking 
@@ -400,7 +402,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#f59e0b'
                         }}>
-                            ตรวจสอบ...
+                            {t('common.loading')}
                         </div>
                     )}
                     {!validationStates.tail_registration.checking && 
@@ -414,7 +416,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#ef4444'
                         }}>
-                            ไม่พบข้อมูล
+                            {t('common.noData')}
                         </div>
                     )}
                     <datalist id="truck-tail-list">
@@ -426,13 +428,13 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>หมายเลขตู้</label>
+                <label>{t('datatoday.table.container')}</label>
                 <div style={{ position: 'relative' }}>
                     <input
                         list="container-list"
                         value={form.container_no || ""}
                         onChange={(e) => handleContainerNumberChange(e.target.value)}
-                        placeholder="XXXX-0000000"
+                        placeholder={t('workorder.form.containerNumber.placeholder')}
                         maxLength={12}
                         style={{
                             borderColor: validationStates.container_no.checking 
@@ -452,7 +454,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#f59e0b'
                         }}>
-                            ตรวจสอบ...
+                            {t('common.loading')}
                         </div>
                     )}
                     {!validationStates.container_no.checking && 
@@ -466,7 +468,7 @@ export default function DataTodayForm({
                             fontSize: '12px',
                             color: '#ef4444'
                         }}>
-                            ไม่พบข้อมูล
+                            {t('common.noData')}
                         </div>
                     )}
                     <datalist id="container-list">
@@ -478,24 +480,24 @@ export default function DataTodayForm({
             </div>
 
             <div className="data-today-modal-row">
-                <label>ตำแหน่ง</label>
+                <label>{t('datatoday.table.station')}</label>
                 <input
                     type="text"
                     value={form.station_in}
                     onChange={(e) => onChange("station_in", e.target.value)}
-                    placeholder="ตำแหน่งคนขับรถ"
+                    placeholder={t('common.searchPlaceholder')}
                     required
                 />
             </div>
 
             <div className="data-today-modal-row">
-                <label>บริษัท</label>
+                <label>{t('datatoday.table.company')}</label>
                 <select
                     value={form.companyname || ""}
                     onChange={(e) => onChange("companyname", e.target.value)}
                     required
                 >
-                    <option value="">เลือกบริษัท</option>
+                    <option value="">{t('workorder.form.companyName.placeholder')}</option>
                     <option value="ป๋อเฉิน">ป๋อเฉิน</option>
                     <option value="รถร่วม">รถร่วม</option>
                 </select>
@@ -504,7 +506,7 @@ export default function DataTodayForm({
             
 
             <div className="data-today-modal-row">
-                <label>รูปใบสั่งงาน</label>
+                <label>{t('datatoday.table.bookingImage')}</label>
                 <input
                     type="file"
                     accept="image/*,application/pdf"
@@ -515,7 +517,7 @@ export default function DataTodayForm({
                 />
                 {(form as any).booking_image && typeof (form as any).booking_image === "string" && (
                     <button type="button" className="data-today-modal-link" onClick={() => openPreviewFromUrl((form as any).booking_image)}>
-                        ดูภาพที่แนบ
+                        {t('datatoday.table.viewDocument')}
                     </button>
                 )}
                 {(form as any).booking_image && (form as any).booking_image instanceof File && (
@@ -530,10 +532,10 @@ export default function DataTodayForm({
 
             <div className="data-today-modal-actions">
                 <button type="button" className="data-today-modal-btn-cancel" onClick={onCancel}>
-                    ยกเลิก
+                    {t('common.cancel')}
                 </button>
                 <button className="data-today-modal-btn-submit" type="submit" disabled={submitting}>
-                    {submitting ? "กำลังบันทึก..." : editing ? "บันทึกการแก้ไข" : "เพิ่มรายการ"}
+                    {submitting ? t('common.loading') : editing ? t('common.save') : t('datatoday.filters.addNew')}
                 </button>
             </div>
         </form>

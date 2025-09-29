@@ -3,6 +3,7 @@ import { sendContactMessage } from "../../api/components/contactApi";
 import PolicyModal from "./PolicyModal";
 
 import "../../styles/pages/LandingPage.css";
+import { useI18n } from "../../i18n";
 
 // ✅ Custom Hook ถูกต้องแล้ว
 function useInView(threshold = 0.2) {
@@ -41,6 +42,7 @@ const miniGallery = [
 ];
 
 const Home: React.FC = () => {
+    const { t } = useI18n();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [heroRef, heroVisible] = useInView();
     const [serviceRef, serviceVisible] = useInView();
@@ -83,10 +85,10 @@ const Home: React.FC = () => {
 
         try {
             await sendContactMessage(formData);
-            setSuccess("Message sent successfully! We'll contact you soon.");
+            setSuccess(t('landing.contact.success'));
             setFormData({ name: "", email: "", message: "" });
         } catch (err: any) {
-            setError("Failed to send message. Please try again later.");
+            setError(t('landing.contact.error'));
         } finally {
             setLoading(false);
         }
@@ -107,10 +109,11 @@ const Home: React.FC = () => {
                 </div>
             </section>
             <div className="homepage-hero-content">
-                <h1>Welcome to PORCHOEN 2014 COMPANY LIMITED</h1>
+                <h1>{t('landing.companyName')}</h1>
                 <h2>
-                    We specialize in container transportation services across Thailand, ensuring secure, efficient, and on-time delivery with professional logistics solutions tailored to your needs.
+                    {t('landing.subtitle')} 
                 </h2>
+                <br />
             </div>
 
             {/* ✅ Slideshow */}
@@ -146,27 +149,27 @@ const Home: React.FC = () => {
                 </div>
             </section>
 
-            {/* ✅ Services */}
+            {/* ✅ Company Capabilities */}
             <section
                 ref={serviceRef}
                 className={`homepage-section fade-in-section ${serviceVisible ? 'visible' : ''}`}
             >
-                <h2 className="homepage-section-title">Our Services</h2>
+                <h2 className="homepage-section-title">{t('landing.capabilities')}</h2>
                 <div className="homepage-card-grid">
                     <div className="homepage-service-card">
-                        <div className="homepage-icon">🚚</div>
-                        <h3>Nationwide Container Delivery</h3>
-                        <p>On-time and reliable delivery of containers to every region.</p>
+                        <div className="homepage-icon">🚛</div>
+                        <h3>{t('landing.cap.headTruck')}</h3>
+                        <p>{t('landing.cap.headTruck.desc')}</p>
                     </div>
                     <div className="homepage-service-card">
-                        <div className="homepage-icon">📍</div>
-                        <h3>Real-Time Cargo Tracking</h3>
-                        <p>Monitor your shipments live from dispatch to destination.</p>
+                        <div className="homepage-icon">📦</div>
+                        <h3>{t('landing.cap.coldContainer')}</h3>
+                        <p>{t('landing.cap.coldContainer.desc')}</p>
                     </div>
                     <div className="homepage-service-card">
-                        <div className="homepage-icon">🛡️</div>
-                        <h3>Secure & Safe Handling</h3>
-                        <p>Rigorous security standards to protect your goods at all times.</p>
+                        <div className="homepage-icon">🏢</div>
+                        <h3>{t('landing.cap.yard')}</h3>
+                        <p>{t('landing.cap.yard.desc')}</p>
                     </div>
 
                     {/* Mini Gallery */}
@@ -182,17 +185,54 @@ const Home: React.FC = () => {
                 </div>
             </section>
 
+            {/* ✅ Services */}
+            <section className="homepage-section" style={{ marginTop: '-50px' }}>
+                <h2 className="homepage-section-title">{t('landing.services')}</h2>
+                <div className="homepage-card-grid">
+                    <div className="homepage-service-card">
+                        <div className="homepage-icon">🌍</div>
+                        <h3>{t('landing.service.importExport')}</h3>
+                        <p>{t('landing.service.importExport.desc')}</p>
+                    </div>
+                    <div className="homepage-service-card">
+                        <div className="homepage-icon">🚚</div>
+                        <h3>{t('landing.service.crossBorder')}</h3>
+                        <p>{t('landing.service.crossBorder.desc')}</p>
+                    </div>
+                    <div className="homepage-service-card">
+                        <div className="homepage-icon">🥬</div>
+                        <h3>{t('landing.service.fresh')}</h3>
+                        <p>{t('landing.service.fresh.desc')}</p>
+                    </div>
+                    <div className="homepage-service-card">
+                        <div className="homepage-icon">📋</div>
+                        <h3>{t('landing.service.logistics')}</h3>
+                        <p>{t('landing.service.logistics.desc')}</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* ✅ Company Mission */}
+            <section className="homepage-section" style={{ backgroundColor: '#f8fafc', marginBottom: '100px' }}>
+                <h2 className="homepage-section-title">{t('landing.mission')}</h2>
+                <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+                    <p style={{ fontSize: '1.2rem', lineHeight: '1.8', color: '#475569' }}>
+                        "{t('landing.mission.quote')}"
+                    </p>
+                </div>
+            </section>
+
             {/* ✅ Contact */}
             <section
                 ref={contactRef}
                 className={`homepage-section contact-section fade-in-section ${contactVisible ? 'visible' : ''}`}
             >
-                <h2 className="homepage-section-title">Contact Us</h2>
+                <h2 className="homepage-section-title">{t('landing.contact')}</h2>
                 <form className="contact-form" onSubmit={handleSubmit}>
                     <input
                         type="text"
                         name="name"
-                        placeholder="Your Name"
+                        placeholder={t('landing.contact.name')}
                         value={formData.name}
                         onChange={handleChange}
                         required
@@ -200,7 +240,7 @@ const Home: React.FC = () => {
                     <input
                         type="email"
                         name="email"
-                        placeholder="Your Email"
+                        placeholder={t('landing.contact.email')}
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -208,32 +248,32 @@ const Home: React.FC = () => {
                     <textarea
                         name="message"
                         rows={5}
-                        placeholder="Your Message..."
+                        placeholder={t('landing.contact.message')}
                         value={formData.message}
                         onChange={handleChange}
                         required
                     />
                     <button type="submit" disabled={loading}>
-                        {loading ? "Sending..." : "Send Message"}
+                        {loading ? t('landing.contact.sending') : t('landing.contact.submit')}
                     </button>
                     {success && <p className="success-message">{success}</p>}
                     {error && <p className="error-message">{error}</p>}
                 </form>
 
                 <div className="contact-channels">
-                    <h3>Other Ways to Reach Us</h3>
+                    <h3>{t('landing.contact.other')}</h3>
                     <ul>
                         <li><strong>Email:</strong> <a href="mailto:porchoen2014@gmail.com">porchoen2014@gmail.com</a></li>
                         <li><strong>LINE:</strong> <span>@porchoen2014</span></li>
                         <li><strong>WeChat:</strong> <span>porchoen2014</span></li>
                         <li>
-                            <strong>Location:</strong>{' '}
+                            <strong>{t('landing.contact.address')}:</strong>{' '}
                             <a
                                 href="https://maps.app.goo.gl/zAmb4MCx7rUvTZqz7"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                PORCHOEN 2014 COMPANY LIMITED, 101, ต.เวียง อ.เชียงแสน จ.เชียงราย
+                                61/36-37 ซอยทวีมิตร 6 ถนนพระราม9 ห้วยขวาง เขตห้วยขวาง กรุงเทพมหานคร 10310 ประเทศไทย
                             </a>
                         </li>
                     </ul>
@@ -242,24 +282,24 @@ const Home: React.FC = () => {
 
             <footer className="homepage-footer">
                 <div className="footer-links" style={{ textAlign: "center", marginTop: "3rem" }}>
-                    <span onClick={() => setShowPolicy(true)} className="footer-link">Privacy Policy</span> |
-                    <span onClick={() => setShowTerms(true)} className="footer-link">Terms of Service</span>
+                    <span onClick={() => setShowPolicy(true)} className="footer-link">{t('landing.privacy')}</span> |
+                    <span onClick={() => setShowTerms(true)} className="footer-link">{t('landing.terms')}</span>
 
                     {/* Modals */}
                     <PolicyModal
                         isVisible={showPolicy}
                         onClose={() => setShowPolicy(false)}
-                        title="Privacy Policy"
+                        title={t('landing.privacy') as any}
                     />
 
                     <PolicyModal
                         isVisible={showTerms}
                         onClose={() => setShowTerms(false)}
-                        title="Terms of Service"
+                        title={t('landing.terms') as any}
                     />
 
                 </div>
-                <p>© PORCHOEN 2014 COMPANY LIMITED.</p>
+                <p>{t('landing.copyright')}</p>
             </footer>
         </div>
     );

@@ -5,6 +5,8 @@ import { faSignInAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import LoginPageModal from "../auth/LoginPageModal";
 import RegisterPageModal from "../auth/RegisterPageModal";
 import "../../styles/components/layout/Header.css";
+import LanguageSwitcher from "../common/LanguageSwitcher";
+import { useI18n } from "../../i18n";
 
 interface NavbarProps {
     isSidebarOpen: boolean;
@@ -15,6 +17,7 @@ const Header: React.FC<NavbarProps> = ({ isSidebarOpen = false }) => {
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false); // Toggle state
+    const { t } = useI18n();
 
     return (
         <>
@@ -23,17 +26,21 @@ const Header: React.FC<NavbarProps> = ({ isSidebarOpen = false }) => {
                 <div className="navbar-content">
                     {/* Logo */}
                     <div className={`iconName ${isSidebarOpen ? "shifted" : ""}`}>
-                        PORCHOEN 2014 COMPANY LIMITED
+                        {t('header.companyName')}
                     </div>
 
-                    {/* Hamburger Toggle */}
-                    <div
-                        className={`hamburger ${isMenuOpen ? "active" : ""}`}
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >
-                        <span className="bar"></span>
-                        <span className="bar"></span>
-                        <span className="bar"></span>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <LanguageSwitcher />
+                        {/* Hamburger Toggle */}
+                        <div
+                            className={`hamburger ${isMenuOpen ? "active" : ""}`}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            style={{ marginLeft: 12 }}
+                        >
+                            <span className="bar"></span>
+                            <span className="bar"></span>
+                            <span className="bar"></span>
+                        </div>
                     </div>
 
                     {isMenuOpen && (
@@ -42,13 +49,13 @@ const Header: React.FC<NavbarProps> = ({ isSidebarOpen = false }) => {
                                 onClick={() => setIsLoginModalVisible(true)}
                                 className="login-button-header"
                             >
-                                <FontAwesomeIcon icon={faSignInAlt} /> เข้าสู่ระบบ
+                                <FontAwesomeIcon icon={faSignInAlt} /> {t('header.signIn')}
                             </button>
                             <button
                                 onClick={() => setIsRegisterModalVisible(true)}
                                 className="register-button-header"
                             >
-                                <FontAwesomeIcon icon={faUserPlus} /> สมัครสมาชิก
+                                <FontAwesomeIcon icon={faUserPlus} /> {t('header.signUp')}
                             </button>
                         </div>
                     )}

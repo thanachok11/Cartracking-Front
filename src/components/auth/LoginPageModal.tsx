@@ -4,6 +4,7 @@ import { loginUser, saveToken } from "../../api/auth/auth";
 import "../../styles/components/auth/LoginPageModal.css";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useI18n } from "../../i18n";
 
 interface LoginProps {
     isVisible: boolean;
@@ -21,6 +22,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useI18n();
 
     if (!isVisible) return null;
 
@@ -57,12 +59,12 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
             console.log('🔍 Login redirect path:', redirectPath);
             navigate(redirectPath, { replace: true });
 
-            setSuccessMessage("Login Success!");
+            setSuccessMessage(t('auth.login.success'));
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
         } catch (err: any) {
-            setError(err.message || "Error logging in. Please try again.");
+            setError(err.message || t('auth.login.error'));
         }
     };
 
@@ -86,11 +88,11 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
                 <div className={`login-modal ${isClosing ? 'slide-out' : 'slide-in'}`}>
                     <button onClick={handleClose} className="login-close-button">×</button>
                     <form onSubmit={handleLogin} className="login-form">
-                        <h2 className="login-title">เข้าสู่ระบบ</h2>
+                        <h2 className="login-title">{t('auth.login.title')}</h2>
                         <input
                             type="email"
                             name="email"
-                            placeholder="Email"
+                            placeholder={t('auth.login.email')}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="login-input"
@@ -99,7 +101,7 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
                             <input
                                 type={showPassword ? "text" : "password"} // สลับ type
                                 name="password"
-                                placeholder="Password"
+                                placeholder={t('auth.login.password')}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="login-input"
@@ -120,17 +122,17 @@ const Login: React.FC<LoginProps> = ({ isVisible, onClose }) => {
                                 onChange={() => setRememberMe(!rememberMe)}
                             />
                             <label htmlFor="rememberMe" className="login-label">
-                                Remember me
+                                {t('auth.login.remember')}
                             </label>
                         </div>
 
-                        <button type="submit" className="login-button">Login</button>
+                        <button type="submit" className="login-button">{t('auth.login.submit')}</button>
 
                         <p
                             className="login-forgot"
                             onClick={handleForgotPassword}
                         >
-                            Forgot Password?
+                            {t('auth.login.forgot')}
                         </p>
 
                         {error && <p className="login-error">{error}</p>}

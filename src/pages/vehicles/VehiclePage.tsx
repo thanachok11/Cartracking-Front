@@ -12,8 +12,10 @@ import VehicleGrid from "./vehicleHead/VehicleGrid";
 import VehicleModal from "./vehicleHead/VehicleModal";
 import { useNotification } from "../../hooks/useNotification";
 import NotificationToast from "../../components/common/NotificationToast";
+import { useI18n } from "../../i18n";
 
 const VehiclePage: React.FC = () => {
+    const { t } = useI18n();
     const [truckHeads, setTruckHeads] = useState<ITruckHead[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("all");
@@ -37,7 +39,7 @@ const VehiclePage: React.FC = () => {
             }));
             setTruckHeads(normalized);
         } catch (e) {
-            setError("ไม่สามารถโหลดข้อมูลได้");
+            setError(t('common.noData'));
         } finally {
             setLoading(false);
         }
@@ -63,17 +65,17 @@ const VehiclePage: React.FC = () => {
         try {
             if (editingTruck) {
                 await updateTruckHead(editingTruck._id!, form);
-                showNotification("แก้ไขทะเบียนหัวสำเร็จ! ✅", "success");
+                showNotification(`${t('common.save')} ✅`, "success");
             } else {
                 await createTruckHead(form);
-                showNotification("เพิ่มทะเบียนหัวสำเร็จ! ✅", "success");
+                showNotification(`${t('vehicles.add.head')} ✅`, "success");
             }
             await loadTruckHeads();
             setShowModal(false);
             setForm({ licensePlate: "", companyName: "" });
             setEditingTruck(null);
         } catch (error) {
-            showNotification("เกิดข้อผิดพลาดในการบันทึกข้อมูล ❌", "error");
+            showNotification(`${t('common.noData')} ❌`, "error");
         } finally {
             setSubmitting(false);
         }
@@ -86,13 +88,13 @@ const VehiclePage: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm("คุณต้องการลบข้อมูลนี้หรือไม่?")) {
+        if (window.confirm(`${t('common.delete')}?`)) {
             try {
                 await deleteTruckHead(id);
                 await loadTruckHeads();
-                showNotification("ลบทะเบียนหัวสำเร็จ! ✅", "success");
+                showNotification(`${t('common.delete')} ✅`, "success");
             } catch (error) {
-                showNotification("เกิดข้อผิดพลาดในการลบข้อมูล ❌", "error");
+                showNotification(`${t('common.noData')} ❌`, "error");
             }
         }
     };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Containers } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useI18n } from "../../../i18n";
 
 interface Props {
     items: Containers[];
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
+    const { t } = useI18n();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,8 +23,8 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
     if (!items.length) {
         return (
             <div className="grid-container-page-no-results">
-                <h3>ไม่พบข้อมูลตู้คอนเทนเนอร์</h3>
-                <p>ลองเปลี่ยนคำค้นหาหรือเลือกบริษัทใหม่</p>
+                <h3>{t('containers.noData.title')}</h3>
+                <p>{t('containers.noData.subtitle')}</p>
             </div>
         );
     }
@@ -32,7 +34,6 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
             {/* ตัวเลือกจำนวนที่แสดง */}
             <div className="grid-container-page-controls">
                 <label>
-                    แสดง&nbsp;
                     <select
                         value={itemsPerPage}
                         onChange={(e) => {
@@ -45,7 +46,7 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
                         <option value={30}>30</option>
                         <option value={40}>40</option>
                     </select>
-                    &nbsp;รายการต่อหน้า
+                    &nbsp;{t('common.itemsPerPage')}
                 </label>
             </div>
 
@@ -55,25 +56,31 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
                     <div key={c._id} className="grid-container-page-card">
                         <h3>{c.containerNumber || "N/A"}</h3>
                         <p>
-                            <strong>บริษัท:</strong> {c.companyName || "N/A"}
+                            <strong>{t('containers.form.companyName')}:</strong> {
+                                c.companyName === 'ป๋อเฉิน' 
+                                    ? t('containers.company.porchoen')
+                                    : c.companyName === 'บริษัทร่วม' 
+                                        ? t('containers.company.rotruam')
+                                        : c.companyName || "N/A"
+                            }
                         </p>
                         <p>
-                            <strong>ขนาด:</strong> {c.containerSize || "N/A"}
+                            <strong>{t('containers.form.size')}:</strong> {c.containerSize || "N/A"}
                         </p>
-                        <div className="grid-container-page-id">ID: {c._id}</div>
+                        {/* <div className="grid-container-page-id">ID: {c._id}</div> */}
 
                         <div className="card-actions">
                             <button
                                 className="edit-btn"
                                 onClick={() => onEdit(c)}
-                                title="แก้ไข"
+                                title={t('common.edit')}
                             >
                                 <FontAwesomeIcon icon={faEdit} />
                             </button>
                             <button
                                 className="delete-btn"
                                 onClick={() => c._id && onDelete(c._id)}
-                                title="ลบ"
+                                title={t('common.delete')}
                             >
                                 <FontAwesomeIcon icon={faTrash} />
                             </button>
@@ -89,16 +96,16 @@ export default function ContainerGrid({ items, onEdit, onDelete }: Props) {
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage((prev) => prev - 1)}
                     >
-                        ◀ ก่อนหน้า
+                        ◀ {t('common.previous')}
                     </button>
                     <span>
-                        หน้า {currentPage} จาก {totalPages}
+                        {t('datatoday.pagination.page', { current: String(currentPage), total: String(totalPages) })}
                     </span>
                     <button
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage((prev) => prev + 1)}
                     >
-                        ถัดไป ▶
+                        {t('common.next')} ▶
                     </button>
                 </div>
             )}

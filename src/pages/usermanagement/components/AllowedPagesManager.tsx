@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from "../../../i18n";
 
 import AllowedPagesModal from "./AllowedPagesModal"; // import modal
 import "../../../styles/pages/AllowedModal.css"
@@ -17,6 +18,7 @@ interface User {
 }
 
 const AllowedPagesManager: React.FC = () => {
+    const { t } = useI18n();
     const [users, setUsers] = useState<User[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -33,38 +35,38 @@ const AllowedPagesManager: React.FC = () => {
     }, [token, isModalOpen]);
 
     const roleLabels: { [key: string]: string } = {
-        "user": "ผู้ใช้งานทั่วไป",
-        "manager": "ผู้จัดการ",
-        "admin": "ผู้ดูแลระบบ",
+        "user": t('roles.user'),
+        "manager": t('roles.manager'),
+        "admin": t('roles.admin'),
     };
 
     const pageLabels: { [key: string]: string } = {
-        "/dashboard": "แดชบอร์ด",
-        "/map": "GPS รถบรรทุก",
-        "/track": "GPS คอนเทนเนอร์",
-        "/data-today": "เพิ่มงานและออกรายงาน",
-        "/drivers": "คนขับ",
-        "/vehicles": "ทะเบียนหัว",
-        "/vehiclestail": "ทะเบียนท้าย",
-        "/containers": "ตู้คอนเทนเนอร์",
-        "/management": "การจัดการผู้ใช้",
-        "/settings": "การตั้งค่า",
-        "/workorder": "ใบสั่งงาน",
+        "/dashboard": t('nav.dashboard'),
+        "/map": t('nav.map'),
+        "/track": t('nav.track'),
+        "/data-today": t('nav.dataToday'),
+        "/drivers": t('nav.drivers'),
+        "/vehicles": t('nav.vehicles'),
+        "/vehiclestail": t('nav.vehiclesTail'),
+        "/containers": t('nav.containers'),
+        "/management": t('nav.management'),
+        "/settings": t('nav.settings'),
+        "/workorder": t('nav.workorder'),
     };
 
     return (
         <div className="allowed-pages-manager-page">
-            <h2 className="apm-title">จัดการสิทธิ์ผู้ใช้</h2>
-            <button className="back-btn" onClick={() => navigate(-1)}>⬅ ย้อนกลับ</button>
+            <h2 className="apm-title">{t('allowedPages.title')}</h2>
+            <button className="back-btn" onClick={() => navigate(-1)}>{t('allowedPages.back')}</button>
 
             <table className="apm-user-table">
                 <thead>
                     <tr>
-                        <th>ชื่อ</th>
-                        <th>Email</th>
-                        <th>บทบาท</th>
-                        <th>สิทธิ์เข้าถึงหน้า</th>
-                        <th>จัดการ</th>
+                        <th>{t('allowedPages.table.name')}</th>
+                        <th>{t('allowedPages.table.email')}</th>
+                        <th>{t('allowedPages.table.role')}</th>
+                        <th>{t('allowedPages.table.pages')}</th>
+                        <th>{t('allowedPages.table.actions')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,7 +86,7 @@ const AllowedPagesManager: React.FC = () => {
                                                 {pageLabels[`/${page}`] || page}
                                             </span>
                                         ))
-                                        : "ไม่มีสิทธ์เข้าถึงหน้าอื่นๆ"
+                                        : t('allowedPages.noPages')
                                     }
                                 </td>
 
@@ -96,7 +98,7 @@ const AllowedPagesManager: React.FC = () => {
                                             setIsModalOpen(true);
                                         }}
                                     >
-                                        แก้ไขสิทธิ์
+                                        {t('allowedPages.edit')}
                                     </button>
                                 </td>
                             </tr>
