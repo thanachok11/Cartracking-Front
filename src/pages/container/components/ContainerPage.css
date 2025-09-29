@@ -268,14 +268,19 @@
 .container-header-page-bottom {
     display: flex;
     gap: 12px;
-    margin-top: 14px;
+    align-items: center;
+    margin-top: 12px;
 }
 
 .container-header-page-search-input {
-    padding: 12px 32px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.9rem;
+    padding: 10px 14px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 280px;
+    max-width: 400px;
+    background-color: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .container-header-page-search-input:focus {
@@ -285,11 +290,12 @@
 }
 
 .container-header-page-filter-select {
-    padding: 12px 16px;
-    border: 2px solid #e2e8f0;
+    padding: 10px 14px;
+    border: 2px solid #d1d5db;
     border-radius: 8px;
-    font-size: 1rem;
-    min-width: 150px;
+    font-size: 0.95rem;
+    min-width: 140px;
+    max-width: 180px;
     background-color: white;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -298,4 +304,24 @@
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Responsive สำหรับ container header */
+@media (max-width: 768px) {
+    .container-header-page-bottom {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .container-header-page-search-input {
+        width: 100%;
+        max-width: none;
+    }
+
+    .container-header-page-filter-select {
+        width: 100%;
+        min-width: auto;
+        max-width: none;
+    }
 }

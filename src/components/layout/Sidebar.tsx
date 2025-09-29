@@ -202,26 +202,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
                     <div className="sidebar-title">
                         {(isSidebarOpen || isMobile) && "Car Tracking"}
                     </div>
-                    <div className="sidebar-toggle" onClick={toggleSidebar}>
-                        <FontAwesomeIcon
-                            icon={
-                                isMobile
-                                    ? isSidebarOpen
-                                        ? faTimes
-                                        : faBars
-                                    : isSidebarOpen
-                                        ? faChevronLeft
-                                        : faChevronRight
-                            }
-                        />
-                    </div>
+                <div className="sidebar-toggle" onClick={toggleSidebar}>
+                    <FontAwesomeIcon
+                        icon={
+                            isMobile
+                                ? isSidebarOpen
+                                    ? faTimes
+                                    : faBars
+                                : isSidebarOpen
+                                    ? faChevronLeft
+                                    : faChevronRight
+                        }
+                    />
                 </div>
+            </div>
 
+            {/* Language Switcher - แสดงเฉพาะเมื่อ sidebar เปิด หรืออยู่ในมือถือ */}
+            {(isSidebarOpen || isMobile) && (
                 <div style={{ padding: '0 12px', marginBottom: 8 }}>
                     <LanguageSwitcher />
                 </div>
-
-                {/* Menu */}
+            )}                {/* Menu */}
                 <nav className="sidebar-menu">
                     {(() => {
                         const allowedFiltered = menuItems.filter((item) =>

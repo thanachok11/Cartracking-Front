@@ -13,11 +13,13 @@
 .workorder-modal {
     background: #fff;
     border-radius: 16px;
-    width: 900px;
-    max-width: 95%;
-    padding: 24px;
+    width: 600px;
+    max-width: 90%;
+    padding: 20px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
     animation: slideUp 0.3s ease;
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .workorder-modal h3 {
@@ -34,8 +36,8 @@
 /* Layout: 2 columns */
 .workorder-form-grid {
     display: flex;
-    gap: 24px;
-    margin-bottom: 16px;
+    gap: 16px;
+    margin-bottom: 12px;
 }
 
 .workorder-form-left,
@@ -43,7 +45,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 /* Row style */
@@ -80,15 +82,15 @@
 /* Full width row */
 /* Full width row */
 .workorder-form-full {
-    margin-top: 10px;
+    margin-top: 8px;
     width: 100%;
 }
 
 .workorder-form-full textarea {
     width: 100%;
-    min-height: 200px;
-    line-height: 1.5;
-
+    min-height: 120px;
+    line-height: 1.4;
+    resize: vertical;
 }
 
 /* เอฟเฟกต์เวลาโฟกัส */
@@ -102,8 +104,8 @@
 .workorder-modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 16px;
 }
 
 .workorder-modal-actions button {
@@ -205,5 +207,117 @@
     to {
         transform: translateY(0);
         opacity: 1;
+    }
+}
+
+/* -------------------------
+   Responsive Design
+------------------------- */
+/* Desktop ใหญ่ */
+@media (min-width: 1400px) {
+    .workorder-modal {
+        width: 700px;
+    }
+}
+
+/* Desktop ขนาดกลาง */
+@media (max-width: 1399px) and (min-width: 1200px) {
+    .workorder-modal {
+        width: 600px;
+        padding: 20px;
+    }
+}
+
+/* Notebook ขนาดกลาง (1366x768, 15-16") */
+@media (max-width: 1199px) and (min-width: 1025px) {
+    .workorder-modal {
+        width: 550px;
+        padding: 18px;
+    }
+
+    .workorder-form-grid {
+        gap: 14px;
+    }
+}
+
+/* Tablet และ Notebook ขนาดเล็ก (13-14") */
+@media (max-width: 1024px) {
+    .workorder-modal {
+        width: 500px;
+        padding: 16px;
+        max-height: 90vh;
+    }
+
+    .workorder-form-grid {
+        gap: 12px;
+    }
+
+    .workorder-form-left,
+    .workorder-form-right {
+        gap: 10px;
+    }
+
+    .workorder-form-full textarea {
+        min-height: 100px;
+    }
+}
+
+/* Tablet ขนาดเล็กและ Mobile แนวนอน */
+@media (max-width: 768px) {
+    .workorder-modal {
+        width: 85%;
+        max-width: 500px;
+        padding: 16px;
+        margin: 15px;
+    }
+
+    .workorder-form-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .workorder-form-left,
+    .workorder-form-right {
+        gap: 10px;
+    }
+
+    .workorder-modal-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .workorder-modal-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Mobile แนวตั้ง */
+@media (max-width: 480px) {
+    .workorder-modal {
+        width: 95%;
+        padding: 14px;
+        margin: 10px;
+    }
+
+    .workorder-modal h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .workorder-form-row label {
+        font-size: 0.8rem;
+        margin-bottom: 3px;
+    }
+
+    .workorder-form-row input,
+    .workorder-form-row select,
+    .workorder-form-row textarea {
+        padding: 7px 9px;
+        font-size: 0.85rem;
+    }
+
+    .workorder-form-full textarea {
+        min-height: 100px;
     }
 }
