@@ -5,12 +5,10 @@
   "header.signIn": "Sign In",
   "header.signUp": "Sign Up",
   "header.language": "Language",
-
   "common.loading": "Loading...",
   "common.settings": "Settings",
   "common.logout": "Logout",
   "common.close": "Close",
-
   "nav.dashboard": "Dashboard",
   "nav.map": "Truck GPS",
   "nav.track": "Container GPS",
@@ -22,7 +20,6 @@
   "nav.containers": "Containers",
   "nav.management": "User Management",
   "nav.settings": "Settings",
-  
   "auth.login.title": "Sign In",
   "auth.login.email": "Email",
   "auth.login.password": "Password",
@@ -31,7 +28,6 @@
   "auth.login.success": "Login successful!",
   "auth.login.error": "Error logging in. Please try again.",
   "auth.login.forgot": "Forgot Password?",
-
   "auth.register.title": "Sign Up",
   "auth.register.email": "Email",
   "auth.register.password": "Password",
@@ -42,23 +38,19 @@
   "auth.register.submitting": "Registering...",
   "auth.register.success": "Registration successful! Redirecting to login...",
   "auth.register.error": "Error registering user. Please try again.",
-
   "auth.forgot.title": "Forgot Password",
   "auth.forgot.email": "Email",
   "auth.forgot.submit": "Send reset link",
   "auth.forgot.sending": "Sending...",
   "auth.forgot.success": "Reset link sent! Please check your email.",
   "auth.forgot.error": "Unable to send reset link. Please try again.",
-
   "auth.reset.title": "Reset Password",
   "auth.reset.newPassword": "New password",
   "auth.reset.confirmPassword": "Confirm new password",
   "auth.reset.submit": "Reset Password",
   "auth.reset.success": "Password has been reset successfully.",
   "auth.reset.error": "Unable to reset password. Please try again.",
-
   "protected.denied": "You do not have permission to view this page.",
-
   "landing.companyName": "Porchoen 2014 Co., Ltd.",
   "landing.subtitle": "Founded in 2014 with a registered capital of 20,000,000 THB, we focus on import/export of consumer goods and end-to-end logistics services both domestically and internationally.",
   "landing.capabilities": "Operational Capabilities",
@@ -68,7 +60,6 @@
   "landing.cap.coldContainer.desc": "45ft and 40ft — more than 600 units",
   "landing.cap.yard": "Aiyara Yard",
   "landing.cap.yard.desc": "Space to support trucks and storage",
-
   "landing.services": "Our Services",
   "landing.service.importExport": "Import–Export of general and consumer goods",
   "landing.service.importExport.desc": "End-to-end service for all product types",
@@ -78,10 +69,8 @@
   "landing.service.fresh.desc": "Nationwide delivery with standard reefer logistics",
   "landing.service.logistics": "End-to-end logistics service",
   "landing.service.logistics.desc": "One-stop logistics for customer convenience",
-
   "landing.mission": "Our Mission",
   "landing.mission.quote": "We strive to deliver fast, safe, and reliable services, aiming for sustainable profit and revenue with excellent after-sales support to maximize customer satisfaction and ensure steady growth.",
-
   "landing.contact": "Contact Us",
   "landing.contact.name": "Your name",
   "landing.contact.email": "Your email",
@@ -92,12 +81,9 @@
   "landing.contact.error": "Unable to send message. Please try again.",
   "landing.contact.other": "Other contact channels",
   "landing.contact.address": "Address",
-
   "landing.privacy": "Privacy Policy",
   "landing.terms": "Terms of Use",
-  "landing.copyright": "© Porchoen 2014 Co., Ltd."
-  ,
-  
+  "landing.copyright": "© Porchoen 2014 Co., Ltd.",
   "common.searchPlaceholder": "Search...",
   "common.all": "All",
   "common.add": "Add",
@@ -106,6 +92,7 @@
   "common.save": "Save",
   "common.cancel": "Cancel",
   "common.refresh": "Refresh",
+  "common.ipmport": "Ipmport File",
   "common.view": "View",
   "common.download": "Download",
   "common.actions": "Actions",
@@ -120,12 +107,20 @@
   "common.open": "Open",
   "common.fromDate": "From date",
   "common.toDate": "To date",
+  "common.import": "Upload File",
+  "common.importPreview": "Data Preview to be Imported",
+  "common.previewNote": "⚡ Showing preview of {{rows}} rows",
+  "common.confirmImport": "Confirm Import",
+  "common.invalidHeader": "❌ Invalid header for upload format, missing: {{fields}}",
+  "common.noDataToImport": "⚠️ No data ready to import",
+  "common.downloadTemplateError": "❌ Failed to download template",
+  "common.template": "Download Template",
+
 
   "vehicle.status.driving": "Driving",
   "vehicle.status.idling": "Idling",
   "vehicle.status.stationary": "Stationary",
   "vehicle.status.ignitionOff": "Ignition Off",
-
   "dashboard.title": "Dashboard",
   "dashboard.totalVehicles": "Total Vehicles",
   "dashboard.driving": "Driving",
@@ -140,7 +135,6 @@
   "dashboard.table.registration": "Registration",
   "dashboard.table.status": "Status",
   "dashboard.table.lastUpdated": "Last Updated",
-
   "workorder.title": "Work Orders",
   "workorder.resultCount": "Showing {count} results",
   "workorder.totalCount": "Total {count} items",
@@ -165,7 +159,6 @@
   "workorder.noData": "Please add a work order or adjust the date range",
   "workorder.confirmDelete": "Are you sure you want to delete this work order?",
   "workorder.description.title": "Description",
-
   "workorder.form.title.edit": "Edit Work Order",
   "workorder.form.title.create": "Create Work Order",
   "workorder.form.issueDate": "Issue Date",
@@ -186,7 +179,6 @@
   "workorder.form.description": "Description",
   "workorder.form.header.porchoen": "Porchoen",
   "workorder.form.header.rotruam": "Rot Ruam",
-
   "workorder.print.download": "Download",
   "workorder.print.issueDate": "Issue Date",
   "workorder.print.number": "Work Order No.",
@@ -198,7 +190,6 @@
   "workorder.print.containerNumber": "Container No.",
   "workorder.print.companyName": "Company",
   "workorder.print.description": "Description",
-
   "datatoday.title": "Add Jobs & Reports",
   "datatoday.export": "Download",
   "datatoday.filters.driver": "Driver",
@@ -222,7 +213,6 @@
   "datatoday.table.viewDocument": "View document",
   "datatoday.table.noData": "No results found",
   "datatoday.pagination.page": "Page {current} of {total}",
-
   "drivers.title": "Drivers",
   "drivers.results": "{count} drivers",
   "drivers.add": "Add Driver",
@@ -248,7 +238,6 @@
   "drivers.position.helper": "Driver(Rot Ruam)",
   "drivers.position.owner": "Driver(Owner)",
   "drivers.profile.title": "Driver Profile",
-
   "vehicles.head.title": "Vehicle Head",
   "vehicles.tail.title": "Vehicle Tail",
   "vehicles.results": "{count} items",
@@ -269,7 +258,6 @@
   "vehicles.company.rotruam": "Rot Ruam",
   "vehicles.buttons.cancel": "Cancel",
   "vehicles.buttons.save": "Save",
-
   "containers.title": "Containers",
   "containers.results": "{count} containers",
   "containers.add": "Add Container",
@@ -288,7 +276,6 @@
   "containers.table.size": "Size",
   "containers.table.createdAt": "Created",
   "containers.table.actions": "Actions",
-
   "users.title": "User Management",
   "users.searchPlaceholder": "Search by name or email...",
   "users.refresh": "Refresh",
@@ -307,9 +294,7 @@
   "roles.admin": "Admin",
   "roles.manager": "Manager",
   "roles.user": "User",
-
   "nav.allowedPagesManager": "Manage Page Permissions",
-
   "userManagement.title": "User Management",
   "userManagement.totalUsers": "Total {count} users",
   "userManagement.foundUsers": "Found {found} of {total} users",
@@ -353,7 +338,6 @@
   "userManagement.time.minutesAgo": "{minutes} minutes ago",
   "userManagement.time.hoursAgo": "{hours} hours ago",
   "userManagement.time.daysAgo": "{days} days ago",
-
   "containers.form.selectCompany": "Select company",
   "containers.form.selectSize": "Select size",
   "containers.form.placeholderContainer": "XXXX-0000000",
@@ -362,7 +346,6 @@
   "containers.buttons.saving": "Saving...",
   "containers.buttons.saveEdit": "Save changes",
   "containers.buttons.create": "Create",
-
   "allowedPages.title": "Manage User Permissions",
   "allowedPages.back": "⬅ Back",
   "allowedPages.table.name": "Name",
@@ -379,7 +362,6 @@
   "allowedPages.save": "Save",
   "allowedPages.messages.saveSuccess": "Saved successfully! ✅",
   "allowedPages.messages.saveError": "An error occurred ❌",
-
   "userinfo.title": "Profile",
   "userinfo.back": "Back",
   "userinfo.editProfile": "Edit Profile",
@@ -411,6 +393,5 @@
   "userinfo.messages.invalidFileType": "Please select image files only",
   "userinfo.role.display": "Role: {role}",
   "userinfo.joinDate": "Member since: {date}",
-
   "buttons.back": "⬅ Back"
 }

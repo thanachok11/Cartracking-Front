@@ -115,3 +115,30 @@ export const deleteWorkOrder = async (id: string): Promise<void> => {
         throw error;
     }
 };
+
+// Upload Import File
+
+export const importWorkOrders = async (rows: any[]): Promise<{ message: string; count: number }> => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(`${WORK_ORDERS_BASE}/import`, { rows }, {
+        headers: { Authorization: `Bearer ${token || ""}` },
+    });
+    return res.data;
+};
+
+// Download Template by language
+export const downloadTemplate = async (lang: "th" | "en" | "zh") => {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(`${WORK_ORDERS_BASE}/template/${lang}`, {
+        headers: { Authorization: `Bearer ${token || ""}` },
+        responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `workorder_template_${lang}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+};

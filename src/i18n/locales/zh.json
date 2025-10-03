@@ -5,12 +5,10 @@
   "header.signIn": "登录",
   "header.signUp": "注册",
   "header.language": "语言",
-
   "common.loading": "加载中...",
   "common.settings": "设置",
   "common.logout": "退出登录",
   "common.close": "关闭",
-
   "nav.dashboard": "仪表盘",
   "nav.map": "卡车 GPS",
   "nav.track": "集装箱 GPS",
@@ -22,7 +20,6 @@
   "nav.containers": "集装箱",
   "nav.management": "用户管理",
   "nav.settings": "设置",
-
   "auth.login.title": "登录",
   "auth.login.email": "邮箱",
   "auth.login.password": "密码",
@@ -31,7 +28,6 @@
   "auth.login.success": "登录成功！",
   "auth.login.error": "登录出错，请重试。",
   "auth.login.forgot": "忘记密码？",
-
   "auth.register.title": "注册",
   "auth.register.email": "邮箱",
   "auth.register.password": "密码",
@@ -42,21 +38,18 @@
   "auth.register.submitting": "注册中...",
   "auth.register.success": "注册成功！正在跳转到登录...",
   "auth.register.error": "注册失败，请重试。",
-
   "auth.forgot.title": "忘记密码",
   "auth.forgot.email": "邮箱",
   "auth.forgot.submit": "发送重置链接",
   "auth.forgot.sending": "发送中...",
   "auth.forgot.success": "重置链接已发送，请检查邮箱。",
   "auth.forgot.error": "无法发送重置链接，请重试。",
-
   "auth.reset.title": "重置密码",
   "auth.reset.newPassword": "新密码",
   "auth.reset.confirmPassword": "确认新密码",
   "auth.reset.submit": "重置密码",
   "auth.reset.success": "密码已重置成功。",
   "auth.reset.error": "无法重置密码，请重试。",
-
   "protected.denied": "您没有权限访问此页面。",
 
   "landing.companyName": "博辰 2014 有限公司",
@@ -68,7 +61,6 @@
   "landing.cap.coldContainer.desc": "45 英尺与 40 英尺，总数 600+",
   "landing.cap.yard": "Aiyara 堆场",
   "landing.cap.yard.desc": "支持卡车与货物存储的空间",
-
   "landing.services": "我们的服务",
   "landing.service.importExport": "各类及消费品的进出口",
   "landing.service.importExport.desc": "覆盖全流程的一站式服务",
@@ -78,10 +70,8 @@
   "landing.service.fresh.desc": "全国冷链标准化配送",
   "landing.service.logistics": "一体化物流服务",
   "landing.service.logistics.desc": "为客户提供便捷的一站式物流",
-
   "landing.mission": "我们的目标",
   "landing.mission.quote": "我们致力于提供快速、安全、可靠的服务，追求可持续的利润与营收，以卓越的售后服务实现客户与社会的高度满意，并实现稳健发展。",
-
   "landing.contact": "联系我们",
   "landing.contact.name": "您的姓名",
   "landing.contact.email": "您的邮箱",
@@ -92,11 +82,10 @@
   "landing.contact.error": "暂时无法发送，请稍后重试。",
   "landing.contact.other": "其他联系渠道",
   "landing.contact.address": "地址",
-
   "landing.privacy": "隐私政策",
   "landing.terms": "使用条款",
-  "landing.copyright": "© 博辰 2014 有限公司"
-  ,
+  "landing.copyright": "© 博辰 2014 有限公司",
+
 
   "common.searchPlaceholder": "搜索...",
   "common.all": "全部",
@@ -120,12 +109,20 @@
   "common.open": "打开",
   "common.fromDate": "开始日期",
   "common.toDate": "结束日期",
+  "common.import": "上传文件",
+  "common.importPreview": "要导入的数据预览",
+  "common.previewNote": "⚡ 预览 {{rows}} 行",
+  "common.confirmImport": "确认导入",
+  "common.invalidHeader": "❌ 上传格式的标头无效，缺少: {{fields}}",
+"common.noDataToImport": "⚠️ 没有可导入的数据",
+"common.downloadTemplateError": "❌ 模板下载失败",
+"common.template": "下载模板",
+
 
   "vehicle.status.driving": "行驶中",
   "vehicle.status.idling": "怠速中",
   "vehicle.status.stationary": "静止",
   "vehicle.status.ignitionOff": "熄火",
-
   "dashboard.title": "仪表盘",
   "dashboard.totalVehicles": "车辆总数",
   "dashboard.driving": "行驶中",
@@ -140,7 +137,6 @@
   "dashboard.table.registration": "车牌",
   "dashboard.table.status": "状态",
   "dashboard.table.lastUpdated": "最近更新",
-
   "workorder.title": "工单",
   "workorder.resultCount": "显示 {count} 条",
   "workorder.totalCount": "共 {count} 条",
@@ -165,7 +161,6 @@
   "workorder.noData": "请新增工单或调整日期范围",
   "workorder.confirmDelete": "确定要删除该工单吗？",
   "workorder.description.title": "说明",
-
   "workorder.form.title.edit": "编辑工单",
   "workorder.form.title.create": "新建工单",
   "workorder.form.issueDate": "开单日期",
@@ -186,7 +181,6 @@
   "workorder.form.description": "说明",
   "workorder.form.header.porchoen": "博辰",
   "workorder.form.header.rotruam": "合作车队",
-
   "workorder.print.download": "下载",
   "workorder.print.issueDate": "开单日期",
   "workorder.print.number": "工单号",
@@ -198,7 +192,6 @@
   "workorder.print.containerNumber": "集装箱号",
   "workorder.print.companyName": "公司",
   "workorder.print.description": "说明",
-
   "datatoday.title": "新增任务与报表",
   "datatoday.export": "下载",
   "datatoday.filters.driver": "司机",
@@ -222,7 +215,6 @@
   "datatoday.table.viewDocument": "查看文件",
   "datatoday.table.noData": "未找到结果",
   "datatoday.pagination.page": "第 {current} 页，共 {total} 页",
-
   "drivers.title": "司机",
   "drivers.results": "{count} 人",
   "drivers.add": "新增司机",
@@ -248,7 +240,6 @@
   "drivers.position.helper": "司机(合作车队)",
   "drivers.position.owner": "司机(车主)",
   "drivers.profile.title": "司机个人资料",
-
   "vehicles.head.title": "牵引车",
   "vehicles.tail.title": "挂车",
   "vehicles.results": "{count} 条",
@@ -270,7 +261,6 @@
   "vehicles.company.rotruam": "合作车队",
   "vehicles.buttons.cancel": "取消",
   "vehicles.buttons.save": "保存",
-
   "containers.title": "集装箱",
   "containers.results": "{count} 个",
   "containers.add": "新增集装箱",
@@ -289,7 +279,6 @@
   "containers.table.size": "尺寸",
   "containers.table.createdAt": "创建时间",
   "containers.table.actions": "操作",
-
   "users.title": "用户管理",
   "users.searchPlaceholder": "按姓名或邮箱搜索...",
   "users.refresh": "刷新",
@@ -308,9 +297,7 @@
   "roles.admin": "管理员",
   "roles.manager": "经理",
   "roles.user": "普通用户",
-
   "nav.allowedPagesManager": "管理页面权限",
-
   "userManagement.title": "用户管理",
   "userManagement.totalUsers": "共 {count} 个用户",
   "userManagement.foundUsers": "找到 {found} / {total} 用户",
@@ -354,7 +341,6 @@
   "userManagement.time.minutesAgo": "{minutes} 分钟前",
   "userManagement.time.hoursAgo": "{hours} 小时前",
   "userManagement.time.daysAgo": "{days} 天前",
-
   "userinfo.title": "个人资料",
   "userinfo.back": "返回",
   "userinfo.editProfile": "编辑资料",
@@ -380,7 +366,6 @@
   "containers.buttons.saving": "正在保存...",
   "containers.buttons.saveEdit": "保存更改",
   "containers.buttons.create": "新增",
-
   "allowedPages.title": "管理用户权限",
   "allowedPages.back": "⬅ 返回",
   "allowedPages.table.name": "姓名",
@@ -412,6 +397,5 @@
   "userinfo.messages.invalidFileType": "请仅选择图片文件",
   "userinfo.role.display": "角色：{role}",
   "userinfo.joinDate": "加入时间：{date}",
-
   "buttons.back": "⬅ 返回"
 }

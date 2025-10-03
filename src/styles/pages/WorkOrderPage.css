@@ -9,7 +9,27 @@
     color: #333;
 }
 
-/* Header รวม - เหมือน DriverPage */
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    color: #1e40af;
+}
+
+.result-count {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 2px;
+    font-weight: 400;
+}
+
+/* =============================
+   Header
+============================= */
+
 .workorder-header {
     position: sticky;
     top: 0;
@@ -29,59 +49,9 @@
     align-items: center;
 }
 
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    color: #1e40af;
-}
-
-.result-count {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 2px;
-    font-weight: 400;
-}
-
-.header-actions {
+.workorder-header-actions {
     display: flex;
     gap: 10px;
-}
-
-.refresh-workorder-button,
-.add-workorder-button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.refresh-workorder-button {
-    background: #4285f4;
-    border: 1px solid #4285f4;
-    color: #fff;
-    border-radius: 8px;
-}
-
-.refresh-workorder-button:hover {
-    background: #3367d6;
-    border: 1px solid #3367d6;
-}
-
-.add-workorder-button {
-    background: #1e88e5;
-    color: #fff;
-}
-
-.add-workorder-button:hover {
-    background: #1565c0;
 }
 
 .workorder-header-bottom {
@@ -134,15 +104,6 @@
     box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
 }
 
-.refresh-icon {
-    display: inline-block;
-    animation: none;
-}
-
-.refresh-workorder-button:active .refresh-icon {
-    animation: spin 1s linear;
-}
-
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -156,7 +117,7 @@
 /* =============================
    Buttons
 ============================= */
-.workorder-btn-primary {
+.workorder-create-button {
     padding: 12px 20px;
     background: linear-gradient(135deg, #059669, #047857);
     color: #fff;
@@ -172,10 +133,66 @@
     box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
 }
 
-.workorder-btn-primary:hover {
+.workorder-create-button:hover {
     background: linear-gradient(135deg, #047857, #065f46);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.refresh-workorder-button {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #3b8af3, #28befa);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.refresh-workorder-button:hover {
+    background: linear-gradient(135deg, #55b1fc, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.workorder-import-button {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #9b35fa, #d378fd);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.workorder-import-button:hover {
+    background: linear-gradient(135deg, #b015f8, #8109a5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.workorder-import-button:active {
+    background-color: #cddcff;
+    transform: translateY(0);
+}
+
+.workorder-import-button:disabled {
+    background-color: #f8f9fa;
+    color: #a0a0a0;
+    border: 1px solid #ccc;
+    cursor: not-allowed;
 }
 
 /* =============================
@@ -345,6 +362,7 @@
     background-color: #2563eb;
     /* ฟ้าเข้ม */
 }
+
 /* =============================
    Responsive
 ============================= */
@@ -465,11 +483,11 @@
         width: 95vw;
         margin: 20px;
     }
-    
+
     .description-popup-header {
         padding: 12px 16px;
     }
-    
+
     .description-popup-content {
         padding: 16px;
         max-height: 300px;

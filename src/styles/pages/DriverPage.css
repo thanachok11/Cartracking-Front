@@ -103,6 +103,7 @@
   font-size: 2rem;
   color: #1e40af;
 }
+
 .add-driver-button {
   padding: 12px 20px;
   background: linear-gradient(135deg, #059669, #047857);
@@ -129,9 +130,10 @@
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
 }
+
 .refresh-driver-button {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #3b8af3, #28befa);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -141,12 +143,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .refresh-driver-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
+  background: linear-gradient(135deg, #55b1fc, #1e40af);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
@@ -161,6 +163,7 @@
   cursor: not-allowed;
   transform: none;
 }
+
 .error-container {
   display: flex;
   justify-content: center;
@@ -389,6 +392,7 @@
   transition: all 0.2s ease;
   min-width: 80px;
 }
+
 .driver-action-buttons {
   display: flex;
   gap: 0.5rem;
@@ -588,41 +592,41 @@
   .driver-page {
     padding: 10px;
   }
-  
+
   .header-row {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     text-align: center;
   }
-  
+
   .search-and-sort {
     flex-direction: column;
   }
-  
+
   .driver-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .profile-img {
     width: 50px;
     height: 50px;
   }
-  
+
   .modal-content {
     width: 95%;
     padding: 1.5rem;
   }
-  
+
   .form-row {
     flex-direction: column;
   }
-  
+
   .modal-actions {
     flex-direction: column;
   }
@@ -630,7 +634,8 @@
 
 .back-btn {
   padding: 8px 16px;
-  background-color: #6b7280; /* เทา */
+  background-color: #6b7280;
+  /* เทา */
   color: white;
   border: none;
   border-radius: 6px;
@@ -641,11 +646,13 @@
 }
 
 .back-btn:hover {
-  background-color: #4b5563; /* เทาเข้ม */
+  background-color: #4b5563;
+  /* เทาเข้ม */
 }
 
 .back-btn:active {
-  background-color: #374151; /* เทาเข้มสุด */
+  background-color: #374151;
+  /* เทาเข้มสุด */
   transform: scale(0.97);
 }
 
