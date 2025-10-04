@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
     fetchTruckHeads,
     createTruckHead,
@@ -20,7 +20,6 @@ const VehiclePage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCompany, setSelectedCompany] = useState("all");
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
@@ -29,9 +28,26 @@ const VehiclePage: React.FC = () => {
 
     const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
-    const loadTruckHeads = async () => {
+    // Format license plate input (xxx-xxxx)
+    const formatLicensePlate = (value: string): string => {
+        // Remove all non-alphanumeric characters and convert to uppercase
+        const cleaned = value.replace(/[^0-9]/g, '').toUpperCase();
+        // Limit to 7 characters
+        const limited = cleaned.slice(0, 7);
+        // Add dash after 3rd character
+        if (limited.length > 3) {
+            return limited.slice(0, 3) + '-' + limited.slice(3);
+        }
+        return limited;
+    };
+
+    const handleSearchChange = (value: string) => {
+        const formatted = formatLicensePlate(value);
+        setSearchTerm(formatted);
+    };
+
+    const loadTruckHeads = useCallback(async () => {
         try {
-            setLoading(true);
             const data = await fetchTruckHeads();
             const normalized = data.map((d) => ({
                 ...d,
@@ -40,20 +56,17 @@ const VehiclePage: React.FC = () => {
             setTruckHeads(normalized);
         } catch (e) {
             setError(t('common.noData'));
-        } finally {
-            setLoading(false);
         }
-    };
+    }, [t]);
 
     useEffect(() => {
         loadTruckHeads();
-    }, []);
+    }, [loadTruckHeads]);
 
     const filteredTruckHeads = truckHeads.filter((truck) => {
         const term = searchTerm.trim().toLowerCase();
         const license = (truck.licensePlate || "").toLowerCase();
-        const company = (truck.companyName || "").toLowerCase();
-        const matchesTerm = !term || license.includes(term) || company.includes(term);
+        const matchesTerm = !term || license.includes(term);
         const matchesCompany =
             selectedCompany === "all" || truck.companyName === selectedCompany;
         return matchesTerm && matchesCompany;
@@ -107,7 +120,7 @@ const VehiclePage: React.FC = () => {
                 totalCount={filteredTruckHeads.length}
                 searchTerm={searchTerm}
                 selectedCompany={selectedCompany}
-                onSearch={setSearchTerm}
+                onSearch={handleSearchChange}
                 onFilter={setSelectedCompany}
             />
 

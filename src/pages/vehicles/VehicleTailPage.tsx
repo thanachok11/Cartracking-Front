@@ -26,6 +26,24 @@ const VehicleTailPage: React.FC = () => {
 
     const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
+    // Format license plate input (xxx-xxxx)
+    const formatLicensePlate = (value: string): string => {
+        // Remove all non-alphanumeric characters and convert to uppercase
+        const cleaned = value.replace(/[^0-9]/g, '').toUpperCase();
+        // Limit to 7 characters
+        const limited = cleaned.slice(0, 7);
+        // Add dash after 3rd character
+        if (limited.length > 3) {
+            return limited.slice(0, 3) + '-' + limited.slice(3);
+        }
+        return limited;
+    };
+
+    const handleSearchChange = (value: string) => {
+        const formatted = formatLicensePlate(value);
+        setSearchTerm(formatted);
+    };
+
     const loadTruckTails = async () => {
         const data = await fetchTruckTails();
         setTruckTails(data.map((d) => ({ ...d, companyName: (d.companyName || "").trim() })));
@@ -38,8 +56,7 @@ const VehicleTailPage: React.FC = () => {
     const filteredTruckTails = truckTails.filter((truck) => {
         const term = searchTerm.trim().toLowerCase();
         const license = (truck.licensePlate || "").toLowerCase();
-        const company = (truck.companyName || "").toLowerCase();
-        const matchesTerm = !term || license.includes(term) || company.includes(term);
+        const matchesTerm = !term || license.includes(term);
         const matchesCompany = selectedCompany === "all" || truck.companyName === selectedCompany;
         return matchesTerm && matchesCompany;
     });
@@ -96,7 +113,7 @@ const VehicleTailPage: React.FC = () => {
                 totalCount={filteredTruckTails.length}
                 searchTerm={searchTerm}
                 selectedCompany={selectedCompany}
-                onSearch={setSearchTerm}
+                onSearch={handleSearchChange}
                 onFilter={setSelectedCompany}
             />
 

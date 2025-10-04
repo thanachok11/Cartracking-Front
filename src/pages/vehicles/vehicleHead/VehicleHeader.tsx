@@ -58,6 +58,7 @@ export default function VehicleHeader({
                     value={searchTerm}
                     onChange={(e) => onSearch(e.target.value)}
                     className="container-header-page-search-input"
+                    maxLength={8}
                 />
                 <select
                     value={selectedCompany}

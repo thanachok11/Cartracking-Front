@@ -1,0 +1,15 @@
+/* ทำให้อีเมลเป็นสีทึบและห้าม hover */
+.user-form input[disabled] {
+    background-color: #e0e0e0;
+    /* เทาอ่อน */
+    color: #666;
+    /* ตัวหนังสือเทา */
+    cursor: not-allowed;
+    /* เมาส์เป็นสัญลักษณ์ห้าม */
+    opacity: 1;
+    /* ให้คงสีไว้ ไม่จางลง */
+}
+.user-form input[disabled]:hover {
+    background-color: #d6d6d6;
+    /* เข้มขึ้นนิดหน่อย */
+}

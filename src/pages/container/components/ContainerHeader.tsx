@@ -65,6 +65,7 @@ export default function ContainerHeader({
                     value={searchTerm}
                     onChange={(e) => onSearch(e.target.value)}
                     className="container-header-page-search-input"
+                    maxLength={12}
                 />
                 <select
                     value={filterBy}

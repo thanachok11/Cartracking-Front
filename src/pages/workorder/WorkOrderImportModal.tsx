@@ -34,6 +34,20 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
     const [preview, setPreview] = useState<any[]>([]);
     const [error, setError] = useState<string>("");
 
+    // Thai field names for display
+    const fieldNamesThai: Record<string, string> = {
+        "issueDate": "วันที่ออก",
+        "workOrderNumber": "เลขที่ใบสั่งงาน",
+        "product": "สินค้า", 
+        "driverName": "คนขับ",
+        "driverPhone": "เบอร์โทร",
+        "headPlate": "ทะเบียนหัว",
+        "tailPlate": "ทะเบียนหาง",
+        "containerNumber": "เลขตู้",
+        "companyName": "บริษัท",
+        "description": "รายละเอียด",
+    };
+
     if (!show) return null;
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +83,8 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
             const missing = requiredFields.filter(f => !firstRowKeys.includes(f));
 
             if (missing.length > 0) {
-                setError(t("common.invalidHeader", { fields: missing.join(", ") }));
+                const missingThaiNames = missing.map(field => fieldNamesThai[field] || field);
+                setError(t("common.invalidHeader", { fields: missingThaiNames.join(", ") }));
                 setPreview([]);
             } else {
                 setPreview(normalized.slice(0, 10));
@@ -136,7 +151,7 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
                             <thead>
                                 <tr>
                                     {Object.keys(preview[0]).map((key, idx) => (
-                                        <th key={idx}>{key}</th>
+                                        <th key={idx}>{fieldNamesThai[key] || key}</th>
                                     ))}
                                 </tr>
                             </thead>

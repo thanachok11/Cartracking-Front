@@ -35,6 +35,25 @@ export default function ContainerPage() {
 
   const { notification, progress, showNotification, handleMouseEnter, handleMouseLeave } = useNotification();
 
+  // Format container number input (XXXX-XXXXXXX format)
+  const formatContainerNumber = (value: string): string => {
+    // Remove all non-alphanumeric characters and convert to uppercase
+    const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    // Limit to 11 characters (4+7)
+    const limited = cleaned.slice(0, 11);
+    
+    // Add dashes: XXXX-XXXXXXX
+    if (limited.length > 4) {
+      return limited.slice(0, 4) + '-' + limited.slice(4);
+    }
+    return limited;
+  };
+
+  const handleSearchChange = (value: string) => {
+    const formatted = formatContainerNumber(value);
+    setSearchTerm(formatted);
+  };
+
   const filteredContainers = useMemo(
     () =>
       containers.filter((c) => {
@@ -85,7 +104,7 @@ export default function ContainerPage() {
     } finally {
       setSaving(false);
     }
-  }, [formData, loadContainers, handleCloseModal]);
+  }, [formData, loadContainers, handleCloseModal, showNotification]);
 
   const handleUpdate = useCallback(async () => {
     if (!editingContainer) return;
@@ -107,7 +126,7 @@ export default function ContainerPage() {
     } finally {
       setSaving(false);
     }
-  }, [editingContainer, formData, loadContainers, handleCloseModal]);
+  }, [editingContainer, formData, loadContainers, handleCloseModal, showNotification]);
 
   const handleDelete = useCallback(
     async (id: string) => {
@@ -120,7 +139,7 @@ export default function ContainerPage() {
         showNotification("เกิดข้อผิดพลาดในการลบคอนเทนเนอร์ ❌", "error");
       }
     },
-    [loadContainers]
+    [loadContainers, showNotification]
   );
 
   const handleOpenModal = useCallback((container?: Containers) => {
@@ -157,7 +176,7 @@ export default function ContainerPage() {
         resultsCount={filteredContainers.length}
         searchTerm={searchTerm}
         filterBy={filterBy}
-        onSearch={setSearchTerm}
+        onSearch={handleSearchChange}
         onFilter={setFilterBy}
       />
 
