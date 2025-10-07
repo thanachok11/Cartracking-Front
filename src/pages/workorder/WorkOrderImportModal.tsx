@@ -31,7 +31,7 @@ interface Props {
 
 const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => {
     const { t, lang } = useI18n();
-    const [preview, setPreview] = useState<any[]>([]);
+    const [allData, setAllData] = useState<any[]>([]);
     const [error, setError] = useState<string>("");
 
     // Thai field names for display
@@ -59,16 +59,32 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
         reader.onload = (evt) => {
             const data = evt.target?.result;
             if (!data) return;
-            const workbook = XLSX.read(data, { type: "binary" });
+            const workbook = XLSX.read(data, { type: "binary", cellDates: true });
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+            const json = XLSX.utils.sheet_to_json(sheet, { defval: "", raw: false, dateNF: 'yyyy-mm-dd' });
 
             const normalized = json.map((row: any) => {
                 const newRow: any = {};
                 for (const key in row) {
                     const mapped = headerMapping[key.trim()];
                     if (mapped) {
-                        newRow[mapped] = row[key];
+                        let value = row[key];
+                        
+                        // จัดการวันที่ให้ถูกต้อง
+                        if (mapped === 'issueDate' && value) {
+                            if (value instanceof Date) {
+                                // ถ้าเป็น Date object แล้ว
+                                value = value.toISOString().split('T')[0];
+                            } else if (typeof value === 'string' && value.trim()) {
+                                // ถ้าเป็น string แล้วพยายามแปลงเป็นวันที่
+                                const dateObj = new Date(value);
+                                if (!isNaN(dateObj.getTime())) {
+                                    value = dateObj.toISOString().split('T')[0];
+                                }
+                            }
+                        }
+                        
+                        newRow[mapped] = value;
                     }
                 }
                 return newRow;
@@ -85,9 +101,9 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
             if (missing.length > 0) {
                 const missingThaiNames = missing.map(field => fieldNamesThai[field] || field);
                 setError(t("common.invalidHeader", { fields: missingThaiNames.join(", ") }));
-                setPreview([]);
+                setAllData([]);
             } else {
-                setPreview(normalized.slice(0, 10));
+                setAllData(normalized);
             }
 
         };
@@ -95,11 +111,11 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
     };
 
     const handleConfirm = () => {
-        if (preview.length === 0) {
-            setError(t("common.noDataToImport")); // 👈 ใช้ key ใหม่แทนข้อความฮาร์ดโค้ด
+        if (allData.length === 0) {
+            setError(t("common.noDataToImport"));
             return;
         }
-        onConfirm(preview);
+        onConfirm(allData);
         onClose();
     };
 
@@ -113,14 +129,13 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
 
 
     return (
-        <div className="wo-import-backdrop">
-            <div className="wo-import-container">
+        <div className="workorder-modal-backdrop">
+            <div className="workorder-modal">
                 <h3>{t("common.importPreview")}</h3>
                 <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} />
 
                 {error && (
                     <div className="wo-import-error-block">
-                       
                         <p className="wo-import-error-text">{error}</p>
                         <div className="wo-import-download-buttons">
                         {lang === "th" && (
@@ -144,37 +159,46 @@ const WorkOrderImportModal: React.FC<Props> = ({ show, onClose, onConfirm }) => 
                     </div>
                 )}
 
-
-                {preview.length > 0 && (
+                {allData.length > 0 && (
                     <div className="wo-import-preview-wrapper">
-                        <table className="wo-import-preview-table">
-                            <thead>
-                                <tr>
-                                    {Object.keys(preview[0]).map((key, idx) => (
-                                        <th key={idx}>{fieldNamesThai[key] || key}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {preview.map((row, i) => (
-                                    <tr key={i}>
-                                        {Object.values(row).map((val, j) => (
-                                            <td key={j}>{String(val)}</td>
+                        <div className="wo-import-stats">
+                            <p>📊 ข้อมูลทั้งหมด: <strong>{allData.length}</strong> แถว</p>
+                        </div>
+
+                        <div className="wo-import-table-container">
+                            <table className="wo-import-preview-table">
+                                <thead>
+                                    <tr>
+                                        {Object.keys(allData[0] || {}).map((key, idx) => (
+                                            <th key={idx}>{fieldNamesThai[key] || key}</th>
                                         ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        <p className="wo-import-note"> {t("common.previewNote", { rows: preview.length })}</p>
+                                </thead>
+                                <tbody>
+                                    {allData.map((row: any, i: number) => (
+                                        <tr key={i}>
+                                            {Object.values(row).map((val, j) => (
+                                                <td key={j}>{String(val)}</td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <p className="wo-import-note">
+                            💡 แสดงข้อมูลทั้งหมด {allData.length} แถว
+                        </p>
                     </div>
                 )}
 
-                <div className="wo-import-actions">
-                    <button className="wo-import-btn-cancel" onClick={onClose}>
+                <div className="workorder-modal-actions">
+                    <button type="button" onClick={onClose}>
                         {t("common.cancel")}
                     </button>
-                    <button className="wo-import-btn-confirm" onClick={handleConfirm}>
+                    <button type="submit" onClick={handleConfirm}>
                         {t("common.confirmImport")}
+                        {allData.length > 0 && ` (${allData.length} แถว)`}
                     </button>
                 </div>
             </div>
