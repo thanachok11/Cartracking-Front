@@ -321,3 +321,141 @@
         min-height: 100px;
     }
 }
+
+/* -------------------------
+   Work Order Import Modal Styles
+------------------------- */
+.wo-import-error-block {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12px 0;
+}
+
+.wo-import-error-text {
+    color: #dc2626;
+    margin: 0 0 10px 0;
+    font-weight: 500;
+}
+
+.wo-import-download-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wo-import-download-buttons button {
+    padding: 6px 12px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.wo-import-download-buttons button:hover {
+    background: #b91c1c;
+}
+
+.wo-import-preview-wrapper {
+    margin: 16px 0;
+}
+
+.wo-import-stats {
+    margin-bottom: 12px;
+}
+
+.wo-import-stats p {
+    margin: 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #495057;
+}
+
+.wo-import-table-container {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.wo-import-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.wo-import-preview-table th {
+    background: #f8f9fa;
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.wo-import-preview-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e9ecef;
+    color: #212529;
+}
+
+.wo-import-preview-table tr:hover {
+    background: #f8f9fa;
+}
+
+.wo-import-note {
+    margin: 10px 0 0 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Responsive สำหรับ Import Modal */
+@media (max-width: 768px) {
+    .wo-import-preview-table {
+        font-size: 0.8rem;
+    }
+    
+    .wo-import-preview-table th,
+    .wo-import-preview-table td {
+        padding: 6px 4px;
+    }
+    
+    .wo-import-download-buttons {
+        flex-direction: column;
+    }
+    
+    .wo-import-download-buttons button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .wo-import-table-container {
+        max-height: 300px;
+    }
+    
+    .wo-import-preview-table {
+        font-size: 0.75rem;
+    }
+    
+    .wo-import-preview-table th,
+    .wo-import-preview-table td {
+        padding: 4px 2px;
+    }
+    
+    .wo-import-stats p {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
