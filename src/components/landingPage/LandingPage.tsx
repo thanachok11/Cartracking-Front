@@ -269,7 +269,7 @@ const Home: React.FC = () => {
                         <li>
                             <strong>{t('landing.contact.address')}:</strong>{' '}
                             <a
-                                href="https://maps.app.goo.gl/zAmb4MCx7rUvTZqz7"
+                                href="https://maps.app.goo.gl/S32zkAHDFhueuQPp9"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
