@@ -196,8 +196,7 @@ const Dashboard: React.FC = () => {
     };
 
     fetchDashboardData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   if (loading)
     return (
