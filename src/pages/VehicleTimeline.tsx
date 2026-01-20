@@ -4,7 +4,9 @@ import { useEffect, useState, useRef } from 'react';
 import {
     GoogleMap,
     Marker,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     InfoWindow,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     useJsApiLoader,
     DirectionsRenderer,
 } from '@react-google-maps/api';

@@ -93,6 +93,7 @@ export default function DriverPage() {
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCloseModal = useCallback(() => {
@@ -122,6 +123,7 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, imageFile, loadDrivers, handleCloseModal]);
 
   const handleUpdate = useCallback(async () => {
@@ -145,6 +147,7 @@ export default function DriverPage() {
     } finally {
       setSaving(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingDriver, formData, imageFile, loadDrivers, handleCloseModal]);
 
   const handleDelete = useCallback(
@@ -159,6 +162,7 @@ export default function DriverPage() {
         showNotification(`${t('common.noData')} ❌`, "error");
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [loadDrivers]
   );
 

@@ -11,7 +11,7 @@ interface UseNotificationOptions {
 }
 
 export const useNotification = (options: UseNotificationOptions = {}) => {
-    const { duration = 2500, autoCloseModal = false } = options;
+    const { duration = 2500 } = options;
     
     const [notification, setNotification] = useState<NotificationState | null>(null);
     const [progress, setProgress] = useState(0);

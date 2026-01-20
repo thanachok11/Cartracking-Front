@@ -38,7 +38,7 @@ const WorkOrderPage: React.FC = () => {
     const [searchNumber, setSearchNumber] = useState("");
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
-    const [filterTitle, setFilterTitle] = useState("");
+    const [, setFilterTitle] = useState("");
     const [companyFilter, setCompanyFilter] = useState("");
 
     const { t, lang } = useI18n();
@@ -67,7 +67,7 @@ const WorkOrderPage: React.FC = () => {
 
     // dropdowns
     const [drivers, setDrivers] = useState<string[]>([]);
-    const [driversPhone, setDriversPhone] = useState<string[]>([]);
+    const [driversPhone] = useState<string[]>([]);
     const [truckHeadRegs, setTruckHeadRegs] = useState<string[]>([]);
     const [truckTailRegs, setTruckTailRegs] = useState<string[]>([]);
     const [containerNumbers, setContainerNumbers] = useState<string[]>([]);
@@ -177,6 +177,7 @@ const WorkOrderPage: React.FC = () => {
     useEffect(() => {
         loadOrders();
         loadDropdowns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -234,6 +235,7 @@ const WorkOrderPage: React.FC = () => {
 
     useEffect(() => {
         applyFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchNumber, dateFrom, dateTo, companyFilter, orders]);
 
     // create

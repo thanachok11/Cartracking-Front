@@ -81,7 +81,7 @@ const UserManagement: React.FC = () => {
     const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [formData, setFormData] = useState<UserFormData>({
+    const [, setFormData] = useState<UserFormData>({
         firstName: '',
         lastName: '',
         email: '',

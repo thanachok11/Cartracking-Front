@@ -5,7 +5,7 @@ import {
     createDataToday,
     updateDataToday,
     deleteDataToday,
-    IDataTodayPayload,
+
 } from "../../api/components/dataTodayApi";
 import { fetchAllDrivers } from "../../api/components/driversApi";
 import { fetchTruckHeads, fetchTruckTails } from "../../api/components/truckApi";
@@ -164,6 +164,7 @@ export default function DataTodayPage() {
         };
     }, []);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isoToDateOnly = (v?: string) => (v ? String(v).slice(0, 10) : "");
     const ymdToDmy = (v?: string) => {
         if (!v) return "";

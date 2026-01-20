@@ -35,6 +35,7 @@ export function useDirectionsFromEvents(
         else setDirections(null);
       }
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, JSON.stringify(events.map((e) => [e.lat ?? e.coords?.lat ?? e.latitude, e.lng ?? e.coords?.lng ?? e.longitude]))]);
 
   return directions;

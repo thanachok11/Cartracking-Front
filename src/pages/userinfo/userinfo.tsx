@@ -57,6 +57,7 @@ export default function UserInfo() {
   // Load user data
   useEffect(() => {
     loadUserData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto clear messages

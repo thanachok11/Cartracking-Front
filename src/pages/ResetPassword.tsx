@@ -6,6 +6,7 @@ export default function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isClosing, setIsClosing] = useState(false);
 
     const [searchParams] = useSearchParams();

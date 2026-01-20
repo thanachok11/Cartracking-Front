@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from "../../../i18n";
 
 import AllowedPagesModal from "./AllowedPagesModal"; // import modal
 import "../../../styles/pages/AllowedModal.css"
 import "../../../styles/pages/AllowedPage.css"
-import { fetchUsers, updateAllowedPages } from "../../../api/components/allowedPageApi";
+import { fetchUsers } from "../../../api/components/allowedPageApi";
 
 interface User {
     _id: string;

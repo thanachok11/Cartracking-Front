@@ -128,6 +128,7 @@ const WorkOrderPage: React.FC = () => {
     useEffect(() => {
         loadOrders();
         loadDropdowns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // 📌 โหลด dropdowns ทุกครั้งที่เปิด modal (refresh ใหม่)
@@ -136,6 +137,7 @@ const WorkOrderPage: React.FC = () => {
             console.log("📥 เปิด modal → refresh dropdown data");
             loadDropdowns();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showModal]);
 
     const applyFilter = () => {
@@ -181,6 +183,7 @@ const WorkOrderPage: React.FC = () => {
 
     useEffect(() => {
         applyFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchNumber, dateFrom, dateTo, orders]);
 
     const handleCreate = () => {

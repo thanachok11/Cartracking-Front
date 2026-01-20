@@ -25,6 +25,7 @@ export default function EventPosition({ event, isLoaded }: { event: any; isLoade
     } else {
       setAddress(existing);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coordKey, isLoaded]);
 
   return <span>{loading ? 'กำลังค้นหาตำแหน่ง...' : address}</span>;

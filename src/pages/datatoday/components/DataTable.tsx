@@ -1,7 +1,7 @@
 import React from "react";
 import { DataToday } from "../../../types/DataToday";
 import { IWorkOrder } from "../../../types/WorkOrder";
-import { fetchWorkOrderById, fetchWorkOrderByNumber } from "../../../api/components/orderApi";
+import { fetchWorkOrderByNumber } from "../../../api/components/orderApi";
 import { useI18n } from "../../../i18n";
 
 interface DataTableProps {
